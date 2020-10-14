@@ -6,11 +6,6 @@ void main() => runApp(MaterialApp(home: ToDo()));
 class ToDo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    void alertboxer(){
-
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Evented",
@@ -27,7 +22,11 @@ class ToDo extends StatelessWidget {
       ),
         backgroundColor: kBackgroundColorPrimary,
       floatingActionButton: FloatingActionButton(
-        onPressed: alertboxer,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NewEvent()));
+        },
         child: Icon(Icons.add),
         backgroundColor: kPrimaryColor,
       )
@@ -64,4 +63,24 @@ class SingleEvent extends StatelessWidget {
     );
   }
 }
+
+class NewEvent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add new Event'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: Text('Open route'),
+          onPressed: () {
+            // Navigate to second route when tapped.
+            },
+        ),
+      ),
+    );
+  }
+}
+
 
