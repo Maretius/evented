@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo/constants.dart';
+import 'constants.dart';
+import 'NewEvent.dart';
 
 void main() => runApp(MaterialApp(home: ToDo()));
 
@@ -13,7 +14,8 @@ class ToDo extends StatelessWidget {
           fontSize: 18.0,
           fontWeight: FontWeight.w600,
           fontFamily: "Arial",
-        ),),
+        ),
+        ),
         backgroundColor: kPrimaryColor,
       ),
       body: ListView(
@@ -63,24 +65,3 @@ class SingleEvent extends StatelessWidget {
     );
   }
 }
-
-class NewEvent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Add new Event'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Open route'),
-          onPressed: () {
-            // Navigate to second route when tapped.
-            },
-        ),
-      ),
-    );
-  }
-}
-
-
