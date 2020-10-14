@@ -18,7 +18,7 @@ class ToDo extends StatelessWidget {
       ),
       body: ListView(
         scrollDirection: Axis.vertical,
-        children: <Widget>[SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Tschüss"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt")],
+        children: <Widget>[SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Tschüss"),SingleEvent("🐣", "Gutschi"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt")],
       ),
         backgroundColor: kBackgroundColorPrimary,
       floatingActionButton: FloatingActionButton(
