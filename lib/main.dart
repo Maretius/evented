@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'NewEvent.dart';
 
-void main() => runApp(MaterialApp(home: ToDo()));
+void main() => runApp(MaterialApp(home: evented()));
 
-class ToDo extends StatelessWidget {
+class evented extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +37,10 @@ class ToDo extends StatelessWidget {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => NewEvent()));
           },
-          child: Icon(Icons.add),
+          child: Icon(
+              Icons.add,
+              size: 35.0,
+          ),
           backgroundColor: kPrimaryColor,
         ));
   }

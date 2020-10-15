@@ -13,10 +13,7 @@ class NewEvent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => ToDo()));
-                },
+                onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.arrow_back_ios_rounded)),
             Text(
               "New Event",
@@ -24,7 +21,7 @@ class NewEvent extends StatelessWidget {
             IconButton(
                 onPressed: () {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => ToDo()));
+                      context, MaterialPageRoute(builder: (context) => evented()));
                 },
                 icon: Icon(Icons.done)),
           ],
