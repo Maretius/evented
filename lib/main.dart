@@ -27,7 +27,7 @@ class Evented extends StatelessWidget {
           title: Text(
             "Evented",
             style: TextStyle(
-              fontSize: 26.0,
+              fontSize: 24.0,
               fontWeight: FontWeight.w600,
               fontFamily: "Arial",
             ),
@@ -37,7 +37,6 @@ class Evented extends StatelessWidget {
               icon: Icon(
                 Icons.search_rounded,
                 size: 28.0,
-                color: kTextColor,
               ),
               onPressed: () {
                 // do something
@@ -47,7 +46,6 @@ class Evented extends StatelessWidget {
               icon: Icon(
                 Icons.person_add_alt_1_rounded,
                 size: 28.0,
-                color: kTextColor,
               ),
               onPressed: () {
                 Navigator.push(context,
@@ -75,7 +73,7 @@ class Evented extends StatelessWidget {
                 context, MaterialPageRoute(builder: (context) => NewEvent()));
           },
           child: Icon(
-            Icons.add,
+            Icons.add_rounded,
             size: 32.0,
           ),
           backgroundColor: kPrimaryColor,
