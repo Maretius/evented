@@ -8,31 +8,37 @@ class ToDo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Evented",
-        style: TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.w600,
-          fontFamily: "Arial",
+        appBar: AppBar(
+          title: Text(
+            "Evented",
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+              fontFamily: "Arial",
+            ),
+          ),
+          backgroundColor: kPrimaryColor,
         ),
+        body: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            SingleEvent("🐣", "Abfahrt"),
+            SingleEvent("🐣", "Tschüss"),
+            SingleEvent("🐣", "Gutschi"),
+            SingleEvent("🐣", "LOL"),
+            SingleEvent("🐣", "Abfahrt"),
+            SingleEvent("🐣", "Abfahrt")
+          ],
         ),
-        backgroundColor: kPrimaryColor,
-      ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: <Widget>[SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Tschüss"),SingleEvent("🐣", "Gutschi"),SingleEvent("🐣", "LOL"),SingleEvent("🐣", "Abfahrt"),SingleEvent("🐣", "Abfahrt")],
-      ),
         backgroundColor: kBackgroundColorPrimary,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NewEvent()));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: kPrimaryColor,
-      )
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => NewEvent()));
+          },
+          child: Icon(Icons.add),
+          backgroundColor: kPrimaryColor,
+        ));
   }
 }
 
@@ -43,25 +49,20 @@ class SingleEvent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: 22
-        ),
-        child:
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 4.0),
-          leading: Text(eventIcon,
+      padding: EdgeInsets.symmetric(horizontal: 22),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 4.0),
+        leading: Text(
+          eventIcon,
           style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w600,
-            color: kTextColor
-          ),),
-          title: Text(evenTitle,
-            style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w600,
-                color: kTextColor),
-          ),
+              fontSize: 18.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
+        title: Text(
+          evenTitle,
+          style: TextStyle(
+              fontSize: 18.0, fontWeight: FontWeight.w600, color: kTextColor),
+        ),
+      ),
     );
   }
 }
