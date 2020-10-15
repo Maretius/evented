@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
-import 'package:intl/intl.dart';
 import 'constants.dart';
 import 'main.dart';
 
