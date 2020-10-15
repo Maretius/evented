@@ -12,7 +12,7 @@ class ToDo extends StatelessWidget {
           title: Text(
             "Evented",
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 26.0,
               fontWeight: FontWeight.w600,
               fontFamily: "Arial",
             ),
@@ -22,15 +22,15 @@ class ToDo extends StatelessWidget {
         body: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            SingleEvent("🐣", "Abfahrt"),
+            SingleEvent("🦆", "Ehre!"),
             SingleEvent("🐣", "Tschüss"),
             SingleEvent("🐣", "Gutschi"),
             SingleEvent("🐣", "LOL"),
-            SingleEvent("🐣", "Abfahrt"),
+            SingleEvent("☀", "Hot"),
             SingleEvent("🐣", "Abfahrt")
           ],
         ),
-        backgroundColor: kBackgroundColorPrimary,
+        backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
@@ -49,19 +49,24 @@ class SingleEvent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 22),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),
         leading: Text(
           eventIcon,
           style: TextStyle(
-              fontSize: 18.0, fontWeight: FontWeight.w600, color: kTextColor),
+              fontSize: 24.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         title: Text(
           evenTitle,
           style: TextStyle(
-              fontSize: 18.0, fontWeight: FontWeight.w600, color: kTextColor),
+              fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+        color: kSecondaryColor,
+        borderRadius: new BorderRadius.all(const Radius.circular(5.0))
       ),
     );
   }
