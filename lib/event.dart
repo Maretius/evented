@@ -18,15 +18,22 @@ class Event extends StatelessWidget {
           evenTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 24.0, fontWeight: FontWeight.w600,
+            fontSize: 24.0,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          Text(
-            eventIcon,
-            style: TextStyle(
-              fontSize: 24.0, fontWeight: FontWeight.w600,
-            ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                eventIcon,
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ],
         backgroundColor: kPrimaryColor,
@@ -35,12 +42,9 @@ class Event extends StatelessWidget {
   }
 }
 
-
 class EventUserTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
-
-
