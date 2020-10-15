@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:date_field/date_field.dart';
+import 'package:intl/intl.dart';
 import 'constants.dart';
 import 'main.dart';
 
@@ -27,13 +29,15 @@ class NewEvent extends StatelessWidget {
                 icon: Icon(Icons.done)),
           ],
         ),
-        backgroundColor: kBackgroundColorPrimary,
+        backgroundColor: kPrimaryColor,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           EventEmoji(),
           EventName(),
+          EventDetails(),
+          EventDate(),
         ],
       ),
     );
@@ -55,13 +59,13 @@ class _EventEmojiState extends State<EventEmoji> {
   String userText1 = "";
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onChanged: updateEventName,
+    return TextField(   onChanged: updateEventName,
       decoration:
           InputDecoration(border: OutlineInputBorder(), labelText: "Icon"),
     );
   }
 }
+
 
 class EventName extends StatefulWidget {
   @override
@@ -85,3 +89,53 @@ class _EventNameState extends State<EventName> {
     );
   }
 }
+
+
+class EventDetails extends StatefulWidget {
+  @override
+  _EventDetailsState createState() => _EventDetailsState();
+}
+
+class _EventDetailsState extends State<EventDetails> {
+  void updateEventDetails(String text3) {
+    setState(() {
+      userText3 = text3;
+    });
+  }
+
+  String userText3 = "";
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: updateEventDetails,
+      keyboardType: TextInputType.multiline,
+      maxLines: 2,
+      decoration:
+      InputDecoration(border: OutlineInputBorder(), labelText: "Eventdetails"),
+    );
+  }
+}
+
+class EventDate extends StatefulWidget {
+  @override
+  _EventDateState createState() => _EventDateState();
+}
+
+class _EventDateState extends State<EventDate> {
+  void updateEventDate(DateTime text4) {
+    setState(() {
+      userText4 = text4;
+    });
+  }
+
+  DateTime userText4;
+  @override
+  Widget build(BuildContext context) {
+    return DateTimeField(
+      selectedDate: userText4,
+      onDateSelected: updateEventDate, //TODO hier am besten das aktuelle Jahr; LastDate kann weggelassen werden
+    );
+  }
+}
+
+
