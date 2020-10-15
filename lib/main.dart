@@ -2,13 +2,14 @@ import 'package:evented/contacts.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'newEvent.dart';
+import 'event.dart';
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() => runApp(MaterialApp(home: evented()));
+void main() => runApp(MaterialApp(home: Evented()));
 
-class evented extends StatelessWidget {
+class Evented extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,12 +102,17 @@ class SingleEvent extends StatelessWidget {
           style: TextStyle(
               fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
+        onTap: (){
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Event(eventIcon, evenTitle)));
+      },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
           color: kSecondaryColor,
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+
     );
   }
 }

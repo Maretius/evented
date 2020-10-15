@@ -22,9 +22,9 @@ class NewEvent extends StatelessWidget {
           IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => evented()));
+                    MaterialPageRoute(builder: (context) => Evented()));
               },
-              icon: Icon(Icons.done)),
+              icon: Icon(Icons.done_rounded)),
         ],
         backgroundColor: kPrimaryColor,
       ),
