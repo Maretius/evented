@@ -8,24 +8,24 @@ class NewEvent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios_rounded)),
-            Text(
-              "New Event",
-            ),
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => evented()));
-                },
-                icon: Icon(Icons.done)),
-          ],
+        centerTitle: true,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios_rounded)),
+        title: Text(
+          "New Event",
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => evented()));
+              },
+              icon: Icon(Icons.done)),
+        ],
         backgroundColor: kPrimaryColor,
       ),
       body: Column(
@@ -56,13 +56,13 @@ class _EventEmojiState extends State<EventEmoji> {
   String userText1 = "";
   @override
   Widget build(BuildContext context) {
-    return TextField(   onChanged: updateEventName,
+    return TextField(
+      onChanged: updateEventName,
       decoration:
           InputDecoration(border: OutlineInputBorder(), labelText: "Icon"),
     );
   }
 }
-
 
 class EventName extends StatefulWidget {
   @override
@@ -87,7 +87,6 @@ class _EventNameState extends State<EventName> {
   }
 }
 
-
 class EventDetails extends StatefulWidget {
   @override
   _EventDetailsState createState() => _EventDetailsState();
@@ -107,8 +106,8 @@ class _EventDetailsState extends State<EventDetails> {
       onChanged: updateEventDetails,
       keyboardType: TextInputType.multiline,
       maxLines: 2,
-      decoration:
-      InputDecoration(border: OutlineInputBorder(), labelText: "Eventdetails"),
+      decoration: InputDecoration(
+          border: OutlineInputBorder(), labelText: "Eventdetails"),
     );
   }
 }
@@ -130,9 +129,8 @@ class _EventDateState extends State<EventDate> {
   Widget build(BuildContext context) {
     return DateTimeField(
       selectedDate: userText4,
-      onDateSelected: updateEventDate, //TODO hier am besten das aktuelle Jahr; LastDate kann weggelassen werden
+      onDateSelected:
+          updateEventDate, //TODO hier am besten das aktuelle Jahr; LastDate kann weggelassen werden
     );
   }
 }
-
-

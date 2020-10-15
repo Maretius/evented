@@ -1,10 +1,10 @@
+import 'package:evented/contacts.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'newEvent.dart';
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 void main() => runApp(MaterialApp(home: evented()));
 
@@ -13,7 +13,16 @@ class evented extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Image.asset(
+                'assets/images/evented_logo_white_without_bg.png',
+                fit: BoxFit.cover,
+                height: 38.0,
+              ),
+            ],
+          ),
           title: Text(
             "Evented",
             style: TextStyle(
@@ -22,6 +31,29 @@ class evented extends StatelessWidget {
               fontFamily: "Arial",
             ),
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.search_rounded,
+                size: 28.0,
+                color: kTextColor,
+              ),
+              onPressed: () {
+                // do something
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.person_add_alt_1_rounded,
+                size: 28.0,
+                color: kTextColor,
+              ),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Contacts()));
+              },
+            ),
+          ],
           backgroundColor: kPrimaryColor,
         ),
         body: ListView(
@@ -42,8 +74,8 @@ class evented extends StatelessWidget {
                 context, MaterialPageRoute(builder: (context) => NewEvent()));
           },
           child: Icon(
-              Icons.add,
-              size: 35.0,
+            Icons.add,
+            size: 32.0,
           ),
           backgroundColor: kPrimaryColor,
         ));
@@ -73,9 +105,8 @@ class SingleEvent extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-        color: kSecondaryColor,
-        borderRadius: new BorderRadius.all(const Radius.circular(5.0))
-      ),
+          color: kSecondaryColor,
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
     );
   }
 }
