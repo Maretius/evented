@@ -25,9 +25,10 @@ class Event extends StatelessWidget {
           ),
         ),
         actions: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+          Container(
+            margin: const EdgeInsets.only(right: 20.0),
+            alignment: Alignment.center,
+            child:
               Text(
                 eventIcon,
                 style: TextStyle(
@@ -35,7 +36,6 @@ class Event extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-            ],
           ),
         ],
         backgroundColor: kPrimaryColor,
@@ -48,13 +48,17 @@ class Event extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               builder: (context) => new GridView.count(
-                    crossAxisCount: 3,
+                    crossAxisCount: 2,
+                    scrollDirection: Axis.horizontal,
+                   childAspectRatio: (3/2),
+
+
                     children: <Widget>[
                       Container(
-                        alignment: Alignment.center,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Icon(Icons.add_rounded, size: 36,),
+                            IconButton(icon: Icon(Icons.add_rounded, size: 36,), onPressed: null, ),
                             Text('Add', style: TextStyle(fontSize: 20),),
                           ],
                         ),
