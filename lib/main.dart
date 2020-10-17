@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'newEvent.dart';
 import 'event.dart';
-import 'database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'database.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
@@ -83,8 +83,8 @@ class Evented extends StatelessWidget {
 
 class SingleEvent extends StatelessWidget {
   final String eventIcon;
-  final String evenTitle;
-  const SingleEvent(this.eventIcon, this.evenTitle);
+  final String eventTitle;
+  const SingleEvent(this.eventIcon, this.eventTitle);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,13 +96,13 @@ class SingleEvent extends StatelessWidget {
               fontSize: 24.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         title: Text(
-          evenTitle,
+          eventTitle,
           style: TextStyle(
               fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         onTap: (){
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Event(eventIcon, evenTitle)));
+              MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle)));
       },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),

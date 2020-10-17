@@ -1,11 +1,13 @@
 import 'package:evented/constants.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
+// import 'main.dart';
+// import 'newEvent.dart';
 
 class Event extends StatelessWidget {
   final String eventIcon;
-  final String evenTitle;
-  const Event(this.eventIcon, this.evenTitle);
+  final String eventTitle;
+  const Event(this.eventIcon, this.eventTitle);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +17,7 @@ class Event extends StatelessWidget {
             icon: Icon(Icons.arrow_back_ios_rounded)),
         centerTitle: true,
         title: Text(
-          evenTitle,
+          eventTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24.0,
@@ -38,13 +40,43 @@ class Event extends StatelessWidget {
         ],
         backgroundColor: kPrimaryColor,
       ),
-    );
-  }
-}
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+              builder: (context) => new GridView.count(
+                    crossAxisCount: 3,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: <Widget>[
+                            Icon(Icons.add_rounded, size: 36,),
+                            Text('Add', style: TextStyle(fontSize: 20),),
+                          ],
+                        ),
+                      ),
 
-class EventUserTasks extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                    ],
+
+                  )
+          );
+        },
+        child: Icon(
+          Icons.settings_rounded,
+          size: 32.0,
+        ),
+        backgroundColor: kPrimaryColor,
+      ),
+      backgroundColor: kPrimaryBackgroundColor,
+    );
   }
 }
