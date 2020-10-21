@@ -1,4 +1,5 @@
 import 'package:evented/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
@@ -28,14 +29,13 @@ class Event extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(right: 20.0),
             alignment: Alignment.center,
-            child:
-              Text(
-                eventIcon,
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.w600,
-                ),
+            child: Text(
+              eventIcon,
+              style: TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.w600,
               ),
+            ),
           ),
         ],
         backgroundColor: kPrimaryColor,
@@ -43,35 +43,23 @@ class Event extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
+            backgroundColor: kPrimaryColor,
               context: context,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
               ),
               builder: (context) => new GridView.count(
-                    crossAxisCount: 2,
-                    scrollDirection: Axis.horizontal,
-                   childAspectRatio: (3/2),
-
-
+                shrinkWrap: true,
+                childAspectRatio: 1.0,
+                crossAxisCount: 3,
                     children: <Widget>[
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            IconButton(icon: Icon(Icons.add_rounded, size: 36,), onPressed: null, ),
-                            Text('Add', style: TextStyle(fontSize: 20),),
-                          ],
-                        ),
-                      ),
-
-                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
-                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
-                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
-                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
-                      IconButton(icon: Icon(Icons.add_rounded,), onPressed: null),
+                      ButtonContainer(Icons.person_add_alt_1_rounded, "Invite Friends", null),
+                      ButtonContainer(Icons.menu_open_rounded, "Add Task", null),
+                      ButtonContainer(Icons.date_range_rounded, "Change Date", null),
+                      ButtonContainer(Icons.access_time_rounded, "Change Time", null),
+                      ButtonContainer(Icons.delete_forever_rounded, "Delete Event", null),
                     ],
-
-                  )
+                  ),
           );
         },
         child: Icon(
@@ -81,6 +69,35 @@ class Event extends StatelessWidget {
         backgroundColor: kPrimaryColor,
       ),
       backgroundColor: kPrimaryBackgroundColor,
+    );
+  }
+}
+
+class ButtonContainer extends StatelessWidget {
+  const ButtonContainer(this.buttonIcon, this.buttonText, this.buttonTheme);
+  final IconData buttonIcon;
+  final String buttonText;
+  final String buttonTheme;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(
+              buttonIcon,
+              size: 34,
+              color: Colors.white,
+            ),
+            onPressed: null,
+          ),
+          Text(
+            buttonText,
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }
