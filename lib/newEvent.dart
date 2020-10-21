@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
+import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'main.dart';
 
@@ -7,37 +7,41 @@ class NewEvent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_rounded)),
-        title: Text(
-          "New Event",
-          style: TextStyle(
-            fontSize: 20.0,
+        appBar: AppBar(
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios_rounded)),
+          title: Text(
+            "New Event",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
           ),
+          actions: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.done_rounded)),
+          ],
+          backgroundColor: kPrimaryColor,
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Evented()));
-              },
-              icon: Icon(Icons.done_rounded)),
-        ],
-        backgroundColor: kPrimaryColor,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          EventEmoji(),
-          EventName(),
-          EventDetails(),
-          EventDate(),
-        ],
-      ),
-    );
+        body: Center(
+          child: Container(
+            width: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                EventName(),
+                EventEmoji(),
+                EventDetails(),
+                EventDate(),
+                EventTasks(),
+                Container(
+                  height: 200,
+                  color: Colors.yellow,
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -81,6 +85,7 @@ class _EventNameState extends State<EventName> {
   Widget build(BuildContext context) {
     return TextField(
       onChanged: updateEventName,
+      maxLength: 20,
       decoration:
           InputDecoration(border: OutlineInputBorder(), labelText: "Eventname"),
     );
@@ -105,7 +110,8 @@ class _EventDetailsState extends State<EventDetails> {
     return TextField(
       onChanged: updateEventDetails,
       keyboardType: TextInputType.multiline,
-      maxLines: 2,
+      maxLines: 3,
+      maxLength: 200,
       decoration: InputDecoration(
           border: OutlineInputBorder(), labelText: "Eventdetails"),
     );
@@ -131,6 +137,29 @@ class _EventDateState extends State<EventDate> {
       selectedDate: userText4,
       onDateSelected:
           updateEventDate, //TODO hier am besten das aktuelle Jahr; LastDate kann weggelassen werden
+    );
+  }
+}
+
+class EventTasks extends StatefulWidget {
+  @override
+  _EventTasksState createState() => _EventTasksState();
+}
+
+class _EventTasksState extends State<EventTasks> {
+  void updateEventTasks(String text4) {
+    setState(() {
+      userText4 = text4;
+    });
+  }
+
+  String userText4 = "";
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: updateEventTasks,
+      decoration:
+      InputDecoration(border: OutlineInputBorder(), labelText: "Eventtasks"),
     );
   }
 }

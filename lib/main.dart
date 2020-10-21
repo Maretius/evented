@@ -58,12 +58,9 @@ class Evented extends StatelessWidget {
         body: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            SingleEvent("🦆", "Ehre!"),
-            SingleEvent("🐣", "Tschüss"),
-            SingleEvent("🐣", "Gutschi"),
-            SingleEvent("🐣", "LOL"),
-            SingleEvent("☀", "Hot"),
-            SingleEvent("🐣", "Abfahrt")
+            SingleEvent("🦆", "1. Veranstaltung"),
+            SingleEvent("🐣", "2. Veranstaltung"),
+            SingleEvent("🏒", "3. Veranstaltung"),
           ],
         ),
         backgroundColor: kPrimaryBackgroundColor,

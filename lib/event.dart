@@ -87,7 +87,7 @@ class ButtonContainer extends StatelessWidget {
           IconButton(
             icon: Icon(
               buttonIcon,
-              size: 34,
+              size: 32,
               color: Colors.white,
             ),
             onPressed: null,
