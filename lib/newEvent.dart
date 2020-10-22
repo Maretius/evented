@@ -1,7 +1,7 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
-import 'main.dart';
+// import 'main.dart';
 
 class NewEvent extends StatelessWidget {
   @override
@@ -29,8 +29,24 @@ class NewEvent extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                EventName(),
-                EventEmoji(),
+                Container(
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topCenter,
+                        width: MediaQuery.of(context).size.width / 6.0,
+                        child: EventEmoji(),
+                      ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        width: MediaQuery.of(context).size.width / 1.5,
+                        child: EventName(),
+                      ),
+                    ],
+                  ),
+                ),
                 EventDetails(),
                 EventDate(),
                 EventTasks(),
@@ -41,7 +57,9 @@ class NewEvent extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        ),
+        // TODO backgroundColor: kPrimaryBackgroundColor,
+    );
   }
 }
 
@@ -61,9 +79,11 @@ class _EventEmojiState extends State<EventEmoji> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      textAlign: TextAlign.center,
       onChanged: updateEventName,
-      decoration:
-          InputDecoration(border: OutlineInputBorder(), labelText: "Icon"),
+      decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "Icon"),
     );
   }
 }
@@ -86,6 +106,7 @@ class _EventNameState extends State<EventName> {
     return TextField(
       onChanged: updateEventName,
       maxLength: 20,
+      // TODO autofocus: true,
       decoration:
           InputDecoration(border: OutlineInputBorder(), labelText: "Eventname"),
     );
