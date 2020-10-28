@@ -58,9 +58,9 @@ class Evented extends StatelessWidget {
         body: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            SingleEvent("🦆", "1. Veranstaltung"),
-            SingleEvent("🐣", "2. Veranstaltung"),
-            SingleEvent("🏒", "3. Veranstaltung"),
+            SingleEvent("🦆", "1. Veranstaltung", "Eventdetails 1."),
+            SingleEvent("🐣", "2. Veranstaltung", "Eventdetails 2."),
+            SingleEvent("🏒", "3. Veranstaltung", "Eventdetails 3."),
           ],
         ),
         backgroundColor: kPrimaryBackgroundColor,
@@ -81,7 +81,8 @@ class Evented extends StatelessWidget {
 class SingleEvent extends StatelessWidget {
   final String eventIcon;
   final String eventTitle;
-  const SingleEvent(this.eventIcon, this.eventTitle);
+  final String eventDetails;
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -99,7 +100,7 @@ class SingleEvent extends StatelessWidget {
         ),
         onTap: (){
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle)));
+              MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails)));
       },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),

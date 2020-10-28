@@ -1,4 +1,5 @@
 import 'package:evented/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
@@ -6,7 +7,8 @@ import 'package:flutter/material.dart';
 class Event extends StatelessWidget {
   final String eventIcon;
   final String eventTitle;
-  const Event(this.eventIcon, this.eventTitle);
+  final String eventDetails;
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails);
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +30,45 @@ class Event extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(right: 20.0),
             alignment: Alignment.center,
-            child: Text(
-              eventIcon,
-              style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.w600,
+            child: IconButton(
+              icon: Text(
+                eventIcon,
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext cxt) {
+                    return SimpleDialog(
+                        backgroundColor: kPrimaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadiusDirectional.vertical(
+                              top: Radius.circular(20.0),
+                              bottom: Radius.circular(20.0)),
+                        ),
+                        children: [
+                          Container(
+                            child: Column(
+                              children: [
+                                Text(
+                                  eventDetails,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            margin: const EdgeInsets.only(
+                                top: 20.0, bottom: 20.0),
+                          ),
+                        ]);
+                  },
+                );
+              },
             ),
           ),
         ],
