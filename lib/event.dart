@@ -62,8 +62,8 @@ class Event extends StatelessWidget {
                               ],
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 5),
-                            margin: const EdgeInsets.only(
-                                top: 20.0, bottom: 20.0),
+                            margin:
+                                const EdgeInsets.only(top: 20.0, bottom: 20.0),
                           ),
                         ]);
                   },
@@ -111,13 +111,15 @@ class Event extends StatelessWidget {
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
+                ButtonContainer(Icons.person_add_alt_1_rounded,
+                    "Invite Friends", "inviteFriends"),
+                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask"),
                 ButtonContainer(
-                    Icons.person_add_alt_1_rounded, "Invite Friends", null),
-                ButtonContainer(Icons.menu_open_rounded, "Add Task", null),
-                ButtonContainer(Icons.date_range_rounded, "Change Date", null),
-                ButtonContainer(Icons.access_time_rounded, "Change Time", null),
+                    Icons.date_range_rounded, "Change Date", "changeDate"),
                 ButtonContainer(
-                    Icons.delete_forever_rounded, "Delete Event", null),
+                    Icons.access_time_rounded, "Change Time", "changeTime"),
+                ButtonContainer(Icons.delete_forever_rounded, "Delete Event",
+                    "deleteEvent"),
               ],
             ),
           );
@@ -150,7 +152,83 @@ class ButtonContainer extends StatelessWidget {
               size: 32,
               color: Colors.white,
             ),
-            onPressed: null,
+            onPressed: () {
+              if (buttonTheme == "inviteFriends") {
+                showModalBottomSheet(
+                  backgroundColor: kPrimaryColor,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0), bottom: Radius.zero),
+                  ),
+                  builder: (context) => new GridView.count(
+                    shrinkWrap: true,
+                    childAspectRatio: 1.0,
+                    crossAxisCount: 3,
+                    children: <Widget>[
+
+                    ],
+                  ),
+                );
+              }
+              if (buttonTheme == "addTask") {}
+              if (buttonTheme == "changeDate") {}
+              if (buttonTheme == "changeTime") {}
+              if (buttonTheme == "deleteEvent") {
+                return showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext cxt) {
+                    return AlertDialog(
+                      backgroundColor: kPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusDirectional.vertical(
+                            top: Radius.circular(20.0),
+                            bottom: Radius.circular(20.0)),
+                      ),
+                      title: Text(
+                        'Delete Event?',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text(
+                              'Are you sure u wanna delete the event?',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              'Deleted Events cant be restored!',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(color: kTextColor),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(color: kTextColor),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
           ),
           Text(
             buttonText,
