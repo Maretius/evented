@@ -1,5 +1,4 @@
 import 'package:evented/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
@@ -172,9 +171,9 @@ class ButtonContainer extends StatelessWidget {
                 );
               }
               if (buttonTheme == "addTask") {}
-              if (buttonTheme == "changeDate") {}
-              if (buttonTheme == "changeTime") {}
-              if (buttonTheme == "deleteEvent") {
+              else if (buttonTheme == "changeDate") {}
+              else if (buttonTheme == "changeTime") {}
+              else if (buttonTheme == "deleteEvent") {
                 return showDialog(
                   context: context,
                   barrierDismissible: false,
