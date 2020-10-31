@@ -1,5 +1,4 @@
 import 'package:evented/constants.dart';
-import 'package:evented/contacts.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 // import 'newEvent.dart';

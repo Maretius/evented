@@ -1,5 +1,7 @@
-//import 'package:date_field/date_field.dart';
-
-class DataBaseService{
-
-}
+// import 'package:cloud_firestore/cloud_firestore.dart';
+//
+// class DatabaseService{
+//
+//   final CollectionReference events = Firestore.instance.collection("events");
+//
+// }

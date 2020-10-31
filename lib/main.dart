@@ -1,15 +1,16 @@
-import 'package:evented/contacts.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'contacts.dart';
 import 'newEvent.dart';
 import 'event.dart';
 // import 'database.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
 
 class Evented extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+
 import 'constants.dart';
 // import 'main.dart';
 
@@ -6,93 +8,58 @@ class NewEvent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_ios_rounded)),
-          title: Text(
-            "New Event",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.done_rounded)),
-          ],
-          backgroundColor: kPrimaryColor,
-        ),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 36.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topCenter,
-                        width: MediaQuery.of(context).size.width * 0.18,
-                        child: EventEmoji(),
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        width: MediaQuery.of(context).size.width * 0.58,
-                        child: EventName(),
-                      ),
-                    ],
-                  ),
-                ),
-                EventDetails(),
-
-                EventDate(),
-
-
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        width: MediaQuery.of(context).size.width * 0.58,
-                        child: EventTasks(),
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.add_rounded),
-                          iconSize: 32.0,
-                          color: Colors.white,
-                          splashRadius: 24.0,
-                        ),
-                        decoration: ShapeDecoration(
-                          color: kPrimaryColor,
-                          shape: CircleBorder()
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios_rounded)),
+        title: Text(
+          "New Event",
+          style: TextStyle(
+            fontSize: 20.0,
           ),
         ),
-        // TODO backgroundColor: kPrimaryBackgroundColor,
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.done_rounded)),
+        ],
+        backgroundColor: kPrimaryColor,
+      ),
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 36.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                alignment: Alignment.topCenter,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topCenter,
+                      width: MediaQuery.of(context).size.width * 0.18,
+                      child: EventEmoji(),
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: MediaQuery.of(context).size.width * 0.58,
+                      child: EventName(),
+                    ),
+                  ],
+                ),
+              ),
+              EventDetails(),
+              EventDateTime(),
+              EventTasks(),
+            ],
+          ),
+        ),
+      ),
+      // TODO backgroundColor: kPrimaryBackgroundColor,
     );
   }
 }
-
-
-/* TODO Link zum Date / Timepicker ohne Package
- https://medium.com/@LohaniDamodar/date-and-time-pickers-in-flutter-without-using-any-packages-1de04a13938c
- */
 
 class EventEmoji extends StatefulWidget {
   @override
@@ -112,13 +79,11 @@ class _EventEmojiState extends State<EventEmoji> {
     return TextField(
       textAlign: TextAlign.center,
       onChanged: updateEventName,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Icon"),
+      decoration:
+          InputDecoration(border: OutlineInputBorder(), labelText: "Icon"),
     );
   }
 }
-
 
 class EventName extends StatefulWidget {
   @override
@@ -145,7 +110,6 @@ class _EventNameState extends State<EventName> {
   }
 }
 
-
 class EventDetails extends StatefulWidget {
   @override
   _EventDetailsState createState() => _EventDetailsState();
@@ -167,74 +131,38 @@ class _EventDetailsState extends State<EventDetails> {
       maxLines: 3,
       maxLength: 200,
       decoration: InputDecoration(
-          border: OutlineInputBorder(), 
-          labelText: "Eventdetails"),
+          border: OutlineInputBorder(), labelText: "Eventdetails"),
     );
   }
 }
 
-
-class EventDate extends StatefulWidget {
+class EventDateTime extends StatefulWidget {
   @override
-  _EventDateState createState() => _EventDateState();
+  _EventDateTimeState createState() => _EventDateTimeState();
 }
 
-class _EventDateState extends State<EventDate> {
-
-  DateTime _date = DateTime.now();
-  
-  Future<Null> _selectDate(BuildContext context) async {
-    DateTime _datePicker = await showDatePicker(
-        context: context, 
-        initialDate: DateTime.now(), 
-        firstDate: DateTime.now(), 
-        lastDate: DateTime(2021),
-        builder: (BuildContext context, Widget child){
-          return Theme(data: ThemeData(primaryColor: kPrimaryColor), child: child);
+class _EventDateTimeState extends State<EventDateTime> {
+  @override
+  Widget build(BuildContext context) {
+    return DateTimeField(
+      onShowPicker: (context, currentValue) async {
+        final date = await showDatePicker(
+            context: context,
+            firstDate: DateTime(1900),
+            initialDate: currentValue ?? DateTime.now(),
+            lastDate: DateTime(2100));
+        if (date != null) {
+          final time = await showTimePicker(
+            context: context,
+            initialTime:
+            TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+          );
+          return DateTimeField.combine(date, time);
+        } else {
+          return currentValue;
         }
-    );
-    if (_datePicker != null && _datePicker != _date){
-      setState(() {
-        _date = _datePicker;
-        print(_date.toString());
-      });
-    }
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      readOnly: true,
-      onTap: () {
-        setState(() {
-          _selectDate(context);
-        });
       },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: "Date",
-        hintText: _date.toString().substring(0,10),
-      ),
-    );
-  }
-}
-
-
-class EventTime extends StatefulWidget {
-  @override
-  _EventTimeState createState() => _EventTimeState();
-}
-
-class _EventTimeState extends State<EventTime> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.centerLeft,
-      child: OutlineButton(
-        onPressed: () { showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime(2021)); },
-        child: Text("Time"),
-      ),
+      format: null,
     );
   }
 }
@@ -246,19 +174,79 @@ class EventTasks extends StatefulWidget {
 }
 
 class _EventTasksState extends State<EventTasks> {
-  void updateEventTasks(String text4) {
+  void addTask(String task) {
     setState(() {
-      userText4 = text4;
+      eventTask.add(task);
+    });
+   // Navigator.of(context).pop();
+  }
+  void deleteEventTask(int index){
+    setState(() {
+      eventTask.removeAt(index);
     });
   }
 
-  String userText4 = "";
+  List<String> eventTask = [
+    "Task1",
+    "Task2",
+  ];
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onChanged: updateEventTasks,
-      decoration:
-      InputDecoration(border: OutlineInputBorder(), labelText: "Eventtasks"),
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            onSubmitted: addTask,
+            scrollPadding: EdgeInsets.only(bottom: 10.0),
+            decoration: InputDecoration(
+                border: OutlineInputBorder(), labelText: "Eventtasks"),
+          ),
+          SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: eventTask.length,
+              itemBuilder: (context, i) {
+                return TaskItem(eventTask[i], () { deleteEventTask(i);});
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class TaskItem extends StatelessWidget {
+  final String taskname;
+  final Function remove;
+  const TaskItem(this.taskname, this.remove);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+          color: kSecondaryColor,
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+        title: Text(
+          taskname,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete_forever_rounded),
+          color: Colors.white,
+          iconSize: 28.0,
+          onPressed: () { remove();},
+        ),
+      ),
     );
   }
 }
