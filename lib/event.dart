@@ -1,4 +1,5 @@
 import 'package:evented/constants.dart';
+import 'package:evented/contacts.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
@@ -110,15 +111,17 @@ class Event extends StatelessWidget {
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
+                ButtonContainer(Icons.event_note_rounded, "Change Details",
+                    "changeDetails", eventDetails),
                 ButtonContainer(Icons.person_add_alt_1_rounded,
-                    "Invite Friends", "inviteFriends"),
-                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask"),
+                    "Invite Friends", "inviteFriends", eventDetails),
+                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask", eventDetails),
                 ButtonContainer(
-                    Icons.date_range_rounded, "Change Date", "changeDate"),
+                    Icons.date_range_rounded, "Change Date", "changeDate", eventDetails),
                 ButtonContainer(
-                    Icons.access_time_rounded, "Change Time", "changeTime"),
+                    Icons.access_time_rounded, "Change Time", "changeTime", eventDetails),
                 ButtonContainer(Icons.delete_forever_rounded, "Delete Event",
-                    "deleteEvent"),
+                    "deleteEvent", eventDetails),
               ],
             ),
           );
@@ -135,10 +138,11 @@ class Event extends StatelessWidget {
 }
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer(this.buttonIcon, this.buttonText, this.buttonTheme);
+  const ButtonContainer(this.buttonIcon, this.buttonText, this.buttonTheme, this.eventDetails);
   final IconData buttonIcon;
   final String buttonText;
   final String buttonTheme;
+  final String eventDetails;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -152,6 +156,49 @@ class ButtonContainer extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
+              if (buttonTheme == "changeDetails") {
+                showModalBottomSheet(
+                  backgroundColor: kPrimaryColor,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0), bottom: Radius.zero),
+                  ),
+                  builder: (context) => new Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: new BorderRadius.all(
+                                  const Radius.circular(5.0))),
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          child: TextField(
+                            // onChanged: updateEventDetails,
+                            controller: TextEditingController()..text = eventDetails,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 3,
+                            maxLength: 200,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "Eventdetails"),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.check_rounded,
+                            size: 32,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
               if (buttonTheme == "inviteFriends") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
@@ -164,16 +211,14 @@ class ButtonContainer extends StatelessWidget {
                     shrinkWrap: true,
                     childAspectRatio: 1.0,
                     crossAxisCount: 3,
-                    children: <Widget>[
-
-                    ],
+                    children: <Widget>[],
                   ),
                 );
               }
-              if (buttonTheme == "addTask") {}
-              else if (buttonTheme == "changeDate") {}
-              else if (buttonTheme == "changeTime") {}
-              else if (buttonTheme == "deleteEvent") {
+              if (buttonTheme == "addTask") {
+              } else if (buttonTheme == "changeDate") {
+              } else if (buttonTheme == "changeTime") {
+              } else if (buttonTheme == "deleteEvent") {
                 return showDialog(
                   context: context,
                   barrierDismissible: false,

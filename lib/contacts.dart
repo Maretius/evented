@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:date_field/date_field.dart';
 import 'constants.dart';
 import 'main.dart';
 
@@ -7,6 +6,7 @@ class Contacts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
@@ -20,14 +20,15 @@ class Contacts extends StatelessWidget {
         ),
         backgroundColor: kPrimaryColor,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          MyName(),
-          MyID(),
-          FriendID(),
-          FriendList(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            MyName(),
+            MyID(),
+            FriendList(),
+          ],
+        ),
       ),
       backgroundColor: kPrimaryBackgroundColor,
     );
@@ -88,26 +89,92 @@ class MyID extends StatelessWidget {
   }
 }
 
-class FriendID extends StatefulWidget {
-  @override
-  _FriendIDState createState() => _FriendIDState();
-}
-
-class _FriendIDState extends State<FriendID> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
 class FriendList extends StatefulWidget {
   @override
   _FriendListState createState() => _FriendListState();
 }
 
 class _FriendListState extends State<FriendList> {
+  List<String> friendsname = [
+    'Chris',
+    'KrasserChris',
+    'Chris',
+    'KrasserChris',
+    'Chris',
+    'KrasserChris',
+    'Chris',
+    'KrasserChris',
+    'Chris',
+    'KrasserChris',
+  ];
+// List<String> friendsid = ['#32423', '#2342','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris',];
+  void addFriend(String friend) {
+    setState(() {
+      friendsname.add(friend);
+    });
+  }
+  void deleteFriend(int index){
+    setState(() {
+      friendsname.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      children: [
+        Padding(
+          child: TextField(
+            onSubmitted: addFriend,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(), labelText: "Add Friend"),
+          ),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        ),
+        SizedBox(
+          height: 300,
+          child: new ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: friendsname.length,
+              itemBuilder: (context, i) {
+                return Friend(friendsname[i], () { deleteFriend(i);});
+
+              }),
+        ),
+      ],
+    );
+  }
+}
+
+class Friend extends StatelessWidget {
+  final String friendname;
+  final Function remove;
+  const Friend(this.friendname, this.remove);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+          color: kSecondaryColor,
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+        title: Text(
+          friendname,
+          style: TextStyle(
+            fontSize: 22.0,
+            color: Colors.white,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete_forever_rounded),
+          color: Colors.white,
+          onPressed: () { remove();},
+        ),
+      ),
+    );
   }
 }
