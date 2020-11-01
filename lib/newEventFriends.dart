@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'constants.dart';
 import 'main.dart';
 //import 'newEvent.dart';
@@ -51,114 +50,50 @@ class EventFriends extends StatefulWidget {
 }
 
 class _EventFriendsState extends State<EventFriends> {
-  void addFriend(String task) {
+  void toggleMember(String key) {
     setState(() {
-      eventFriend.add(task);
-    });
-    // Navigator.of(context).pop();
-  }
-
-  void deleteEventTask(int index) {
-    setState(() {
-      eventFriend.removeAt(index);
+      eventFriends.update(key, (bool done) => !done);
     });
   }
 
-  GlobalKey<AutoCompleteTextFieldState<String>> key = new GlobalKey();
-  List<String> eventFriend = [
-    "Friend 1",
-    "Friend 2",
-  ];
-  List<String> suggestions = [
-    "Chris",
-    "Hannes",
-    "Jeremy",
-    "Pascal",
-    "Axel",
-    "Gertrude",
-    "Buglunde",
-  ];
+  Map<String, bool> eventFriends = {
+    'Jeremy': false,
+    'Hans Jürgen': false,
+    'Gertrude': false,
+    'Peter Silie': false,
+  };
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SimpleAutoCompleteTextField(
-                key: key,
-                suggestions: null,
-                clearOnSubmit: true,
-                textSubmitted: (text) {
-                  setState(() {
-                    if (text != '') {
-                      addFriend(text);
-                    }
-                  });
-                },
-                decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Friends"),
-              ),
-              Container(
-                alignment: Alignment.topCenter,
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Friends"),
-                ),
-              ),
-              Container(
-                  alignment: Alignment.centerRight,
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  child: Ink(
-                    decoration: ShapeDecoration(
-                        color: kPrimaryColor, shape: CircleBorder()),
-                    child: IconButton(
-                      onPressed: () {
-                        addFriend;
-                      },
-                      icon: Icon(Icons.add_rounded),
-                      color: Colors.white,
-                    ),
-                  )),
-            ],
-          ),
-          SizedBox(
-            height: 300,
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: eventFriend.length,
-              itemBuilder: (context, i) {
-                return TaskItem(eventFriend[i], () {
-                  deleteEventTask(i);
-                });
-              },
-            ),
-          )
-        ],
-      ),
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: eventFriends.length,
+      itemBuilder: (context, i) {
+        String key = eventFriends.keys.elementAt(i);
+        return EventFriend(key, eventFriends[key], () {
+          toggleMember(key);
+        });
+      },
     );
   }
 }
 
-class TaskItem extends StatelessWidget {
+class EventFriend extends StatelessWidget {
   final String friendName;
-  final Function remove;
-  const TaskItem(this.friendName, this.remove);
+  final bool done;
+  final Function toggle;
+  const EventFriend(this.friendName, this.done, this.toggle);
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: kPrimaryColor,
+          color: done ? kPrimaryColor : kPrimaryBackgroundColor,
+          border: Border.all(color: done ? kPrimaryColor : Colors.white),
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 3.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
           friendName,
           style: TextStyle(
@@ -166,13 +101,13 @@ class TaskItem extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete_forever_rounded),
-          color: Colors.white,
-          iconSize: 28.0,
-          onPressed: () {
-            remove();
+        trailing: Checkbox(
+          value: done,
+          onChanged: (bool value) {
+            toggle();
           },
+          activeColor: kPrimaryBackgroundColor,
+          checkColor: kPrimaryColor,
         ),
       ),
     );

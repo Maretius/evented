@@ -87,7 +87,10 @@ class _EventEmojiState extends State<EventEmoji> {
       textAlign: TextAlign.center,
       onChanged: updateEventName,
       decoration:
-          InputDecoration(border: OutlineInputBorder(), labelText: "Icon"),
+          InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Icon",
+          ),
     );
   }
 }
