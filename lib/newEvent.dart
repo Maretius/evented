@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-
 import 'constants.dart';
+import 'newEventFriends.dart';
 // import 'main.dart';
 
 class NewEvent extends StatelessWidget {
@@ -12,7 +12,7 @@ class NewEvent extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_rounded)),
+            icon: Icon(Icons.keyboard_backspace_rounded)),
         title: Text(
           "New Event",
           style: TextStyle(
@@ -20,7 +20,14 @@ class NewEvent extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.done_rounded)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                      builder: (context) => NewEventFriends("🦆", "Eventtitle")),
+                );
+              },
+              icon: Icon(Icons.arrow_forward_ios_rounded)),
         ],
         backgroundColor: kPrimaryColor,
       ),
@@ -50,13 +57,13 @@ class NewEvent extends StatelessWidget {
                 ),
               ),
               EventDetails(),
-              EventDateTime(),
+              // EventDateTime(),
               EventTasks(),
             ],
           ),
         ),
       ),
-      // TODO backgroundColor: kPrimaryBackgroundColor,
+      backgroundColor: kPrimaryBackgroundColor,
     );
   }
 }
@@ -136,37 +143,27 @@ class _EventDetailsState extends State<EventDetails> {
   }
 }
 
-class EventDateTime extends StatefulWidget {
-  @override
-  _EventDateTimeState createState() => _EventDateTimeState();
-}
-
-class _EventDateTimeState extends State<EventDateTime> {
-  @override
-  Widget build(BuildContext context) {
-    return DateTimeField(
-      onShowPicker: (context, currentValue) async {
-        final date = await showDatePicker(
-            context: context,
-            firstDate: DateTime(1900),
-            initialDate: currentValue ?? DateTime.now(),
-            lastDate: DateTime(2100));
-        if (date != null) {
-          final time = await showTimePicker(
-            context: context,
-            initialTime:
-            TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-          );
-          return DateTimeField.combine(date, time);
-        } else {
-          return currentValue;
-        }
-      },
-      format: null,
-    );
-  }
-}
-
+// class EventDateTime extends StatefulWidget {
+//   @override
+//   _EventDateTimeState createState() => _EventDateTimeState();
+// }
+//
+// class _EventDateTimeState extends State<EventDateTime> {
+//   final format = DateFormat("yyyy-MM-dd HH:mm");
+//   @override
+//   Widget build(BuildContext context) {
+//     return DateTimeField(
+//           format: format,
+//           onShowPicker: (context, currentValue) {
+//             return showDatePicker(
+//                 context: context,
+//                 firstDate: DateTime(1900),
+//                 initialDate: currentValue ?? DateTime.now(),
+//                 lastDate: DateTime(2100));
+//           },
+//     );
+//   }
+// }
 
 class EventTasks extends StatefulWidget {
   @override
@@ -178,9 +175,10 @@ class _EventTasksState extends State<EventTasks> {
     setState(() {
       eventTask.add(task);
     });
-   // Navigator.of(context).pop();
+    // Navigator.of(context).pop();
   }
-  void deleteEventTask(int index){
+
+  void deleteEventTask(int index) {
     setState(() {
       eventTask.removeAt(index);
     });
@@ -209,7 +207,9 @@ class _EventTasksState extends State<EventTasks> {
               scrollDirection: Axis.vertical,
               itemCount: eventTask.length,
               itemBuilder: (context, i) {
-                return TaskItem(eventTask[i], () { deleteEventTask(i);});
+                return TaskItem(eventTask[i], () {
+                  deleteEventTask(i);
+                });
               },
             ),
           )
@@ -244,7 +244,9 @@ class TaskItem extends StatelessWidget {
           icon: Icon(Icons.delete_forever_rounded),
           color: Colors.white,
           iconSize: 28.0,
-          onPressed: () { remove();},
+          onPressed: () {
+            remove();
+          },
         ),
       ),
     );

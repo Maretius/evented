@@ -122,7 +122,7 @@ class _FriendListState extends State<FriendList> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Padding(
           child: TextField(
             onSubmitted: addFriend,
@@ -134,7 +134,7 @@ class _FriendListState extends State<FriendList> {
         ),
         SizedBox(
           height: 300,
-          child: new ListView.builder(
+          child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: friendsname.length,
@@ -149,9 +149,9 @@ class _FriendListState extends State<FriendList> {
 }
 
 class Friend extends StatelessWidget {
-  final String friendname;
+  final String friendName;
   final Function remove;
-  const Friend(this.friendname, this.remove);
+  const Friend(this.friendName, this.remove);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -163,7 +163,7 @@ class Friend extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 8.0),
         title: Text(
-          friendname,
+          friendName,
           style: TextStyle(
             fontSize: 22.0,
             color: Colors.white,
@@ -172,6 +172,7 @@ class Friend extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.delete_forever_rounded),
           color: Colors.white,
+          iconSize: 28.0,
           onPressed: () { remove();},
         ),
       ),
