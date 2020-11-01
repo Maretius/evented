@@ -23,8 +23,10 @@ class NewEvent extends StatelessWidget {
           IconButton(
               onPressed: () {
                 Navigator.push(
-                  context, MaterialPageRoute(
-                      builder: (context) => NewEventFriends("🦆", "Eventtitle")),
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          NewEventFriends("🦆", "Eventtitle")),
                 );
               },
               icon: Icon(Icons.arrow_forward_ios_rounded)),
@@ -84,14 +86,15 @@ class _EventEmojiState extends State<EventEmoji> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      textAlign: TextAlign.center,
-      onChanged: updateEventName,
-      decoration:
-          InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Icon",
-          ),
-    );
+        textAlign: TextAlign.center,
+        onChanged: updateEventName,
+        decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
+          border: OutlineInputBorder(),
+          labelText: "Icon",
+        ),
+      );
   }
 }
 
@@ -114,8 +117,11 @@ class _EventNameState extends State<EventName> {
       onChanged: updateEventName,
       maxLength: 20,
       // TODO autofocus: true,
-      decoration:
-          InputDecoration(border: OutlineInputBorder(), labelText: "Eventname"),
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+          filled: true,
+          border: OutlineInputBorder(),
+          labelText: "Eventname"),
     );
   }
 }
@@ -141,6 +147,8 @@ class _EventDetailsState extends State<EventDetails> {
       maxLines: 3,
       maxLength: 200,
       decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
           border: OutlineInputBorder(), labelText: "Eventdetails"),
     );
   }
@@ -202,7 +210,10 @@ class _EventTasksState extends State<EventTasks> {
             onSubmitted: addTask,
             scrollPadding: EdgeInsets.only(bottom: 10.0),
             decoration: InputDecoration(
-                border: OutlineInputBorder(), labelText: "Eventtasks"),
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(),
+                labelText: "Eventtasks"),
           ),
           SizedBox(
             height: 300,
@@ -235,7 +246,7 @@ class TaskItem extends StatelessWidget {
           color: kSecondaryColor,
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 2.0),
         title: Text(
           taskname,
           style: TextStyle(
