@@ -6,6 +6,9 @@ const kSecondaryColor = Color.fromRGBO(81, 140, 115, 1);
 const kThirdColor = Color.fromRGBO(250, 163, 7, 0.8);
 const kFourthColor = Color.fromRGBO(208, 47, 2, 0.8);
 
+const kFifthColor = Color.fromRGBO(63, 117, 150, 0.8);
+
+
 //const Save = Color.fromRGBO(82, 130, 109, 1);
 const kTextColor = Color.fromRGBO(222, 226, 209, 1);
 const kPrimaryBackgroundColor = Color.fromRGBO(49, 50, 56, 1);

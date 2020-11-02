@@ -96,6 +96,7 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
+      body: InvitedFriendsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -264,6 +265,121 @@ class ButtonContainer extends StatelessWidget {
     );
   }
 }
+
+class InvitedFriendsList extends StatefulWidget {
+  @override
+  _InvitedFriendsListState createState() => _InvitedFriendsListState();
+}
+
+class _InvitedFriendsListState extends State<InvitedFriendsList> {
+  Map<String, String> invitedFriends = {
+    'Jeremy': 'promised',
+    'Hans Jürgen': 'not decided',
+    'Gertrude': 'promised',
+    'Petfewie': 'called off',
+    'Peter Silie': 'promised',
+    'Petsdfsdf Silie': 'promised',
+    'Peteg': 'promised',
+    'eegregerg Silie': 'promised',
+  };
+
+  void deleteInvitedFriend(String key) {
+    setState(() {
+
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: invitedFriends.length,
+      itemBuilder: (context, i) {
+        String key = invitedFriends.keys.elementAt(i);
+        return InvitedFriend(key, invitedFriends[key], () {
+          deleteInvitedFriend(key);
+        });
+      },
+        );
+  }
+}
+
+class InvitedFriend extends StatelessWidget {
+  final String friendName;
+  final String status;
+  final Function deleteInvitedFriend;
+  const InvitedFriend(this.friendName, this.status, this.deleteInvitedFriend);
+
+  @override
+  Widget build(BuildContext context) {
+    if (status == "promised") {    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+          color: kSecondaryColor,
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+        title: Text(
+          friendName,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
+        ),
+        trailing: Icon(
+          Icons.check_rounded,
+          size: 32.0,
+        ),
+      ),
+    );
+    } else if (status == "not decided") {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+        decoration: BoxDecoration(
+            color: kFifthColor,
+            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+          title: Text(
+            friendName,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+          trailing: Icon(
+            Icons.ac_unit_rounded,
+            size: 32.0,
+          ),
+        ),
+      );
+    } else if (status == "called off") {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+        decoration: BoxDecoration(
+            color: kFourthColor,
+            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+          title: Text(
+            friendName,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+          trailing: Icon(
+            Icons.remove,
+            size: 32.0,
+          ),
+        ),
+      );
+    }
+  }
+}
+
 // TODO: Bereist eingestellte Details übergeben und vorher anzeigen
 class EventDetails extends StatefulWidget {
   @override
@@ -303,9 +419,7 @@ class _EventDetailsState extends State<EventDetails> {
             size: 32,
             color: Colors.white,
           ),
-          onPressed: () {
-
-          },
+          onPressed: () {},
         ),
       ],
     );
