@@ -113,20 +113,71 @@ class _FriendListState extends State<FriendList> {
       friendsname.add(friend);
     });
   }
-  void deleteFriend(int index){
-    setState(() {
-      friendsname.removeAt(index);
-    });
+
+  void deleteFriend(int index) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: kPrimaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusDirectional.vertical(
+                top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+          ),
+          title: Text(
+            'Delete Friend?',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Are you sure u want to delete?',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Yes',
+                style: TextStyle(color: kTextColor),
+              ),
+              onPressed: () {
+                setState(() {
+                  friendsname.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                'No',
+                style: TextStyle(color: kTextColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
+        Container(
+          margin: const EdgeInsets.all(20.0),
           child: TextField(
             onSubmitted: addFriend,
             decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
                 border: OutlineInputBorder(), labelText: "Add Friend"),
           ),
           padding:
@@ -139,8 +190,9 @@ class _FriendListState extends State<FriendList> {
               scrollDirection: Axis.vertical,
               itemCount: friendsname.length,
               itemBuilder: (context, i) {
-                return Friend(friendsname[i], () { deleteFriend(i);});
-
+                return Friend(friendsname[i], () {
+                  deleteFriend(i);
+                });
               }),
         ),
       ],
@@ -173,7 +225,9 @@ class Friend extends StatelessWidget {
           icon: Icon(Icons.delete_forever_rounded),
           color: Colors.white,
           iconSize: 28.0,
-          onPressed: () { remove();},
+          onPressed: () {
+            remove();
+          },
         ),
       ),
     );
