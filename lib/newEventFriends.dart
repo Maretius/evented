@@ -80,17 +80,17 @@ class _EventFriendsState extends State<EventFriends> {
 
 class EventFriend extends StatelessWidget {
   final String friendName;
-  final bool done;
-  final Function toggle;
-  const EventFriend(this.friendName, this.done, this.toggle);
+  final bool friendMember;
+  final Function friendToggle;
+  const EventFriend(this.friendName, this.friendMember, this.friendToggle);
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kPrimaryBackgroundColor,
-          border: Border.all(color: done ? kPrimaryColor : Colors.white),
+          color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor,
+          border: Border.all(color: kPrimaryColor, width: 2),
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
@@ -102,9 +102,9 @@ class EventFriend extends StatelessWidget {
           ),
         ),
         trailing: Checkbox(
-          value: done,
+          value: friendMember,
           onChanged: (bool value) {
-            toggle();
+            friendToggle();
           },
           activeColor: kPrimaryBackgroundColor,
           checkColor: kPrimaryColor,

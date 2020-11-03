@@ -27,8 +27,8 @@ dependencies:
   # firebase_core: ^0.4.0+9
   # Add the dependencies for the Firebase products you want to use in your app
   # For example, to use Firebase Authentication and Cloud Firestore
-  # firebase_auth: ^0.14.0+5
   # cloud_firestore: ^0.12.9+5
+  # firebase_auth: ^0.14.0+5
   datetime_picker_formfield: ^1.0.0
   modal_bottom_sheet: ^0.2.2
 

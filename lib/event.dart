@@ -1,5 +1,7 @@
 import 'package:evented/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
 
@@ -166,10 +168,10 @@ class ButtonContainer extends StatelessWidget {
                     borderRadius: BorderRadiusDirectional.vertical(
                         top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
-                  builder: (context) => new Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-                    child: EventDetails(),
+                  builder: (context) => Wrap(
+                    children: [
+                      EventDetails(),
+                    ],
                   ),
                 );
               }
@@ -199,7 +201,33 @@ class ButtonContainer extends StatelessWidget {
                   ),
                 );
               } else if (buttonTheme == "changeDate") {
+                showModalBottomSheet(
+                  backgroundColor: kPrimaryColor,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0), bottom: Radius.zero),
+                  ),
+                  builder: (context) => Wrap(
+                    children: [
+                      EventDate(),
+                    ],
+                  ),
+                );
               } else if (buttonTheme == "changeTime") {
+                showModalBottomSheet(
+                  backgroundColor: kPrimaryColor,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0), bottom: Radius.zero),
+                  ),
+                  builder: (context) => Wrap(
+                    children: [
+                      EventTime(),
+                    ],
+                  ),
+                );
               } else if (buttonTheme == "deleteEvent") {
                 return showDialog(
                   context: context,
@@ -284,10 +312,9 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
   };
 
   void deleteInvitedFriend(String key) {
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -299,7 +326,7 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
           deleteInvitedFriend(key);
         });
       },
-        );
+    );
   }
 }
 
@@ -311,27 +338,28 @@ class InvitedFriend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (status == "promised") {    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color: kSecondaryColor,
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-        title: Text(
-          friendName,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
+    if (status == "promised") {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+        decoration: BoxDecoration(
+            color: kSecondaryColor,
+            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+          title: Text(
+            friendName,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+          trailing: Icon(
+            Icons.check_rounded,
+            size: 32.0,
           ),
         ),
-        trailing: Icon(
-          Icons.check_rounded,
-          size: 32.0,
-        ),
-      ),
-    );
+      );
     } else if (status == "not decided") {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12),
@@ -399,8 +427,8 @@ class _EventDetailsState extends State<EventDetails> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 20.0),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
           child: TextField(
             onChanged: updateEventDetails,
             keyboardType: TextInputType.multiline,
@@ -413,14 +441,17 @@ class _EventDetailsState extends State<EventDetails> {
                 labelText: "Eventdetails"),
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.check_rounded,
-            size: 32,
-            color: Colors.white,
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.check_rounded,
+              size: 32,
+              color: Colors.white,
+            ),
+            onPressed: () {},
           ),
-          onPressed: () {},
-        ),
+        )
       ],
     );
   }
@@ -658,5 +689,95 @@ class TaskItem extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class EventDate extends StatefulWidget {
+  @override
+  _EventDateState createState() => _EventDateState();
+}
+
+class _EventDateState extends State<EventDate> {
+  final dateFormat = DateFormat("dd.MM.yyyy");
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
+          child: DateTimeField(
+            format: dateFormat,
+            onShowPicker: (context, currentValue) {
+              return showDatePicker(
+                  context: context,
+                  firstDate: DateTime(1900),
+                  initialDate: currentValue ?? DateTime.now(),
+                  lastDate: DateTime(2100));
+            },
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(),
+                labelText: "Eventdate"),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.check_rounded,
+              size: 32,
+              color: Colors.white,
+            ),
+            onPressed: () {},
+          ),
+        )
+      ],
+    ); // URL: https://pub.dev/packages/datetime_picker_formfield
+  }
+}
+
+class EventTime extends StatefulWidget {
+  @override
+  _EventTimeState createState() => _EventTimeState();
+}
+
+class _EventTimeState extends State<EventTime> {
+  final dateFormat = DateFormat("HH:mm");
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
+        child: DateTimeField(
+          format: dateFormat,
+          onShowPicker: (context, currentValue) async {
+            final time = await showTimePicker(
+              context: context,
+              initialTime:
+                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+            );
+            return DateTimeField.convert(time);
+          },
+          decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(),
+              labelText: "Eventtime"),
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
+        child: IconButton(
+          icon: Icon(
+            Icons.check_rounded,
+            size: 32,
+            color: Colors.white,
+          ),
+          onPressed: () {},
+        ),
+      )
+    ]); // URL: https://pub.dev/packages/datetime_picker_formfield
   }
 }
