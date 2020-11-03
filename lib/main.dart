@@ -67,7 +67,8 @@ class Evented extends StatelessWidget {
             size: 32.0,
           ),
           backgroundColor: kPrimaryColor,
-        ));
+        )
+    );
   }
 }
 
