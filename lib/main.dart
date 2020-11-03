@@ -10,7 +10,6 @@ import 'event.dart';
 void main() => runApp(MaterialApp(home: Evented()));
 
 class Evented extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,14 +55,7 @@ class Evented extends StatelessWidget {
           ],
           backgroundColor: kPrimaryColor,
         ),
-        body: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            SingleEvent("🦆", "1. Veranstaltung", "Eventdetails 1."),
-            SingleEvent("🐣", "2. Veranstaltung", "Eventdetails 2."),
-            SingleEvent("🏒", "3. Veranstaltung", "Eventdetails 3."),
-          ],
-        ),
+        body: EventList(),
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -76,6 +68,45 @@ class Evented extends StatelessWidget {
           ),
           backgroundColor: kPrimaryColor,
         ));
+  }
+}
+
+class EventList extends StatefulWidget {
+  @override
+  _EventListState createState() => _EventListState();
+}
+
+class _EventListState extends State<EventList> {
+  List<String> eventlistEventID = ['#1234567', '#7654321', '#192837465'];
+  Map<String, String> eventlistIcon = {
+    '#1234567': '🦆',
+    '#7654321': '🐣',
+    '#192837465': '🏒'
+  };
+  Map<String, String> eventlistName = {
+    '#1234567': '1. Veranstaltung',
+    '#7654321': '2. Veranstaltung',
+    '#192837465': '3. Veranstaltung'
+  };
+  Map<String, String> eventlistDetails = {
+    '#1234567': 'Eventdetails 1.',
+    '#7654321': 'Eventdetails 2.',
+    '#192837465': 'Eventdetails 3.'
+  };
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: eventlistEventID.length,
+      itemBuilder: (context, i) {
+        String key = eventlistEventID.elementAt(i);
+        return SingleEvent(
+          eventlistIcon[key],
+          eventlistName[key],
+          eventlistDetails[key],
+        );
+      },
+    );
   }
 }
 
@@ -99,17 +130,19 @@ class SingleEvent extends StatelessWidget {
           style: TextStyle(
               fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
-        onTap: (){
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails)));
-      },
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Event(eventIcon, eventTitle, eventDetails)));
+        },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
           color: kSecondaryColor,
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-
     );
   }
 }
