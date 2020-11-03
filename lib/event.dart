@@ -358,6 +358,43 @@ class InvitedFriend extends StatelessWidget {
             Icons.check_rounded,
             size: 32.0,
           ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext cxt) {
+                return SimpleDialog(
+                    backgroundColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.vertical(
+                          top: Radius.circular(20.0),
+                          bottom: Radius.circular(20.0)),
+                    ),
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              friendName,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            InvitedFriendTasklist(),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      ),
+                    ]);
+              },
+            );
+          },
         ),
       );
     } else if (status == "not decided") {
@@ -380,6 +417,42 @@ class InvitedFriend extends StatelessWidget {
             Icons.ac_unit_rounded,
             size: 32.0,
           ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext cxt) {
+                return SimpleDialog(
+                    backgroundColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.vertical(
+                          top: Radius.circular(20.0),
+                          bottom: Radius.circular(20.0)),
+                    ),
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              friendName,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      ),
+                    ]);
+              },
+            );
+          },
         ),
       );
     } else if (status == "called off") {
@@ -402,9 +475,179 @@ class InvitedFriend extends StatelessWidget {
             Icons.remove,
             size: 32.0,
           ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext cxt) {
+                return SimpleDialog(
+                    backgroundColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.vertical(
+                          top: Radius.circular(20.0),
+                          bottom: Radius.circular(20.0)),
+                    ),
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              friendName,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      ),
+                    ]);
+              },
+            );
+          },
         ),
       );
     }
+  }
+}
+
+class InvitedFriendTasklist extends StatefulWidget {
+  @override
+  _InvitedFriendTasklistState createState() => _InvitedFriendTasklistState();
+}
+
+class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
+  void toggleMember(String key) {
+    setState(() {
+      eventFriends.update(key, (bool done) => !done);
+    });
+  }
+
+  Map<String, bool> eventFriends = {
+    'Task 1': false,
+    'Task 2': false,
+    'Task 3': false,
+    'Task 4': false,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(
+            Icons.check_rounded,
+            size: 32,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: kPrimaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0),
+                        bottom: Radius.circular(20.0)),
+                  ),
+                  title: Text(
+                    'Invite Friends?',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text(
+                          'Are you sure u want to invite this friends??',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        'Yes',
+                        style: TextStyle(color: kTextColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        'No',
+                        style: TextStyle(color: kTextColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        SizedBox(
+          height: 300,
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: eventFriends.length,
+            itemBuilder: (context, i) {
+              String key = eventFriends.keys.elementAt(i);
+              return InvitedFriendTask(key, eventFriends[key], () {
+                toggleMember(key);
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class InvitedFriendTask extends StatelessWidget {
+  final String friendName;
+  final bool done;
+  final Function toggle;
+  const InvitedFriendTask(this.friendName, this.done, this.toggle);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+          color: done ? kPrimaryColor : kPrimaryBackgroundColor,
+          border: Border.all(color: done ? kPrimaryColor : Colors.white),
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+        title: Text(
+          friendName,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
+        ),
+        trailing: Checkbox(
+          value: done,
+          onChanged: (bool value) {
+            toggle();
+          },
+          activeColor: kPrimaryBackgroundColor,
+          checkColor: kPrimaryColor,
+        ),
+      ),
+    );
   }
 }
 
