@@ -26,7 +26,6 @@ class _NewEventState extends State<NewEvent> {
 
   final dateFormat = DateFormat("dd.MM.yyyy - HH:mm");
   final TextEditingController _controller = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
   final _event = EventSettings();
 
@@ -54,12 +53,7 @@ class _NewEventState extends State<NewEvent> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewEventFriends(
-                            _event.eventIcon,
-                            _event.eventName,
-                            _event.eventDetails,
-                            _event.eventDateTime,
-                            _event.eventTasks)),
+                        builder: (context) => NewEventFriends(_event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
                   );
                 }
               },
@@ -91,12 +85,15 @@ class _NewEventState extends State<NewEvent> {
                             width: MediaQuery.of(context).size.width * 0.18,
                             child: TextFormField(
                               validator: (value) {
+                                final RegExp emojiregex = new RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
                                 if (value.isEmpty) {
                                   return 'Please enter Eventicon';
+                                } else if (!emojiregex.hasMatch(value) || value.length > 2){
+                                  return '1 Emoji';
                                 }
+                                return null;
                               },
-                              onSaved: (val) =>
-                                  setState(() => _event.eventIcon = val),
+                              onSaved: (val) => setState(() => _event.eventIcon = val),
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -114,9 +111,9 @@ class _NewEventState extends State<NewEvent> {
                                 if (value.isEmpty) {
                                   return 'Please enter Eventname';
                                 }
+                                return null;
                               },
-                              onSaved: (val) =>
-                                  setState(() => _event.eventName = val),
+                              onSaved: (val) => setState(() => _event.eventName = val),
                               maxLength: 20,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -134,6 +131,7 @@ class _NewEventState extends State<NewEvent> {
                         if (value.isEmpty) {
                           return 'Please enter some Eventdetails';
                         }
+                        return null;
                       },
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
@@ -145,9 +143,13 @@ class _NewEventState extends State<NewEvent> {
                           labelText: "Eventdetails"),
                     ),
                     DateTimeField(
-                      // TODO DateTime validator
-                      onSaved: (val) =>
-                          setState(() => _event.eventDateTime = val),
+                      validator: (value) {
+                        if (value == null){
+                          return 'Please enter Date & Time';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) => setState(() => _event.eventDateTime = val),
                       // URL: https://pub.dev/packages/datetime_picker_formfield
                       format: dateFormat,
                       onShowPicker: (context, currentValue) async {
@@ -171,16 +173,16 @@ class _NewEventState extends State<NewEvent> {
                           fillColor: Colors.white,
                           filled: true,
                           border: OutlineInputBorder(),
-                          labelText: "Eventdate & time"),
+                          labelText: "Eventdate & Time"),
                     ),
                     Container(
+                      margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.0, horizontal: 0.0),
+                            padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
                             child: TextFormField(
                               controller: _controller,
                               onFieldSubmitted: (value) {

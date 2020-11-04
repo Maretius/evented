@@ -89,7 +89,7 @@ class EventFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
       margin: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
           color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor,
