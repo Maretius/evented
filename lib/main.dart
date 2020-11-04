@@ -92,6 +92,7 @@ class _EventListState extends State<EventList> {
   };
   Map<String, String> eventlistDetails = {
     '#1234567': 'Eventdetails 1.',
+    '#7654321': 'Kücken Event',
     '#192837465': 'Eventdetails 3.'
   };
   Map<String, DateTime> eventlistDateTime = {
@@ -101,8 +102,37 @@ class _EventListState extends State<EventList> {
   };
   Map<String, String> eventlistUserStatus = {
     '#1234567': 'not decided',
-    '#7654321': 'called off',
+    '#7654321': 'promised',
     '#192837465': 'promised'
+  };
+  Map<String, List<String>> eventlistInvitedUsers = {
+    '#1234567': ['#24552', '#2951', '#546893', '#324325'],
+    '#7654321': ['#23505', '#28592', '#482593'],
+    '#192837465': ['#439503', '#435344', '#258235']
+  };
+  Map<String, String> eventlistUsers = {
+    '#24552': "Pascal",
+    '#2951': "Jimmy",
+    '#546893': "Annegred",
+    '#324325': "Fred",
+    '#23505': "Gunther",
+    '#28592': "Hans",
+    '#482593': "Jürgen",
+    '#439503': "Pomm",
+    '#435344': "Fritz",
+    '#258235': "Dieter"
+  };
+  Map<String, String> eventlistInvitedUsersWithAnswer = {
+    "#24552": 'not decided',
+    "#2951": 'promised',
+    "#546893": 'promised',
+    "#324325": 'called off',
+    "#23505": 'not decided',
+    "#28592": 'called off',
+    "#482593": 'not decided',
+    "#439503": 'promised',
+    "#435344": 'promised',
+    "#258235": 'called off'
   };
 
   @override
@@ -111,13 +141,28 @@ class _EventListState extends State<EventList> {
       scrollDirection: Axis.vertical,
       itemCount: eventlistEventID.length,
       itemBuilder: (context, i) {
-        String key = eventlistEventID.elementAt(i);
+        String eventkey = eventlistEventID.elementAt(i);
+
+        List<String> eventlistInvitedUsersToThis =
+            eventlistInvitedUsers[eventkey];
+        Map<String, String> UserWithAnswer = {};
+        String userkey = "";
+        String username = "";
+        String useranswer = "";
+
+        for (var u = 0; u < eventlistInvitedUsersToThis.length; u++) {
+          userkey = eventlistInvitedUsersToThis.elementAt(u);
+          username = eventlistUsers[userkey];
+          useranswer = eventlistInvitedUsersWithAnswer[userkey];
+          UserWithAnswer[username] = useranswer;
+        }
         return SingleEvent(
-          eventlistIcon[key],
-          eventlistName[key],
-          eventlistDetails[key],
-          eventlistDateTime[key],
-          eventlistUserStatus[key],
+          eventlistIcon[eventkey],
+          eventlistName[eventkey],
+          eventlistDetails[eventkey],
+          eventlistDateTime[eventkey],
+          eventlistUserStatus[eventkey],
+          UserWithAnswer,
         );
       },
     );
@@ -130,8 +175,9 @@ class SingleEvent extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
+  final Map eventUserWithAnswer;
   const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails,
-      this.eventDateTime, this.eventUserStatus);
+      this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +220,8 @@ class SingleEvent extends StatelessWidget {
                         ),
                         Text(
                           DateFormat('dd.MM.yyyy, kk:mm')
-                              .format(eventDateTime) + " Uhr",
+                                  .format(eventDateTime) +
+                              " Uhr",
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
@@ -204,7 +251,8 @@ class SingleEvent extends StatelessWidget {
                                     eventTitle,
                                     eventDetails,
                                     eventDateTime,
-                                    eventUserStatus)));
+                                    eventUserStatus,
+                                    eventUserWithAnswer)));
                       },
                     ),
                     TextButton(
@@ -224,8 +272,13 @@ class SingleEvent extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Event(eventIcon, eventTitle,
-                        eventDetails, eventDateTime, eventUserStatus)));
+                    builder: (context) => Event(
+                        eventIcon,
+                        eventTitle,
+                        eventDetails,
+                        eventDateTime,
+                        eventUserStatus,
+                        eventUserWithAnswer)));
           }
         },
       ),

@@ -11,8 +11,9 @@ class Event extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
+  final Map eventUserWithAnswer;
   const Event(this.eventIcon, this.eventTitle, this.eventDetails,
-      this.eventDateTime, this.eventUserStatus);
+      this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +102,7 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(),
+      body: InvitedFriendsList(eventUserWithAnswer),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -298,21 +299,16 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class InvitedFriendsList extends StatefulWidget {
+  Map eventUserWithAnswer;
+  InvitedFriendsList(this.eventUserWithAnswer);
   @override
-  _InvitedFriendsListState createState() => _InvitedFriendsListState();
+  _InvitedFriendsListState createState() =>
+      _InvitedFriendsListState(eventUserWithAnswer);
 }
 
 class _InvitedFriendsListState extends State<InvitedFriendsList> {
-  Map<String, String> invitedFriends = {
-    'Jeremy': 'promised',
-    'Hans Jürgen': 'not decided',
-    'Gertrude': 'promised',
-    'Petfewie': 'called off',
-    'Peter Silie': 'promised',
-    'Petsdfsdf Silie': 'promised',
-    'Peteg': 'promised',
-    'eegregerg Silie': 'promised',
-  };
+  Map eventUserWithAnswer;
+  _InvitedFriendsListState(this.eventUserWithAnswer);
 
   void deleteInvitedFriend(String key) {
     setState(() {});
@@ -322,10 +318,10 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.vertical,
-      itemCount: invitedFriends.length,
+      itemCount: eventUserWithAnswer.length,
       itemBuilder: (context, i) {
-        String key = invitedFriends.keys.elementAt(i);
-        return InvitedFriend(key, invitedFriends[key], () {
+        String key = eventUserWithAnswer.keys.elementAt(i);
+        return InvitedFriend(key, eventUserWithAnswer[key], () {
           deleteInvitedFriend(key);
         });
       },
@@ -528,11 +524,11 @@ class InvitedFriendTasklist extends StatefulWidget {
 class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
   void toggleMember(String key) {
     setState(() {
-      eventFriends.update(key, (bool done) => !done);
+      eventinvitedFriendsTasks.update(key, (bool done) => !done);
     });
   }
 
-  Map<String, bool> eventFriends = {
+  Map<String, bool> eventinvitedFriendsTasks = {
     'Task 1': false,
     'Task 2': false,
     'Task 3': false,
@@ -555,10 +551,10 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
           height: 300,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
-            itemCount: eventFriends.length,
+            itemCount: eventinvitedFriendsTasks.length,
             itemBuilder: (context, i) {
-              String key = eventFriends.keys.elementAt(i);
-              return InvitedFriendTask(key, eventFriends[key], () {
+              String key = eventinvitedFriendsTasks.keys.elementAt(i);
+              return InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
                 toggleMember(key);
               });
             },
@@ -607,17 +603,15 @@ class InvitedFriendTask extends StatelessWidget {
 
 // TODO: Bereist eingestellte Details übergeben und vorher anzeigen
 class EventDetails extends StatefulWidget {
+  String eventDetails;
+  EventDetails();
   @override
-  _EventDetailsState createState() => _EventDetailsState();
+  _EventDetailsState createState() => _EventDetailsState(this.eventDetails);
 }
 
 class _EventDetailsState extends State<EventDetails> {
-  _EventDetailsState();
-  void updateEventDetails(String text3) {
-    setState(() {
-      userText3 = text3;
-    });
-  }
+  String eventDetails;
+  _EventDetailsState(this.eventDetails);
 
   String userText3 = "";
   @override
@@ -627,7 +621,6 @@ class _EventDetailsState extends State<EventDetails> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
           child: TextField(
-            onChanged: updateEventDetails,
             keyboardType: TextInputType.multiline,
             maxLines: 3,
             maxLength: 200,
