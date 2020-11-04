@@ -9,7 +9,10 @@ class Event extends StatelessWidget {
   final String eventIcon;
   final String eventTitle;
   final String eventDetails;
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails);
+  final DateTime eventDateTime;
+  final String eventUserStatus;
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails,
+      this.eventDateTime, this.eventUserStatus);
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +84,14 @@ class Event extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                "01.01.2020",
+                DateFormat('dd.MM.yyyy').format(eventDateTime),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                 ),
               ),
               Text(
-                "13:30 Uhr",
+                DateFormat('kk:mm').format(eventDateTime) + " Uhr",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -231,7 +234,7 @@ class ButtonContainer extends StatelessWidget {
               } else if (buttonTheme == "deleteEvent") {
                 return showDialog(
                   context: context,
-                  barrierDismissible: false,
+                  barrierDismissible: true,
                   builder: (BuildContext cxt) {
                     return AlertDialog(
                       backgroundColor: kPrimaryColor,
@@ -546,56 +549,7 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
             size: 32,
             color: Colors.white,
           ),
-          onPressed: () {
-            showDialog<void>(
-              context: context,
-              barrierDismissible: false, // user must tap button!
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: kPrimaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0),
-                        bottom: Radius.circular(20.0)),
-                  ),
-                  title: Text(
-                    'Invite Friends?',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  content: SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        Text(
-                          'Are you sure u want to invite this friends??',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text(
-                        'Yes',
-                        style: TextStyle(color: kTextColor),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: kTextColor),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+          onPressed: () {},
         ),
         SizedBox(
           height: 300,
@@ -736,7 +690,7 @@ class _EventFriendsState extends State<EventFriends> {
           onPressed: () {
             showDialog<void>(
               context: context,
-              barrierDismissible: false, // user must tap button!
+              barrierDismissible: true, // user must tap button!
               builder: (BuildContext context) {
                 return AlertDialog(
                   backgroundColor: kPrimaryColor,

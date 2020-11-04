@@ -3,6 +3,8 @@ import 'constants.dart';
 import 'contacts.dart';
 import 'newEvent.dart';
 import 'event.dart';
+import 'package:intl/intl.dart';
+
 // import 'database.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -67,8 +69,7 @@ class Evented extends StatelessWidget {
             size: 32.0,
           ),
           backgroundColor: kPrimaryColor,
-        )
-    );
+        ));
   }
 }
 
@@ -91,9 +92,19 @@ class _EventListState extends State<EventList> {
   };
   Map<String, String> eventlistDetails = {
     '#1234567': 'Eventdetails 1.',
-    '#7654321': 'Eventdetails 2.',
     '#192837465': 'Eventdetails 3.'
   };
+  Map<String, DateTime> eventlistDateTime = {
+    '#1234567': DateTime.now(),
+    '#7654321': DateTime.now(),
+    '#192837465': DateTime.now()
+  };
+  Map<String, String> eventlistUserStatus = {
+    '#1234567': 'not decided',
+    '#7654321': 'called off',
+    '#192837465': 'promised'
+  };
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -105,6 +116,8 @@ class _EventListState extends State<EventList> {
           eventlistIcon[key],
           eventlistName[key],
           eventlistDetails[key],
+          eventlistDateTime[key],
+          eventlistUserStatus[key],
         );
       },
     );
@@ -115,7 +128,11 @@ class SingleEvent extends StatelessWidget {
   final String eventIcon;
   final String eventTitle;
   final String eventDetails;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails);
+  final DateTime eventDateTime;
+  final String eventUserStatus;
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails,
+      this.eventDateTime, this.eventUserStatus);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -132,17 +149,91 @@ class SingleEvent extends StatelessWidget {
               fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Event(eventIcon, eventTitle, eventDetails)));
+          if (eventUserStatus == "not decided") {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: true, // user must tap button!
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: kPrimaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.vertical(
+                        top: Radius.circular(20.0),
+                        bottom: Radius.circular(20.0)),
+                  ),
+                  title: Text(
+                    eventTitle,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text(
+                          eventDetails,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          DateFormat('dd.MM.yyyy, kk:mm')
+                              .format(eventDateTime) + " Uhr",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          '',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          'Do u want to accept the Invite?',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        'Accept',
+                        style: TextStyle(color: kTextColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Event(
+                                    eventIcon,
+                                    eventTitle,
+                                    eventDetails,
+                                    eventDateTime,
+                                    eventUserStatus)));
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        'Decline',
+                        style: TextStyle(color: kTextColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Event(eventIcon, eventTitle,
+                        eventDetails, eventDateTime, eventUserStatus)));
+          }
         },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: kSecondaryColor,
+          color:
+              eventUserStatus == "not decided" ? kThirdColor : kSecondaryColor,
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
     );
   }
