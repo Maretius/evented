@@ -1,11 +1,12 @@
+import 'package:evented/login.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'contacts.dart';
 import 'newEvent.dart';
 import 'event.dart';
-// import 'database.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
 
@@ -39,7 +40,8 @@ class Evented extends StatelessWidget {
                 size: 28.0,
               ),
               onPressed: () {
-                // do something
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GoogleLogin()));
               },
             ),
             IconButton(
