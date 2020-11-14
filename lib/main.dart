@@ -11,7 +11,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
 
-class Evented extends StatelessWidget {
+class Evented extends StatefulWidget {
+  @override
+  _EventedState createState() => _EventedState();
+}
+
+class _EventedState extends State<Evented> {
+
+  FirebaseUser user;
+  DatabaseService database;
+
+  void connectToFirebase() async {
+    final FirebaseAuth authenticate = FirebaseAuth.instance;
+    AuthResult result = await authenticate.signInWithCustomToken(token: null);
+    user = result.user;
+    print(user.uid);
+    database = DatabaseService(user.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
