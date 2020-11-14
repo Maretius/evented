@@ -7,7 +7,8 @@ import 'event.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
 
@@ -17,17 +18,59 @@ class Evented extends StatefulWidget {
 }
 
 class _EventedState extends State<Evented> {
-/*
-  FirebaseUser user;
+  User user;
   DatabaseService database;
+  bool isLoggedIn = false;
+  String localUserID = '';
 
-  void connectToFirebase() async {
+/*  void connectToFirebase() async {
     final FirebaseAuth authenticate = FirebaseAuth.instance;
-    AuthResult result = await authenticate.signInWithCustomToken(token: null);
+    AuthResult result = await authenticate.
     user = result.user;
     print(user.uid);
     database = DatabaseService(user.uid);
   }*/
+
+  @override
+  void initState() {
+    super.initState();
+    print(isLoggedIn);
+    autoLogIn();
+  }
+
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String userId = prefs.getString('userid');
+
+    if (userId != null) {
+      setState(() {
+        isLoggedIn = true;
+        localUserID = userId;
+      });
+      return;
+    }
+  }
+
+  Future<Null> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userid', null);
+
+    setState(() {
+      localUserID = '';
+      isLoggedIn = false;
+    });
+  }
+
+  Future<Null> loginUser() async {
+    String userID = await signInWithGoogle();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userid', userID);
+
+    setState(() {
+      localUserID = userID;
+      isLoggedIn = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +115,34 @@ class _EventedState extends State<Evented> {
                     MaterialPageRoute(builder: (context) => Contacts()));
               },
             ),
+            IconButton(
+              icon: Icon(
+                Icons.gamepad,
+                size: 28.0,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext cxt) {
+                    return SimpleDialog(
+                        backgroundColor: kPrimaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadiusDirectional.vertical(
+                              top: Radius.circular(20.0),
+                              bottom: Radius.circular(20.0)),
+                        ),
+                        children: [
+                          RaisedButton(
+                            onPressed: () {
+                              isLoggedIn ? logout() : loginUser();
+                            },
+                            child: isLoggedIn ? Text('Logout') : Text('Login'),
+                          )
+                        ]);
+                  },
+                );
+              },
+            ),
           ],
           backgroundColor: kPrimaryColor,
         ),
@@ -87,8 +158,7 @@ class _EventedState extends State<Evented> {
             size: 32.0,
           ),
           backgroundColor: kPrimaryColor,
-        )
-    );
+        ));
   }
 }
 

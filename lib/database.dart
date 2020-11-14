@@ -1,4 +1,4 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,14 +28,13 @@ Future<String> signInWithGoogle() async {
     final User currentUser = _auth.currentUser;
     assert(user.uid == currentUser.uid);
 
-    print('signInWithGoogle succeeded: $user');
 
-    return '$user';
+    return user.uid;
   }
 
   return null;
 }
-/*
+
 class DatabaseService {
   final String userID;
   DatabaseService(this.userID);
@@ -46,7 +45,7 @@ class DatabaseService {
   Future setFriend(String friendID, String friendName) async {
     return await userFriends.document(userID).setData(
       {friendID: friendName},
-      merge: true,
+
     );
   }
 
@@ -63,4 +62,4 @@ class DatabaseService {
       return false;
     }
   }
-}*/
+}
