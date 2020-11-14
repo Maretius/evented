@@ -61,9 +61,7 @@ class _GoogleLoginState extends State<GoogleLogin> {
                 ),
               ),
               onPressed: () {
-                signInWithGoogle().whenComplete(() {
-                  print("Hello");
-
+                signInWithGoogle().then((result) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) {
                       return Evented();

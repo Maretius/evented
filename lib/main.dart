@@ -7,7 +7,7 @@ import 'event.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MaterialApp(home: Evented()));
 
@@ -17,7 +17,7 @@ class Evented extends StatefulWidget {
 }
 
 class _EventedState extends State<Evented> {
-
+/*
   FirebaseUser user;
   DatabaseService database;
 
@@ -27,7 +27,7 @@ class _EventedState extends State<Evented> {
     user = result.user;
     print(user.uid);
     database = DatabaseService(user.uid);
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
