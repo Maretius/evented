@@ -66,7 +66,6 @@ class _NewEventState extends State<NewEvent> {
       body: Center(
           child: Builder(
         builder: (context) => Form(
-          //  https://medium.com/flutter-community/realistic-forms-in-flutter-part-1-327929dfd6fd
           key: _formKey,
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 36.0),

@@ -17,7 +17,9 @@ class NewEventFriends extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: Icon(Icons.keyboard_backspace_rounded),
         ),
         title: Text(

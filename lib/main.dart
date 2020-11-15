@@ -23,18 +23,15 @@ class _EventedState extends State<Evented> {
   bool isLoggedIn = false;
   String localUserID = '';
 
-/*  void connectToFirebase() async {
-    final FirebaseAuth authenticate = FirebaseAuth.instance;
-    AuthResult result = await authenticate.
-    user = result.user;
-    print(user.uid);
-    database = DatabaseService(user.uid);
-  }*/
+  void connectToFirebase() async {
+    print(localUserID);
+    database = DatabaseService(localUserID);
+  }
 
   @override
   void initState() {
     super.initState();
-    print(isLoggedIn);
+
     autoLogIn();
   }
 
@@ -47,11 +44,15 @@ class _EventedState extends State<Evented> {
         isLoggedIn = true;
         localUserID = userId;
       });
-      return;
+    } else {
+      await loginUser();
     }
+    connectToFirebase();
+    database.checkIfUserExists();
   }
 
-  Future<Null> logout() async {
+  void logout() async {
+    signOutWithGoogle();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('userid', null);
 
@@ -70,6 +71,8 @@ class _EventedState extends State<Evented> {
       localUserID = userID;
       isLoggedIn = true;
     });
+
+    return null;
   }
 
   @override
@@ -117,7 +120,7 @@ class _EventedState extends State<Evented> {
             ),
             IconButton(
               icon: Icon(
-                Icons.gamepad,
+                Icons.logout,
                 size: 28.0,
               ),
               onPressed: () {
