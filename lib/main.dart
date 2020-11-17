@@ -1,4 +1,5 @@
 import 'package:evented/login.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'contacts.dart';
@@ -39,6 +40,7 @@ class _EventedState extends State<Evented> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String userId = prefs.getString('userid');
 
+    await Firebase.initializeApp();
     if (userId != null) {
       setState(() {
         isLoggedIn = true;
@@ -154,7 +156,7 @@ class _EventedState extends State<Evented> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NewEvent()));
+                context, MaterialPageRoute(builder: (context) => NewEvent(userID: localUserID)));
           },
           child: Icon(
             Icons.add_rounded,
@@ -235,8 +237,7 @@ class _EventListState extends State<EventList> {
       itemBuilder: (context, i) {
         String eventkey = eventlistEventID.elementAt(i);
 
-        List<String> eventlistInvitedUsersToThis =
-            eventlistInvitedUsers[eventkey];
+        List<String> eventlistInvitedUsersToThis = eventlistInvitedUsers[eventkey];
         Map<String, String> UserWithAnswer = {};
         String userkey = "";
         String username = "";

@@ -6,10 +6,9 @@ import 'package:firebase_core/firebase_core.dart';
 //final Firestore firestore = Firestore();
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
-User user; //TODO hier müsste doch user stehen
+User user;
 
 Future<String> signInWithGoogle() async {
-  await Firebase.initializeApp();
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
   final GoogleSignInAuthentication googleSignInAuthentication =
   await googleSignInAccount.authentication;
@@ -43,7 +42,8 @@ class DatabaseService {
   final String userID;
   DatabaseService(this.userID);
 
-  final CollectionReference users = FirebaseFirestore.instance.collection('users'); //TODO hier muss noch was geaendert werden!
+  final CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final CollectionReference events = FirebaseFirestore.instance.collection('events');
 
   // Future setFriend(String friendID, String friendName) async {
   //   return await userFriends.doc(userID).set(
@@ -55,8 +55,42 @@ class DatabaseService {
   //   return await userFriends.doc(userID).update({userID: FieldValue.delete()});
   // }
 
+  Future addEvent(String eventIcon, String eventTitle, String eventDetails, DateTime eventDateTime, List<String> eventTasks, Map<String, bool> eventMembers,) async { // List<String> eventMembers
+
+    // List<Map<String, String>> eventUsers = [
+    //   for (var u = 0; u < eventTask.length; u++){
+    //     {
+    //       "eventUserID": "UserID",
+    //       "eventUserName": eventTask[u],
+    //       "eventUserRole" : if
+    //     },
+    //   }
+    // ];
+
+    final eventUsers = List<Map<String,String>>.generate(eventTasks.length,(index) => null);
+
+
+    return await events.doc().set(
+      {
+        "eventName" : eventTitle,
+        "eventIcon" : eventIcon,
+        "eventDateTime" : eventDateTime,
+        "eventDetails" : eventDetails,
+        "eventTasksUnassigned" : eventTasks,
+        "eventUser" : eventMembers,
+
+        // "eventAdmin" : userID,
+        // "eventUsers": eventUsers,
+      }
+    );
+  }
+
   Future addUser() async {
-    return await users.doc(userID).set({"userName": user.displayName});
+    return await users.doc(userID).set(
+        {
+          "userName": user.displayName,
+        }
+        );
   }
 
   Future checkIfUserExists() async {

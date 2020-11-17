@@ -1,3 +1,4 @@
+import 'package:evented/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -7,6 +8,8 @@ import 'newEventFriends.dart';
 // import 'main.dart';
 
 class NewEvent extends StatefulWidget {
+  final String userID;
+  const NewEvent({Key key, this.userID}): super(key: key);
   @override
   _NewEventState createState() => _NewEventState();
 }
@@ -16,7 +19,7 @@ class _NewEventState extends State<NewEvent> {
     setState(() {
       _event.eventTasks.add(task);
     });
-    // Navigator.of(context).pop();
+    // Navigator.of(context).pop();s
   }
 
   void deleteEventTask(int index) {
@@ -54,7 +57,7 @@ class _NewEventState extends State<NewEvent> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewEventFriends(_event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
+                        builder: (context) => NewEventFriends(widget.userID, _event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
                   );
                 }
               },
@@ -133,6 +136,7 @@ class _NewEventState extends State<NewEvent> {
                         }
                         return null;
                       },
+                      onSaved: (val) => setState(() => _event.eventDetails = val),
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
                       maxLength: 200,

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'main.dart';
+import 'database.dart';
 //import 'newEvent.dart';
 
 class NewEventFriends extends StatelessWidget {
+  final String userID;
   final String eventIcon;
   final String eventTitle;
   final String eventDetails;
   final DateTime eventDateTime;
   final List<String> eventTask;
-  const NewEventFriends(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
+  const NewEventFriends(this.userID, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
+
+  Map<String, bool> get eventFriends => null;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +36,7 @@ class NewEventFriends extends StatelessWidget {
         actions: <Widget>[
           IconButton(
               onPressed: () {
+                DatabaseService(userID).addEvent(eventIcon, eventTitle, eventDetails, eventDateTime, eventTask, eventFriends);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Evented()),
