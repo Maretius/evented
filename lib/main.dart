@@ -24,7 +24,7 @@ class _EventedState extends State<Evented> {
   bool isLoggedIn = false;
   String localUserID = '';
 
-  void connectToFirebase() async {
+  Future<void> connectToFirebase() async {
     print(localUserID);
     database = DatabaseService(localUserID);
   }
@@ -151,12 +151,75 @@ class _EventedState extends State<Evented> {
           ],
           backgroundColor: kPrimaryColor,
         ),
-        body: EventList(),
+        body: FutureBuilder(
+
+            // Wait until [connectToFirebase] returns stream
+            future: connectToFirebase(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                // When stream exists, use Streambilder to wait for data
+                return StreamBuilder<DocumentSnapshot>(
+                  stream: database.getEvents(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
+                      Map<String, dynamic> items =
+                          snapshot.data.data();
+
+
+                      return ListView.builder(
+                          itemCount: items.length,
+                          itemBuilder: (context, i) {
+                            String key = items.keys.elementAt(i);
+                            return new Container(
+                              child: Text(items[key].toString()),
+                            );
+                          });
+
+                      /* new ListView.builder(
+  scrollDirection: Axis.vertical,
+    itemCount: eventlistEventID.length,
+    itemBuilder: (context, i) {
+    String eventkey = eventlistEventID.elementAt(i);
+
+    List<String> eventlistInvitedUsersToThis =
+    eventlistInvitedUsers[eventkey];
+    Map<String, String> UserWithAnswer = {};
+    String userkey = "";
+    String username = "";
+    String useranswer = "";
+
+    for (var u = 0; u < eventlistInvitedUsersToThis.length; u++) {
+    userkey = eventlistInvitedUsersToThis.elementAt(u);
+    username = eventlistUsers[userkey];
+    useranswer = eventlistInvitedUsersWithAnswer[userkey];
+    UserWithAnswer[username] = useranswer;
+    }
+    return SingleEvent(
+    eventlistIcon[eventkey],
+    eventlistName[eventkey],
+    eventlistDetails[eventkey],
+    eventlistDateTime[eventkey],
+    eventlistUserStatus[eventkey],
+    UserWithAnswer,
+    );
+    },
+                          );*/
+                    }
+                  },
+                );
+              }
+            }),
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NewEvent(userID: localUserID)));
+                context, MaterialPageRoute(builder: (context) => NewEvent()));
           },
           child: Icon(
             Icons.add_rounded,
@@ -164,101 +227,6 @@ class _EventedState extends State<Evented> {
           ),
           backgroundColor: kPrimaryColor,
         ));
-  }
-}
-
-class EventList extends StatefulWidget {
-  @override
-  _EventListState createState() => _EventListState();
-}
-
-class _EventListState extends State<EventList> {
-  List<String> eventlistEventID = ['#1234567', '#7654321', '#192837465'];
-  Map<String, String> eventlistIcon = {
-    '#1234567': '🦆',
-    '#7654321': '🐣',
-    '#192837465': '🏒'
-  };
-  Map<String, String> eventlistName = {
-    '#1234567': '1. Veranstaltung',
-    '#7654321': '2. Veranstaltung',
-    '#192837465': '3. Veranstaltung'
-  };
-  Map<String, String> eventlistDetails = {
-    '#1234567': 'Eventdetails 1.',
-    '#7654321': 'Eventdetails 2.',
-    '#192837465': 'Eventdetails 3.'
-  };
-  Map<String, DateTime> eventlistDateTime = {
-    '#1234567': DateTime.now(),
-    '#7654321': DateTime.now(),
-    '#192837465': DateTime.now()
-  };
-  Map<String, String> eventlistUserStatus = {
-    '#1234567': 'not decided',
-    '#7654321': 'promised',
-    '#192837465': 'promised'
-  };
-  Map<String, List<String>> eventlistInvitedUsers = {
-    '#1234567': ['#24552', '#2951', '#546893', '#324325'],
-    '#7654321': ['#23505', '#28592', '#482593'],
-    '#192837465': ['#439503', '#435344', '#258235']
-  };
-  Map<String, String> eventlistUsers = {
-    '#24552': "Pascal",
-    '#2951': "Jimmy",
-    '#546893': "Annegred",
-    '#324325': "Fred",
-    '#23505': "Gunther",
-    '#28592': "Hans",
-    '#482593': "Jürgen",
-    '#439503': "Pomm",
-    '#435344': "Fritz",
-    '#258235': "Dieter"
-  };
-  Map<String, String> eventlistInvitedUsersWithAnswer = {
-    "#24552": 'not decided',
-    "#2951": 'promised',
-    "#546893": 'promised',
-    "#324325": 'called off',
-    "#23505": 'not decided',
-    "#28592": 'called off',
-    "#482593": 'not decided',
-    "#439503": 'promised',
-    "#435344": 'promised',
-    "#258235": 'called off'
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: eventlistEventID.length,
-      itemBuilder: (context, i) {
-        String eventkey = eventlistEventID.elementAt(i);
-
-        List<String> eventlistInvitedUsersToThis = eventlistInvitedUsers[eventkey];
-        Map<String, String> UserWithAnswer = {};
-        String userkey = "";
-        String username = "";
-        String useranswer = "";
-
-        for (var u = 0; u < eventlistInvitedUsersToThis.length; u++) {
-          userkey = eventlistInvitedUsersToThis.elementAt(u);
-          username = eventlistUsers[userkey];
-          useranswer = eventlistInvitedUsersWithAnswer[userkey];
-          UserWithAnswer[username] = useranswer;
-        }
-        return SingleEvent(
-          eventlistIcon[eventkey],
-          eventlistName[eventkey],
-          eventlistDetails[eventkey],
-          eventlistDateTime[eventkey],
-          eventlistUserStatus[eventkey],
-          UserWithAnswer,
-        );
-      },
-    );
   }
 }
 
