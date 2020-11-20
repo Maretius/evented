@@ -86,9 +86,11 @@ class DatabaseService {
   }
 
   Future addUser() async {
+    String userToken = userID.substring(userID.length - 6);
     return await users.doc(userID).set(
         {
           "userName": user.displayName,
+          "userToken" : userToken,
         }
         );
   }
@@ -105,4 +107,23 @@ class DatabaseService {
   Stream getEvents() {
     return events.doc("U8psUiSIp6nXyWzIW4zL").snapshots();
   }
+
+  Future<List<String>> getEventIDs() async{
+    List<String> eventIDs;
+    users.doc("tavwHfjv7jg2TekxyvSc").get().then((value){
+      eventIDs = List.from(value.data()["userEvents"]);
+      print(eventIDs.toString());
+    });
+    return eventIDs;
+  }
+
+  Future addFriend(String userFriendToken) async {
+    if ((await users.doc().get()).exists){
+      String friendUserID = users.where("userToken", isEqualTo: userFriendToken).toString();
+      print(friendUserID);
+    } else {
+      return false;
+    }
+  }
+
 }

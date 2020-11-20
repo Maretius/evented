@@ -51,6 +51,8 @@ class _EventedState extends State<Evented> {
     }
     connectToFirebase();
     database.checkIfUserExists();
+    List<String> eventIDs = await database.getEventIDs();
+    print(eventIDs.toString());
   }
 
   void logout() async {
