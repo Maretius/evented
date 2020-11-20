@@ -9,7 +9,7 @@ import 'newEventFriends.dart';
 
 class NewEvent extends StatefulWidget {
   final String userID;
-  const NewEvent({Key key, this.userID}): super(key: key);
+  const NewEvent(this.userID);
   @override
   _NewEventState createState() => _NewEventState();
 }
@@ -19,6 +19,7 @@ class _NewEventState extends State<NewEvent> {
     setState(() {
       _event.eventTasks.add(task);
     });
+    print(widget.userID);
     // Navigator.of(context).pop();s
   }
 
