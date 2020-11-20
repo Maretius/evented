@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //final Firestore firestore = Firestore();
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -26,7 +27,6 @@ Future<String> signInWithGoogle() async {
     final User currentUser = _auth.currentUser;
     assert(user.uid == currentUser.uid);
   }
-
   return user.uid;
 }
 
@@ -36,6 +36,7 @@ Future signOutWithGoogle() async {
   googleSignIn.signOut();
   //googleSignIn.disconnect();
 }
+
 
 class DatabaseService {
 
@@ -96,9 +97,13 @@ class DatabaseService {
   }
 
   Future checkIfUserExists() async {
-    await Firebase.initializeApp();
+    //await Firebase.initializeApp();
+    String userName;
     if ((await users.doc(userID).get()).exists) {
-      return true;
+      await users.doc(userID).get().then((value){
+        userName = (value.data()["userName"]);
+      });
+      return userName;
     } else {
       addUser();
     }
@@ -110,20 +115,45 @@ class DatabaseService {
 
   Future<List<String>> getEventIDs() async{
     List<String> eventIDs;
-    users.doc("tavwHfjv7jg2TekxyvSc").get().then((value){
+    await users.doc("tavwHfjv7jg2TekxyvSc").get().then((value){
       eventIDs = List.from(value.data()["userEvents"]);
-      print(eventIDs.toString());
     });
     return eventIDs;
   }
 
-  Future addFriend(String userFriendToken) async {
-    if ((await users.doc().get()).exists){
-      String friendUserID = users.where("userToken", isEqualTo: userFriendToken).toString();
-      print(friendUserID);
-    } else {
-      return false;
-    }
+  Future<bool> addFriend(String userFriendToken) async {
+    String userFriendName;
+    // TODO schmeißt hier Fehler wenn Token falsch, da kein Dokument da
+     var result = await users.where("userToken", isEqualTo: userFriendToken).limit(1).get();
+     // Check if User exists
+     if (result.docs.length == 0) {
+       return false;
+     } else {
+       final String userFriendID = result.docs.first.id;
+       await users.doc(userFriendID).get().then((value){
+          userFriendName = value.data()["userName"];
+       });
+       String query = "userFriends." + userFriendID;
+       result = await users.where(query, isEqualTo: userFriendName).limit(1).get();
+       // Check if Friend already exist
+       if (result.docs.length == 0) {
+         users.doc(userID).update({
+           query : userFriendName,
+         });
+         return true;
+       } else {
+         return false;
+       }
+     }
+  }
+
+
+  Future<Map<String, String>> getFriends() async {
+    Map<String, String> friendMap;
+    await users.doc(userID).get().then((value){
+      friendMap = value.data()["userFriends"];
+    });
+    print(friendMap.toString());
   }
 
 }

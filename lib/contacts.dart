@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'database.dart';
 import 'main.dart';
 
 class Contacts extends StatelessWidget {
+  final String userID;
+  final String userToken;
+  final String userName;
+  const Contacts(this.userID, this.userToken, this.userName);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +29,9 @@ class Contacts extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            MyName(),
-            MyID(),
-            FriendList(),
+            MyName(userName),
+            MyID(userToken),
+            FriendList(userID),
           ],
         ),
       ),
@@ -36,23 +41,26 @@ class Contacts extends StatelessWidget {
 }
 
 class MyName extends StatelessWidget {
+  final String userName;
+  const MyName(this.userName);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: TextFormField(
-        initialValue: "Jeremy",
+        initialValue: userName,
         enabled: false,
         decoration: InputDecoration(
           labelText: "My Name:",
           labelStyle: TextStyle(
-            color: kTextColor,
-            fontSize: 20.0,
+            color: Colors.white,
+            fontSize: 16.0,
           ),
           filled: true,
-          fillColor: kSecondaryColor,
+          fillColor: kPrimaryColor,
         ),
         style: TextStyle(
-          color: kTextColor,
+          color: Colors.white,
           fontSize: 22.0,
         ),
       ),
@@ -63,23 +71,27 @@ class MyName extends StatelessWidget {
 }
 
 class MyID extends StatelessWidget {
+  //final String userToken = userID.substring(userID.length - 6);
+  final String userToken;
+  const MyID(this.userToken);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: TextFormField(
-        initialValue: "#70425",
+        initialValue: userToken,
         enabled: false,
         decoration: InputDecoration(
-          labelText: "My ID:",
+          labelText: "My Token:",
           labelStyle: TextStyle(
-            color: kTextColor,
-            fontSize: 20.0,
+            color: Colors.white,
+            fontSize: 16.0,
           ),
           filled: true,
-          fillColor: kSecondaryColor,
+          fillColor: kPrimaryColor,
         ),
         style: TextStyle(
-          color: kTextColor,
+          color: Colors.white,
           fontSize: 22.0,
         ),
       ),
@@ -90,11 +102,15 @@ class MyID extends StatelessWidget {
 }
 
 class FriendList extends StatefulWidget {
+  final String userID;
+  const FriendList(this.userID);
+
   @override
   _FriendListState createState() => _FriendListState();
 }
 
 class _FriendListState extends State<FriendList> {
+  bool addFriendReturn;
   List<String> friendsname = [
     'Chris',
     'KrasserChris',
@@ -108,10 +124,30 @@ class _FriendListState extends State<FriendList> {
     'KrasserChris',
   ];
 // List<String> friendsid = ['#32423', '#2342','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris',];
-  void addFriend(String friend) {
+  void addFriend(String friend) async {
     setState(() {
       friendsname.add(friend);
     });
+    //print(await DatabaseService(widget.userID).addFriend(widget.userID, friend));
+    addFriendReturn = await DatabaseService(widget.userID).addFriend(friend);
+    if (addFriendReturn == false) {
+      showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: kFourthColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusDirectional.vertical(
+                    top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+              ),
+              title: Text("Error", style: TextStyle(color: Colors.white),),
+              content: Text(
+                  "Username does not exists or friend does already exist!",
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
+              ),
+            );
+          });
+    }
   }
 
   void deleteFriend(int index) {
@@ -178,7 +214,8 @@ class _FriendListState extends State<FriendList> {
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 filled: true,
-                border: OutlineInputBorder(), labelText: "Add Friend"),
+                border: OutlineInputBorder(),
+                labelText: "Add Friend with Token"),
           ),
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),

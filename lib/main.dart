@@ -23,6 +23,8 @@ class _EventedState extends State<Evented> {
   DatabaseService database;
   bool isLoggedIn = false;
   String localUserID = '';
+  String localUserToken = '';
+  String localUserName = '';
 
   Future<void> connectToFirebase() async {
     print(localUserID);
@@ -38,30 +40,37 @@ class _EventedState extends State<Evented> {
 
   void autoLogIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String userId = prefs.getString('userid');
+    final String userID = prefs.getString('userid');
 
     await Firebase.initializeApp();
-    if (userId != null) {
+    if (userID != null) {
       setState(() {
         isLoggedIn = true;
-        localUserID = userId;
+        localUserID = userID;
+        localUserToken = userID.substring(userID.length - 6);
       });
     } else {
       await loginUser();
     }
     connectToFirebase();
-    database.checkIfUserExists();
+    String userName = await database.checkIfUserExists();
     List<String> eventIDs = await database.getEventIDs();
-    print(eventIDs.toString());
+
+    setState(() {
+      localUserName = userName;
+    });
+    print("UserID: " + localUserID + "; UserToken: " + localUserToken + "; UserName: " + localUserName );
   }
 
-  void logout() async {
+  void logoutUser() async {
     signOutWithGoogle();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('userid', null);
 
     setState(() {
       localUserID = '';
+      localUserToken = '';
+      localUserName = '';
       isLoggedIn = false;
     });
   }
@@ -73,10 +82,9 @@ class _EventedState extends State<Evented> {
 
     setState(() {
       localUserID = userID;
+      localUserToken = userID.substring(userID.length - 6);
       isLoggedIn = true;
     });
-
-    return null;
   }
 
   @override
@@ -118,8 +126,10 @@ class _EventedState extends State<Evented> {
                 size: 28.0,
               ),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Contacts()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Contacts(localUserID, localUserToken, localUserName)));
               },
             ),
             IconButton(
@@ -141,7 +151,7 @@ class _EventedState extends State<Evented> {
                         children: [
                           RaisedButton(
                             onPressed: () {
-                              isLoggedIn ? logout() : loginUser();
+                              isLoggedIn ? logoutUser() : loginUser();
                             },
                             child: isLoggedIn ? Text('Logout') : Text('Login'),
                           )
@@ -170,9 +180,7 @@ class _EventedState extends State<Evented> {
                       return Center(child: CircularProgressIndicator());
                     } else {
                       // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                      Map<String, dynamic> items =
-                          snapshot.data.data();
-
+                      Map<String, dynamic> items = snapshot.data.data();
 
                       return ListView.builder(
                           itemCount: items.length,
@@ -220,8 +228,8 @@ class _EventedState extends State<Evented> {
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NewEvent()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => NewEvent(localUserID)));
           },
           child: Icon(
             Icons.add_rounded,

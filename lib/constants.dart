@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 // Colors
 const kPrimaryColor = Color.fromRGBO(29, 120, 88, 1);
 const kSecondaryColor = Color.fromRGBO(81, 140, 115, 1);
-const kThirdColor = Color.fromRGBO(250, 163, 7, 0.8);
-const kFourthColor = Color.fromRGBO(208, 47, 2, 0.8);
-const kFifthColor = Color.fromRGBO(63, 117, 150, 0.8);
+const kThirdColor = Color.fromRGBO(250, 163, 7, 1);
+const kFourthColor = Color.fromRGBO(208, 47, 2, 1);
+const kFifthColor = Color.fromRGBO(63, 117, 150, 1);
 // const kFifthColor = Color.fromRGBO(39, 60, 117, 1);
 
 
