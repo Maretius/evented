@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:async/async.dart';
 
 //final Firestore firestore = Firestore();
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,7 +19,8 @@ Future<String> signInWithGoogle() async {
     idToken: googleSignInAuthentication.idToken,
   );
 
-  final UserCredential authResult = await _auth.signInWithCredential(credential);
+  final UserCredential authResult =
+      await _auth.signInWithCredential(credential);
   user = authResult.user;
 
   if (user != null) {
@@ -39,12 +41,13 @@ Future signOutWithGoogle() async {
 
 
 class DatabaseService {
-
   final String userID;
   DatabaseService(this.userID);
 
-  final CollectionReference users = FirebaseFirestore.instance.collection('users');
-  final CollectionReference events = FirebaseFirestore.instance.collection('events');
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+  final CollectionReference events =
+      FirebaseFirestore.instance.collection('events');
 
   // Future setFriend(String friendID, String friendName) async {
   //   return await userFriends.doc(userID).set(
@@ -68,22 +71,20 @@ class DatabaseService {
     //   }
     // ];
 
-    final eventUsers = List<Map<String,String>>.generate(eventTasks.length,(index) => null);
+    final eventUsers =
+        List<Map<String, String>>.generate(eventTasks.length, (index) => null);
 
+    return await events.doc().set({
+      "eventName": eventTitle,
+      "eventIcon": eventIcon,
+      "eventDateTime": eventDateTime,
+      "eventDetails": eventDetails,
+      "eventTasksUnassigned": eventTasks,
+      "eventUser": eventMembers,
 
-    return await events.doc().set(
-      {
-        "eventName" : eventTitle,
-        "eventIcon" : eventIcon,
-        "eventDateTime" : eventDateTime,
-        "eventDetails" : eventDetails,
-        "eventTasksUnassigned" : eventTasks,
-        "eventUser" : eventMembers,
-
-        // "eventAdmin" : userID,
-        // "eventUsers": eventUsers,
-      }
-    );
+      // "eventAdmin" : userID,
+      // "eventUsers": eventUsers,
+    });
   }
 
   Future addUser() async {
@@ -109,13 +110,15 @@ class DatabaseService {
     }
   }
 
-  Stream getEvents() {
-    return events.doc("U8psUiSIp6nXyWzIW4zL").snapshots();
+  //K3yd3WhOj24JJO2cEeUg
+//hjWD8EEn0vhTsR3zHzlJpPgVzEo2
+  Stream getEvents(String eventID) {
+    return events.doc(eventID).snapshots();
   }
 
   Future<List<String>> getEventIDs() async{
     List<String> eventIDs;
-    await users.doc("tavwHfjv7jg2TekxyvSc").get().then((value){
+    await users.doc(userID).get().then((value){
       eventIDs = List.from(value.data()["userEvents"]);
     });
     return eventIDs;

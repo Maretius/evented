@@ -25,10 +25,17 @@ class _EventedState extends State<Evented> {
   String localUserID = '';
   String localUserToken = '';
   String localUserName = '';
+  List<String> eventIDs;
 
   Future<void> connectToFirebase() async {
     print(localUserID);
     database = DatabaseService(localUserID);
+    await getEventIDsasList();
+  }
+
+  getEventIDsasList() async {
+    eventIDs = await database.getEventIDs();
+    print("Diese: " + eventIDs.toString());
   }
 
   @override
@@ -54,7 +61,6 @@ class _EventedState extends State<Evented> {
     }
     connectToFirebase();
     String userName = await database.checkIfUserExists();
-    List<String> eventIDs = await database.getEventIDs();
 
     setState(() {
       localUserName = userName;
@@ -163,35 +169,57 @@ class _EventedState extends State<Evented> {
           ],
           backgroundColor: kPrimaryColor,
         ),
-        body: FutureBuilder(
+        body: SizedBox(
+          height: 800.0,
+          child: FutureBuilder(
+              // Wait until [connectToFirebase] returns stream
+              future: connectToFirebase(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  print("Diese2: " + eventIDs.toString());
+                  return SizedBox(
+                    height: 200.0,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: eventIDs.length,
+                        itemBuilder: (context, i) {
+                          String eventID = eventIDs[i];
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream: database.getEvents(eventID),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else {
+                                // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
+                                Map<String, dynamic> items =
+                                    snapshot.data.data();
+                                var userDocument = snapshot.data;
+                                //userDocument["eventName"]
+                                return SizedBox(
+                                  height: 85,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: 1,
+                                      itemBuilder: (context, i) {
+                                        String key = items.keys.elementAt(i);
+                                        return SingleEvent(
+                                          userDocument["eventIcon"],
+                                          userDocument["eventName"],
+                                          userDocument["eventDetails"],
+                                          DateTime.now(),
+                                          "promised",
+                                          null,
+                                        );
+                                      }),
+                                );
 
-            // Wait until [connectToFirebase] returns stream
-            future: connectToFirebase(),
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                // When stream exists, use Streambilder to wait for data
-                return StreamBuilder<DocumentSnapshot>(
-                  stream: database.getEvents(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                      Map<String, dynamic> items = snapshot.data.data();
-
-                      return ListView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, i) {
-                            String key = items.keys.elementAt(i);
-                            return new Container(
-                              child: Text(items[key].toString()),
-                            );
-                          });
-
-                      /* new ListView.builder(
+                                /* new ListView.builder(
   scrollDirection: Axis.vertical,
     itemCount: eventlistEventID.length,
     itemBuilder: (context, i) {
@@ -220,11 +248,14 @@ class _EventedState extends State<Evented> {
     );
     },
                           );*/
-                    }
-                  },
-                );
-              }
-            }),
+                              }
+                            },
+                          );
+                        }),
+                  );
+                }
+              }),
+        ),
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
