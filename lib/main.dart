@@ -23,19 +23,13 @@ class _EventedState extends State<Evented> {
   DatabaseService database;
   bool isLoggedIn = false;
   String localUserID = '';
-  String localUserToken = '';
   String localUserName = '';
-  List<String> eventIDs;
+  LocalUser databaseUser;
 
   Future<void> connectToFirebase() async {
     print(localUserID);
     database = DatabaseService(localUserID);
-    await getEventIDsasList();
-  }
-
-  getEventIDsasList() async {
-    eventIDs = await database.getEventIDs();
-    print("Diese: " + eventIDs.toString());
+    databaseUser = await database.getUserData();
   }
 
   @override
@@ -54,18 +48,12 @@ class _EventedState extends State<Evented> {
       setState(() {
         isLoggedIn = true;
         localUserID = userID;
-        localUserToken = userID.substring(userID.length - 6);
       });
     } else {
       await loginUser();
     }
     connectToFirebase();
-    String userName = await database.checkIfUserExists();
-
-    setState(() {
-      localUserName = userName;
-    });
-    print("UserID: " + localUserID + "; UserToken: " + localUserToken + "; UserName: " + localUserName );
+    await database.checkIfUserExists();
   }
 
   void logoutUser() async {
@@ -75,8 +63,6 @@ class _EventedState extends State<Evented> {
 
     setState(() {
       localUserID = '';
-      localUserToken = '';
-      localUserName = '';
       isLoggedIn = false;
     });
   }
@@ -88,7 +74,6 @@ class _EventedState extends State<Evented> {
 
     setState(() {
       localUserID = userID;
-      localUserToken = userID.substring(userID.length - 6);
       isLoggedIn = true;
     });
   }
@@ -135,7 +120,7 @@ class _EventedState extends State<Evented> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Contacts(localUserID, localUserToken, localUserName)));
+                        builder: (context) => Contacts(localUserID, localUserID.substring(localUserID.length - 6), databaseUser.userName, databaseUser.userFriends)));
               },
             ),
             IconButton(
@@ -178,15 +163,15 @@ class _EventedState extends State<Evented> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else {
-                  print("Diese2: " + eventIDs.toString());
+                  print("Diese2: " + databaseUser.userEvents.toString());
                   return SizedBox(
                     height: 200.0,
                     child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        itemCount: eventIDs.length,
+                        itemCount: databaseUser.userEvents.length,
                         itemBuilder: (context, i) {
-                          String eventID = eventIDs[i];
+                          String eventID = databaseUser.userEvents[i];
                           return StreamBuilder<DocumentSnapshot>(
                             stream: database.getEvents(eventID),
                             builder: (BuildContext context,
@@ -196,8 +181,7 @@ class _EventedState extends State<Evented> {
                                     child: CircularProgressIndicator());
                               } else {
                                 // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                                Map<String, dynamic> items =
-                                    snapshot.data.data();
+                                Map<String, dynamic> items = snapshot.data.data();
                                 var userDocument = snapshot.data;
                                 //userDocument["eventName"]
                                 return SizedBox(
@@ -207,7 +191,7 @@ class _EventedState extends State<Evented> {
                                       scrollDirection: Axis.vertical,
                                       itemCount: 1,
                                       itemBuilder: (context, i) {
-                                        String key = items.keys.elementAt(i);
+                                        //String key = items.keys.elementAt(i);
                                         return SingleEvent(
                                           userDocument["eventIcon"],
                                           userDocument["eventName"],

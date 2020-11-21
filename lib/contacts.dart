@@ -7,7 +7,8 @@ class Contacts extends StatelessWidget {
   final String userID;
   final String userToken;
   final String userName;
-  const Contacts(this.userID, this.userToken, this.userName);
+  final Map<String, String> userFriends;
+  const Contacts(this.userID, this.userToken, this.userName, this.userFriends);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +32,7 @@ class Contacts extends StatelessWidget {
           children: <Widget>[
             MyName(userName),
             MyID(userToken),
-            FriendList(userID),
+            FriendList(userID, userFriends),
           ],
         ),
       ),
@@ -103,34 +104,19 @@ class MyID extends StatelessWidget {
 
 class FriendList extends StatefulWidget {
   final String userID;
-  const FriendList(this.userID);
+  Map<String, String> userFriends;
+  FriendList(this.userID, this.userFriends);
 
   @override
   _FriendListState createState() => _FriendListState();
 }
 
 class _FriendListState extends State<FriendList> {
-  bool addFriendReturn;
-  List<String> friendsname = [
-    'Chris',
-    'KrasserChris',
-    'Chris',
-    'KrasserChris',
-    'Chris',
-    'KrasserChris',
-    'Chris',
-    'KrasserChris',
-    'Chris',
-    'KrasserChris',
-  ];
-// List<String> friendsid = ['#32423', '#2342','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris','Chris', 'KrasserChris',];
-  void addFriend(String friend) async {
-    setState(() {
-      friendsname.add(friend);
-    });
-    //print(await DatabaseService(widget.userID).addFriend(widget.userID, friend));
-    addFriendReturn = await DatabaseService(widget.userID).addFriend(friend);
-    if (addFriendReturn == false) {
+  Map<String, String> userFriendName;
+
+  void addFriend(String userFriendToken) async {
+    userFriendName = await DatabaseService(widget.userID).addFriend(userFriendToken);
+    if (userFriendName == null) {
       showDialog<void>(
           context: context,
           builder: (BuildContext context) {
@@ -147,10 +133,14 @@ class _FriendListState extends State<FriendList> {
               ),
             );
           });
+    } else {
+      setState(() {
+        widget.userFriends[userFriendName.keys.toList().elementAt(0).toString()] = userFriendName.values.toList().elementAt(0).toString();
+      });
     }
   }
 
-  void deleteFriend(int index) {
+  void deleteFriend(String friendUserID) {
     showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -179,11 +169,13 @@ class _FriendListState extends State<FriendList> {
             TextButton(
               child: Text(
                 'Yes',
-                style: TextStyle(color: kTextColor),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
+                DatabaseService(widget.userID).deleteFriend(friendUserID);
                 setState(() {
-                  friendsname.removeAt(index);
+                  widget.userFriends.remove(friendUserID);
+                  print(widget.userFriends.values.toList().toString());
                 });
                 Navigator.of(context).pop();
               },
@@ -191,7 +183,7 @@ class _FriendListState extends State<FriendList> {
             TextButton(
               child: Text(
                 'No',
-                style: TextStyle(color: kTextColor),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -225,10 +217,11 @@ class _FriendListState extends State<FriendList> {
           child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
-              itemCount: friendsname.length,
+              itemCount: widget.userFriends.length,
               itemBuilder: (context, i) {
-                return Friend(friendsname[i], () {
-                  deleteFriend(i);
+                return Friend(widget.userFriends.values.toList()[i], () {
+                  String key = widget.userFriends.keys.toList()[i].toString();
+                  deleteFriend(key);
                 });
               }),
         ),
@@ -247,10 +240,10 @@ class Friend extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: kSecondaryColor,
+          color: kFifthColor,
           borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
         title: Text(
           friendName,
           style: TextStyle(
