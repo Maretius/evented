@@ -93,6 +93,7 @@ class DatabaseService {
   Future<Map<String,String>> addFriend(String userFriendToken) async {
     String userFriendName;
      var result = await users.where("userToken", isEqualTo: userFriendToken).limit(1).get();
+     print(result.docs.length);
      // Check if User exists
      if (result.docs.length == 0) {
        return null;
@@ -103,6 +104,7 @@ class DatabaseService {
        });
        String query = "userFriends." + userFriendID;
        result = await users.where(query, isEqualTo: userFriendName).limit(1).get();
+       print(result.docs.length);
        // Check if Friend already exist
        if (result.docs.length == 0) {
          users.doc(userID).update({

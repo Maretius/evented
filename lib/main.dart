@@ -22,7 +22,7 @@ class _EventedState extends State<Evented> {
   User user;
   DatabaseService database;
   bool isLoggedIn = false;
-  String localUserID = '';
+  String localUserID;
   String localUserName = '';
   LocalUser databaseUser;
 
@@ -35,8 +35,11 @@ class _EventedState extends State<Evented> {
   @override
   void initState() {
     super.initState();
-
-    autoLogIn();
+    if (localUserID != null) {
+      connectToFirebase();
+    } else {
+      autoLogIn();
+    }
   }
 
   void autoLogIn() async {
@@ -107,8 +110,8 @@ class _EventedState extends State<Evented> {
                 size: 28.0,
               ),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GoogleLogin()));
+/*                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GoogleLogin()));*/
               },
             ),
             IconButton(
@@ -120,7 +123,11 @@ class _EventedState extends State<Evented> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Contacts(localUserID, localUserID.substring(localUserID.length - 6), databaseUser.userName, databaseUser.userFriends)));
+                        builder: (context) => Contacts(
+                            localUserID,
+                            localUserID.substring(localUserID.length - 6),
+                            databaseUser.userName,
+                            databaseUser.userFriends)));
               },
             ),
             IconButton(
@@ -181,7 +188,8 @@ class _EventedState extends State<Evented> {
                                     child: CircularProgressIndicator());
                               } else {
                                 // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                                Map<String, dynamic> items = snapshot.data.data();
+                                Map<String, dynamic> items =
+                                    snapshot.data.data();
                                 var userDocument = snapshot.data;
                                 //userDocument["eventName"]
                                 return SizedBox(
@@ -191,14 +199,36 @@ class _EventedState extends State<Evented> {
                                       scrollDirection: Axis.vertical,
                                       itemCount: 1,
                                       itemBuilder: (context, i) {
-                                        //String key = items.keys.elementAt(i);
+                                        Map<String, dynamic> eventStatus =
+                                            userDocument["eventStatus"];
+                                        Map<String, dynamic> eventUsers =
+                                            userDocument["eventUsers"];
+                                        List<dynamic> eventInvitedUsers =
+                                            userDocument["eventInvitedUsers"];
+                                        Map<String, String> UserWithAnswer = {};
+                                        String userkey = "";
+                                        String username = "";
+                                        String useranswer = "";
+                                        for (var u = 0;
+                                            u < eventUsers.length;
+                                            u++) {
+                                          userkey =
+                                              eventInvitedUsers.elementAt(u);
+                                          username = eventUsers[userkey];
+                                          useranswer = eventStatus[userkey];
+                                          UserWithAnswer[username] = useranswer;
+                                        }
+
+                                        var datetime =
+                                            userDocument["eventDateTime"]
+                                                .toDate();
                                         return SingleEvent(
                                           userDocument["eventIcon"],
                                           userDocument["eventName"],
                                           userDocument["eventDetails"],
-                                          DateTime.now(),
+                                          datetime,
                                           "promised",
-                                          null,
+                                          UserWithAnswer,
                                         );
                                       }),
                                 );
