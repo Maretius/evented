@@ -115,7 +115,7 @@ class _FriendListState extends State<FriendList> {
   Map<String, String> userFriendName;
 
   void addFriend(String userFriendToken) async {
-    userFriendName = await DatabaseService(widget.userID).addFriend(userFriendToken);
+    userFriendName = await DatabaseService(widget.userID).addFriend(userFriendToken, widget.userFriends.keys.toList());
     if (userFriendName == null) {
       showDialog<void>(
           context: context,

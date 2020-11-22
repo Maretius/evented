@@ -90,7 +90,7 @@ class DatabaseService {
     return events.doc(eventID).snapshots();
   }
 
-  Future<Map<String,String>> addFriend(String userFriendToken) async {
+  Future<Map<String,String>> addFriend(String userFriendToken, List<String> userFriendIDs) async {
     String userFriendName;
      var result = await users.where("userToken", isEqualTo: userFriendToken).limit(1).get();
      // Check if User exists
@@ -102,16 +102,15 @@ class DatabaseService {
           userFriendName = value.data()["userName"];
        });
        String query = "userFriends." + userFriendID;
-       result = await users.where(query, isEqualTo: userFriendName).limit(1).get();
        // Check if Friend already exist
-       if (result.docs.length == 0) {
+       if (userFriendIDs.contains(userFriendID)){
+         return null;
+       } else {
          users.doc(userID).update({
            query : userFriendName,
          });
          Map<String, String> map = {userFriendID: userFriendName};
          return map;
-       } else {
-         return null;
        }
      }
   }
