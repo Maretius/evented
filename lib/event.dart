@@ -601,7 +601,7 @@ class InvitedFriendTask extends StatelessWidget {
   }
 }
 
-// TODO: Bereist eingestellte Details übergeben und vorher anzeigen
+// TODO: Bereits eingestellte Details übergeben und vorher anzeigen
 class EventDetails extends StatefulWidget {
   String eventDetails;
   EventDetails();

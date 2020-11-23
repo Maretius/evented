@@ -1,4 +1,3 @@
-import 'package:evented/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
@@ -285,7 +284,7 @@ class _EventedState extends State<Evented> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => NewEvent(localUserID)));
+                MaterialPageRoute(builder: (context) => NewEvent(localUserID, databaseUser.userName, databaseUser.userFriends)));
           },
           child: Icon(
             Icons.add_rounded,

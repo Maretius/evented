@@ -1,15 +1,14 @@
-import 'package:evented/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-
 import 'constants.dart';
 import 'newEventFriends.dart';
-// import 'main.dart';
 
 class NewEvent extends StatefulWidget {
   final String userID;
-  const NewEvent(this.userID);
+  final String userName;
+  final Map<String, String> userFriends;
+  const NewEvent(this.userID, this.userName, this.userFriends);
   @override
   _NewEventState createState() => _NewEventState();
 }
@@ -58,7 +57,7 @@ class _NewEventState extends State<NewEvent> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewEventFriends(widget.userID, _event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
+                        builder: (context) => NewEventFriends(widget.userID, widget.userName, widget.userFriends, _event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
                   );
                 }
               },
@@ -89,15 +88,18 @@ class _NewEventState extends State<NewEvent> {
                             width: MediaQuery.of(context).size.width * 0.18,
                             child: TextFormField(
                               validator: (value) {
-                                final RegExp emojiregex = new RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+                                final RegExp emojiregex = new RegExp(
+                                    r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
                                 if (value.isEmpty) {
                                   return 'Please enter Eventicon';
-                                } else if (!emojiregex.hasMatch(value) || value.length > 2){
+                                } else if (!emojiregex.hasMatch(value) ||
+                                    value.length > 2) {
                                   return '1 Emoji';
                                 }
                                 return null;
                               },
-                              onSaved: (val) => setState(() => _event.eventIcon = val),
+                              onSaved: (val) =>
+                                  setState(() => _event.eventIcon = val),
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -117,7 +119,8 @@ class _NewEventState extends State<NewEvent> {
                                 }
                                 return null;
                               },
-                              onSaved: (val) => setState(() => _event.eventName = val),
+                              onSaved: (val) =>
+                                  setState(() => _event.eventName = val),
                               maxLength: 20,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -137,7 +140,8 @@ class _NewEventState extends State<NewEvent> {
                         }
                         return null;
                       },
-                      onSaved: (val) => setState(() => _event.eventDetails = val),
+                      onSaved: (val) =>
+                          setState(() => _event.eventDetails = val),
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
                       maxLength: 200,
@@ -149,12 +153,13 @@ class _NewEventState extends State<NewEvent> {
                     ),
                     DateTimeField(
                       validator: (value) {
-                        if (value == null){
+                        if (value == null) {
                           return 'Please enter Date & Time';
                         }
                         return null;
                       },
-                      onSaved: (val) => setState(() => _event.eventDateTime = val),
+                      onSaved: (val) =>
+                          setState(() => _event.eventDateTime = val),
                       // URL: https://pub.dev/packages/datetime_picker_formfield
                       format: dateFormat,
                       onShowPicker: (context, currentValue) async {
@@ -181,13 +186,15 @@ class _NewEventState extends State<NewEvent> {
                           labelText: "Eventdate & Time"),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 2.0, horizontal: 0.0),
                             child: TextFormField(
                               controller: _controller,
                               onFieldSubmitted: (value) {

@@ -49,20 +49,30 @@ class DatabaseService {
   final CollectionReference users = FirebaseFirestore.instance.collection('users');
   final CollectionReference events = FirebaseFirestore.instance.collection('events');
 
-  Future addEvent(String eventIcon, String eventTitle, String eventDetails, DateTime eventDateTime, List<String> eventTasks, Map<String, bool> eventMembers,) async {
+  Future addEvent(String userName, String eventIcon, String eventTitle, String eventDetails, DateTime eventDateTime, List<String> eventTasks, Map<String, bool> eventMembers,) async {
+
+    print("Eventname: " + eventTitle + " ; EventFriends: " + eventMembers.toString() + " ; EventTasks: " + eventTasks.toString());
+
+    Map<String, String> eventTasksUser = {};
+    eventTasks.forEach((element) {
+      eventTasksUser[element] = "null";
+    });
+
+    Map<String, String> eventStatus = {};
+
 
     return await events.doc().set({
       "eventName": eventTitle,
-      "eventIcon": eventIcon,
-      "eventDateTime": eventDateTime,
-      "eventDetails": eventDetails,
-      "eventTasksUnassigned": eventTasks,
-      "eventUser": eventMembers,
-
-      // "eventAdmin" : userID,
-      // "eventUsers": eventUsers,
+      "eventDetails" : eventDetails,
+      "eventIcon" : eventIcon,
+      "eventDateTime" : eventDateTime,
+      "eventAdmin" : userID,
+      "eventTasksUser" : eventTasksUser,
+      "eventStatus" : eventStatus,
+      // "eventUsers" : eventMembers,
     });
   }
+
 
   Future addUser() async {
     String userToken = userID.substring(userID.length - 6);

@@ -6,12 +6,14 @@ import 'database.dart';
 
 class NewEventFriends extends StatelessWidget {
   final String userID;
+  final String userName;
+  final Map<String, String> userFriends;
   final String eventIcon;
   final String eventTitle;
   final String eventDetails;
   final DateTime eventDateTime;
   final List<String> eventTask;
-  const NewEventFriends(this.userID, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
+  const NewEventFriends(this.userID,this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
 
   Map<String, bool> get eventFriends => null;
 
@@ -36,7 +38,10 @@ class NewEventFriends extends StatelessWidget {
         actions: <Widget>[
           IconButton(
               onPressed: () {
-                DatabaseService(userID).addEvent(eventIcon, eventTitle, eventDetails, eventDateTime, eventTask, eventFriends);
+
+                // TODO hier soll er sich die Freundesliste aus EventFriends holen
+
+                DatabaseService(userID).addEvent(userName, eventIcon, eventTitle, eventDetails, eventDateTime, eventTask, eventFriends);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Evented()),
@@ -47,7 +52,7 @@ class NewEventFriends extends StatelessWidget {
         backgroundColor: kPrimaryColor,
       ),
       body: Center(
-        child: EventFriends(),
+        child: EventFriends(userFriends),
       ),
       backgroundColor: kPrimaryBackgroundColor,
     );
@@ -55,23 +60,28 @@ class NewEventFriends extends StatelessWidget {
 }
 
 class EventFriends extends StatefulWidget {
+  final Map<String, String> userFriends;
+  const EventFriends(this.userFriends);
   @override
   _EventFriendsState createState() => _EventFriendsState();
 }
 
 class _EventFriendsState extends State<EventFriends> {
+  Map<String, bool> eventFriends = {};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.userFriends.forEach((key, value) {
+      eventFriends[value] = false;
+    });
+  }
+
   void toggleMember(String key) {
     setState(() {
       eventFriends.update(key, (bool done) => !done);
     });
   }
-
-  Map<String, bool> eventFriends = {
-    'Jeremy': false,
-    'Hans Jürgen': false,
-    'Gertrude': false,
-    'Peter Silie': false,
-  };
 
   @override
   Widget build(BuildContext context) {
