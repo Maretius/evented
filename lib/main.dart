@@ -209,13 +209,24 @@ class _EventedState extends State<Evented> {
                                         String userkey = "";
                                         String username = "";
                                         String useranswer = "";
-                                        for (var u = 0;
-                                            u < eventUsers.length;
-                                            u++) {
-                                          userkey =
-                                              eventInvitedUsers.elementAt(u);
+                                        String adminid =
+                                            userDocument["eventAdmin"];
+                                        String adminname =
+                                            userDocument["eventAdminName"];
+                                        String adminstatus = "promised";
+                                        String localUserStatus = "";
+                                        bool localUserIsAdmin = false;
+                                        if (adminid == localUserID) {
+                                          localUserIsAdmin = true;
+                                        }
+                                        UserWithAnswer[adminname] = adminstatus;
+                                        for (var u = 0; u < eventUsers.length; u++) {
+                                          userkey = eventInvitedUsers.elementAt(u);
                                           username = eventUsers[userkey];
                                           useranswer = eventStatus[userkey];
+                                          if (userkey == localUserID) {
+                                            localUserStatus = useranswer;
+                                          }
                                           UserWithAnswer[username] = useranswer;
                                         }
 
@@ -227,7 +238,7 @@ class _EventedState extends State<Evented> {
                                           userDocument["eventName"],
                                           userDocument["eventDetails"],
                                           datetime,
-                                          "promised",
+                                          localUserStatus,
                                           UserWithAnswer,
                                         );
                                       }),
