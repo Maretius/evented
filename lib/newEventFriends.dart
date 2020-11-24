@@ -4,7 +4,7 @@ import 'main.dart';
 import 'database.dart';
 //import 'newEvent.dart';
 
-class NewEventFriends extends StatelessWidget {
+class NewEventFriends extends StatefulWidget {
   final String userID;
   final String userName;
   final Map<String, String> userFriends;
@@ -13,66 +13,20 @@ class NewEventFriends extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final List<String> eventTask;
-  const NewEventFriends(this.userID, this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
-
-  Map<String, bool> get eventFriends => null;
+  const NewEventFriends(this.userID,this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.keyboard_backspace_rounded),
-        ),
-        title: Text(
-          eventTitle,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24.0,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-              onPressed: () {
-                // TODO hier soll er sich die Freundesliste aus EventFriends holen
-
-                DatabaseService(userID).addEvent(userName, eventIcon, eventTitle, eventDetails, eventDateTime, eventTask, eventFriends);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Evented()),
-                );
-              },
-              icon: Icon(Icons.check_rounded)),
-        ],
-        backgroundColor: kPrimaryColor,
-      ),
-      body: Center(
-        child: EventFriends(userFriends),
-      ),
-      backgroundColor: kPrimaryBackgroundColor,
-    );
-  }
+  _NewEventFriendsState createState() => _NewEventFriendsState();
 }
 
-class EventFriends extends StatefulWidget {
-  final Map<String, String> userFriends;
-  const EventFriends(this.userFriends);
-  @override
-  _EventFriendsState createState() => _EventFriendsState();
-}
-
-class _EventFriendsState extends State<EventFriends> {
+class _NewEventFriendsState extends State<NewEventFriends> {
   Map<String, bool> eventFriends = {};
 
   @override
   void initState() {
     super.initState();
     widget.userFriends.forEach((key, value) {
-      eventFriends[value] = false;
+      eventFriends[key] = false;
     });
   }
 
@@ -84,35 +38,70 @@ class _EventFriendsState extends State<EventFriends> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: eventFriends.length,
-      itemBuilder: (context, i) {
-        String key = eventFriends.keys.elementAt(i);
-        return EventFriend(key, eventFriends[key], () {
-          toggleMember(key);
-        });
-      },
+
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.keyboard_backspace_rounded),
+        ),
+        title: Text(
+          widget.eventTitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24.0,
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                DatabaseService(widget.userID).addEvent(widget.userName, widget.eventIcon, widget.eventTitle, widget.eventDetails, widget.eventDateTime, widget.eventTask, widget.userFriends, eventFriends);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Evented()),
+                );
+              },
+              icon: Icon(Icons.check_rounded)),
+        ],
+        backgroundColor: kPrimaryColor,
+      ),
+      body: Center(
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: eventFriends.length,
+          itemBuilder: (context, i) {
+            String eventFriendID = eventFriends.keys.elementAt(i);
+            String eventFriendUserName = widget.userFriends[eventFriendID];
+            return EventFriend(eventFriendUserName, eventFriends[eventFriendID], () {toggleMember(eventFriendID);});
+          },
+        ),
+      ),
+      backgroundColor: kPrimaryBackgroundColor,
     );
   }
 }
 
 class EventFriend extends StatelessWidget {
-  final String friendName;
+  final String friendUserName;
   final bool friendMember;
   final Function friendToggle;
-  const EventFriend(this.friendName, this.friendMember, this.friendToggle);
+  const EventFriend(this.friendUserName, this.friendMember, this.friendToggle);
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
       margin: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: kPrimaryColor, width: 2), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor,
+          border: Border.all(color: kPrimaryColor, width: 2),
+          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
-          friendName,
+          friendUserName,
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.white,

@@ -49,34 +49,44 @@ class DatabaseService {
   final CollectionReference users = FirebaseFirestore.instance.collection('users');
   final CollectionReference events = FirebaseFirestore.instance.collection('events');
 
-  Future addEvent(
-    String userName,
-    String eventIcon,
-    String eventTitle,
-    String eventDetails,
-    DateTime eventDateTime,
-    List<String> eventTasks,
-    Map<String, bool> eventMembers,
-  ) async {
-    print("Eventname: " + eventTitle + " ; EventFriends: " + eventMembers.toString() + " ; EventTasks: " + eventTasks.toString());
+  Future addEvent(String userName, String eventIcon, String eventTitle, String eventDetails, DateTime eventDateTime, List<String> eventTasks, Map<String, String> userFriends, Map<String, bool> eventMembers,) async {
 
+    Map<String, String> eventUsers = {userID: userName};
     Map<String, String> eventTasksUser = {};
-    eventTasks.forEach((element) {
-      eventTasksUser[element] = "null";
-    });
-
     Map<String, String> eventStatus = {};
 
-    return await events.doc().set({
+    userFriends.forEach((key, value) {
+      if (eventMembers[key] == true) {
+        eventUsers[key] = value;
+      }
+    });
+    eventTasks.forEach((element) {
+      eventTasksUser[element] = null;
+    });
+    eventUsers.forEach((key, value) {
+      if (key == userID) {
+        eventStatus[key] = "admin";
+      } else {
+        eventStatus[key] = "not decided";
+      }
+    });
+
+    print("Eventname: " + eventTitle + "; EventUsers: " + eventUsers.toString() + "; EventTasks: " + eventTasksUser.toString() + "; EventStatus: " + eventStatus.toString());
+
+    final result = await events.add({
       "eventName": eventTitle,
       "eventDetails": eventDetails,
       "eventIcon": eventIcon,
       "eventDateTime": eventDateTime,
-      "eventAdmin": userID,
+      "eventUsers" : eventUsers,
       "eventTasksUser": eventTasksUser,
       "eventStatus": eventStatus,
-      // "eventUsers" : eventMembers,
     });
+
+    eventUsers.forEach((key, value) { 
+      users.doc(key).update({"userEvents": FieldValue.arrayUnion([result.id])});
+    }); 
+
   }
 
   Future addUser() async {

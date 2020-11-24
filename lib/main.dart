@@ -22,7 +22,6 @@ class _EventedState extends State<Evented> {
   DatabaseService database;
   bool isLoggedIn = false;
   String localUserID;
-  String localUserName = '';
   LocalUser databaseUser;
 
   Future<void> connectToFirebase() async {
