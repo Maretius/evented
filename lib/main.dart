@@ -198,21 +198,18 @@ class _EventedState extends State<Evented> {
                                         String userkey = "";
                                         String username = "";
                                         String useranswer = "";
-                                        String adminid = userDocument["eventAdmin"];
-                                        String adminname = userDocument["eventAdminName"];
-                                        String adminstatus = "promised";
                                         String localUserStatus = "";
                                         bool localUserIsAdmin = false;
-                                        if (adminid == localUserID) {
-                                          localUserIsAdmin = true;
-                                        }
-                                        UserWithAnswer[adminname] = adminstatus;
+
                                         for (var u = 0; u < eventUsers.length; u++) {
                                           userkey = eventInvitedUsers.elementAt(u);
                                           username = eventUsers[userkey];
                                           useranswer = eventStatus[userkey];
                                           if (userkey == localUserID) {
                                             localUserStatus = useranswer;
+                                          }
+                                          if (useranswer == "Admin" && userkey == localUserID) {
+                                            localUserIsAdmin = true;
                                           }
                                           UserWithAnswer[username] = useranswer;
                                         }

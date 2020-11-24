@@ -424,6 +424,60 @@ class InvitedFriend extends StatelessWidget {
           },
         ),
       );
+    } else if (status == "Admin") {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+        decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+          title: Text(
+            friendName,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+          trailing: Icon(
+            Icons.person_rounded,
+            size: 32.0,
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext cxt) {
+                return SimpleDialog(
+                    backgroundColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                    ),
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              friendName,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      ),
+                    ]);
+              },
+            );
+          },
+        ),
+      );
     } else if (status == "called off") {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12),
