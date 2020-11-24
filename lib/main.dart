@@ -119,14 +119,7 @@ class _EventedState extends State<Evented> {
                 size: 28.0,
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Contacts(
-                            localUserID,
-                            localUserID.substring(localUserID.length - 6),
-                            databaseUser.userName,
-                            databaseUser.userFriends)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Contacts(localUserID, localUserID.substring(localUserID.length - 6), databaseUser.userName, databaseUser.userFriends)));
               },
             ),
             IconButton(
@@ -141,9 +134,7 @@ class _EventedState extends State<Evented> {
                     return SimpleDialog(
                         backgroundColor: kPrimaryColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.vertical(
-                              top: Radius.circular(20.0),
-                              bottom: Radius.circular(20.0)),
+                          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                         ),
                         children: [
                           RaisedButton(
@@ -180,15 +171,12 @@ class _EventedState extends State<Evented> {
                           String eventID = databaseUser.userEvents[i];
                           return StreamBuilder<DocumentSnapshot>(
                             stream: database.getEvents(eventID),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                               if (!snapshot.hasData) {
-                                return Center(
-                                    child: CircularProgressIndicator());
+                                return Center(child: CircularProgressIndicator());
                               } else {
                                 // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                                Map<String, dynamic> items =
-                                    snapshot.data.data();
+                                Map<String, dynamic> items = snapshot.data.data();
                                 var userDocument = snapshot.data;
                                 //userDocument["eventName"]
                                 return SizedBox(
@@ -198,20 +186,20 @@ class _EventedState extends State<Evented> {
                                       scrollDirection: Axis.vertical,
                                       itemCount: 1,
                                       itemBuilder: (context, i) {
-                                        Map<String, dynamic> eventStatus =
-                                            userDocument["eventStatus"];
-                                        Map<String, dynamic> eventUsers =
-                                            userDocument["eventUsers"];
-                                        List<dynamic> eventInvitedUsers =
-                                            userDocument["eventInvitedUsers"];
+                                        Map<String, dynamic> eventStatus = userDocument["eventStatus"];
+                                        Map<String, dynamic> eventUsers = userDocument["eventUsers"];
+
+                                        List<String> eventInvitedUsers = [];
+                                        eventUsers.forEach((key, value) {
+                                          eventInvitedUsers.add(key);
+                                        });
+
                                         Map<String, String> UserWithAnswer = {};
                                         String userkey = "";
                                         String username = "";
                                         String useranswer = "";
-                                        String adminid =
-                                            userDocument["eventAdmin"];
-                                        String adminname =
-                                            userDocument["eventAdminName"];
+                                        String adminid = userDocument["eventAdmin"];
+                                        String adminname = userDocument["eventAdminName"];
                                         String adminstatus = "promised";
                                         String localUserStatus = "";
                                         bool localUserIsAdmin = false;
@@ -229,9 +217,7 @@ class _EventedState extends State<Evented> {
                                           UserWithAnswer[username] = useranswer;
                                         }
 
-                                        var datetime =
-                                            userDocument["eventDateTime"]
-                                                .toDate();
+                                        var datetime = userDocument["eventDateTime"].toDate();
                                         return SingleEvent(
                                           userDocument["eventIcon"],
                                           userDocument["eventName"],
@@ -283,8 +269,7 @@ class _EventedState extends State<Evented> {
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => NewEvent(localUserID, databaseUser.userName, databaseUser.userFriends)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => NewEvent(localUserID, databaseUser.userName, databaseUser.userFriends)));
           },
           child: Icon(
             Icons.add_rounded,
@@ -302,8 +287,7 @@ class SingleEvent extends StatelessWidget {
   final DateTime eventDateTime;
   final String eventUserStatus;
   final Map eventUserWithAnswer;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails,
-      this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
 
   @override
   Widget build(BuildContext context) {
@@ -312,13 +296,11 @@ class SingleEvent extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),
         leading: Text(
           eventIcon,
-          style: TextStyle(
-              fontSize: 24.0, fontWeight: FontWeight.w600, color: kTextColor),
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         title: Text(
           eventTitle,
-          style: TextStyle(
-              fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
+          style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
         ),
         onTap: () {
           if (eventUserStatus == "not decided") {
@@ -329,9 +311,7 @@ class SingleEvent extends StatelessWidget {
                 return AlertDialog(
                   backgroundColor: kPrimaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0),
-                        bottom: Radius.circular(20.0)),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                   ),
                   title: Text(
                     eventTitle,
@@ -345,9 +325,7 @@ class SingleEvent extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
-                          DateFormat('dd.MM.yyyy, kk:mm')
-                                  .format(eventDateTime) +
-                              " Uhr",
+                          DateFormat('dd.MM.yyyy, kk:mm').format(eventDateTime) + " Uhr",
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
@@ -369,16 +347,7 @@ class SingleEvent extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Event(
-                                    eventIcon,
-                                    eventTitle,
-                                    eventDetails,
-                                    eventDateTime,
-                                    eventUserStatus,
-                                    eventUserWithAnswer)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer)));
                       },
                     ),
                     TextButton(
@@ -395,25 +364,13 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Event(
-                        eventIcon,
-                        eventTitle,
-                        eventDetails,
-                        eventDateTime,
-                        eventUserStatus,
-                        eventUserWithAnswer)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer)));
           }
         },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color:
-              eventUserStatus == "not decided" ? kThirdColor : kSecondaryColor,
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: eventUserStatus == "not decided" ? kThirdColor : kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
     );
   }
 }

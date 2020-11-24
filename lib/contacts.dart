@@ -15,9 +15,7 @@ class Contacts extends StatelessWidget {
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_rounded)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
         title: Text(
           "Contacts",
           style: TextStyle(
@@ -123,12 +121,14 @@ class _FriendListState extends State<FriendList> {
             return AlertDialog(
               backgroundColor: kFourthColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusDirectional.vertical(
-                    top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
               ),
-              title: Text("Error", style: TextStyle(color: Colors.white),),
+              title: Text(
+                "Error",
+                style: TextStyle(color: Colors.white),
+              ),
               content: Text(
-                  "Username does not exists or friend does already exist!",
+                "Username does not exists or friend does already exist!",
                 style: TextStyle(color: Colors.white, fontSize: 18.0),
               ),
             );
@@ -148,8 +148,7 @@ class _FriendListState extends State<FriendList> {
         return AlertDialog(
           backgroundColor: kPrimaryColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusDirectional.vertical(
-                top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+            borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
           ),
           title: Text(
             'Delete Friend?',
@@ -203,14 +202,9 @@ class _FriendListState extends State<FriendList> {
           margin: const EdgeInsets.all(20.0),
           child: TextField(
             onSubmitted: addFriend,
-            decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                border: OutlineInputBorder(),
-                labelText: "Add Friend with Token"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Add Friend with Token"),
           ),
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         ),
         SizedBox(
           height: 300,
@@ -239,9 +233,7 @@ class Friend extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color: kFifthColor,
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: kFifthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
         title: Text(

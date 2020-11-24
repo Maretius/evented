@@ -38,9 +38,7 @@ class _NewEventState extends State<NewEvent> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.keyboard_backspace_rounded)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.keyboard_backspace_rounded)),
         title: Text(
           "New Event",
           style: TextStyle(
@@ -57,7 +55,8 @@ class _NewEventState extends State<NewEvent> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewEventFriends(widget.userID, widget.userName, widget.userFriends, _event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
+                        builder: (context) =>
+                            NewEventFriends(widget.userID, widget.userName, widget.userFriends, _event.eventIcon, _event.eventName, _event.eventDetails, _event.eventDateTime, _event.eventTasks)),
                   );
                 }
               },
@@ -88,18 +87,15 @@ class _NewEventState extends State<NewEvent> {
                             width: MediaQuery.of(context).size.width * 0.18,
                             child: TextFormField(
                               validator: (value) {
-                                final RegExp emojiregex = new RegExp(
-                                    r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+                                final RegExp emojiregex = new RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
                                 if (value.isEmpty) {
                                   return 'Please enter Eventicon';
-                                } else if (!emojiregex.hasMatch(value) ||
-                                    value.length > 2) {
+                                } else if (!emojiregex.hasMatch(value) || value.length > 2) {
                                   return '1 Emoji';
                                 }
                                 return null;
                               },
-                              onSaved: (val) =>
-                                  setState(() => _event.eventIcon = val),
+                              onSaved: (val) => setState(() => _event.eventIcon = val),
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -119,8 +115,7 @@ class _NewEventState extends State<NewEvent> {
                                 }
                                 return null;
                               },
-                              onSaved: (val) =>
-                                  setState(() => _event.eventName = val),
+                              onSaved: (val) => setState(() => _event.eventName = val),
                               maxLength: 20,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -140,16 +135,11 @@ class _NewEventState extends State<NewEvent> {
                         }
                         return null;
                       },
-                      onSaved: (val) =>
-                          setState(() => _event.eventDetails = val),
+                      onSaved: (val) => setState(() => _event.eventDetails = val),
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
                       maxLength: 200,
-                      decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: "Eventdetails"),
+                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
                     ),
                     DateTimeField(
                       validator: (value) {
@@ -158,43 +148,31 @@ class _NewEventState extends State<NewEvent> {
                         }
                         return null;
                       },
-                      onSaved: (val) =>
-                          setState(() => _event.eventDateTime = val),
+                      onSaved: (val) => setState(() => _event.eventDateTime = val),
                       // URL: https://pub.dev/packages/datetime_picker_formfield
                       format: dateFormat,
                       onShowPicker: (context, currentValue) async {
-                        final date = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime.now(),
-                            initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
+                        final date = await showDatePicker(context: context, firstDate: DateTime.now(), initialDate: currentValue ?? DateTime.now(), lastDate: DateTime(2100));
                         if (date != null) {
                           final time = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay.fromDateTime(
-                                currentValue ?? DateTime.now()),
+                            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                           );
                           return DateTimeField.combine(date, time);
                         } else {
                           return currentValue;
                         }
                       },
-                      decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: "Eventdate & Time"),
+                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate & Time"),
                     ),
                     Container(
-                      margin:
-                          EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
+                      margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.0, horizontal: 0.0),
+                            padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
                             child: TextFormField(
                               controller: _controller,
                               onFieldSubmitted: (value) {
@@ -202,11 +180,7 @@ class _NewEventState extends State<NewEvent> {
                                 _controller.clear();
                               },
                               scrollPadding: EdgeInsets.only(bottom: 10.0),
-                              decoration: InputDecoration(
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  border: OutlineInputBorder(),
-                                  labelText: "Eventtasks"),
+                              decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
                             ),
                           ),
                           SizedBox(
@@ -244,9 +218,7 @@ class TaskItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color: kPrimaryColor,
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: kPrimaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(

@@ -13,7 +13,7 @@ class NewEventFriends extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final List<String> eventTask;
-  const NewEventFriends(this.userID,this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
+  const NewEventFriends(this.userID, this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
 
   Map<String, bool> get eventFriends => null;
 
@@ -38,7 +38,6 @@ class NewEventFriends extends StatelessWidget {
         actions: <Widget>[
           IconButton(
               onPressed: () {
-
                 // TODO hier soll er sich die Freundesliste aus EventFriends holen
 
                 DatabaseService(userID).addEvent(userName, eventIcon, eventTitle, eventDetails, eventDateTime, eventTask, eventFriends);
@@ -109,9 +108,7 @@ class EventFriend extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
       margin: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor,
-          border: Border.all(color: kPrimaryColor, width: 2),
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: friendMember ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: kPrimaryColor, width: 2), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(

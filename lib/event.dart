@@ -12,16 +12,13 @@ class Event extends StatelessWidget {
   final DateTime eventDateTime;
   final String eventUserStatus;
   final Map eventUserWithAnswer;
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails,
-      this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_rounded)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
         centerTitle: true,
         title: Text(
           eventTitle,
@@ -50,9 +47,7 @@ class Event extends StatelessWidget {
                     return SimpleDialog(
                         backgroundColor: kPrimaryColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.vertical(
-                              top: Radius.circular(20.0),
-                              bottom: Radius.circular(20.0)),
+                          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                         ),
                         children: [
                           Container(
@@ -67,8 +62,7 @@ class Event extends StatelessWidget {
                               ],
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 5),
-                            margin:
-                                const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                            margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                           ),
                         ]);
                   },
@@ -109,26 +103,19 @@ class Event extends StatelessWidget {
             backgroundColor: kPrimaryColor,
             context: context,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusDirectional.vertical(
-                  top: Radius.circular(20.0), bottom: Radius.zero),
+              borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
             ),
             builder: (context) => new GridView.count(
               shrinkWrap: true,
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
-                ButtonContainer(Icons.event_note_rounded, "Change Details",
-                    "changeDetails", eventDetails),
-                ButtonContainer(Icons.person_add_alt_1_rounded,
-                    "Invite Friends", "inviteFriends", eventDetails),
-                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask",
-                    eventDetails),
-                ButtonContainer(Icons.date_range_rounded, "Change Date",
-                    "changeDate", eventDetails),
-                ButtonContainer(Icons.access_time_rounded, "Change Time",
-                    "changeTime", eventDetails),
-                ButtonContainer(Icons.delete_forever_rounded, "Delete Event",
-                    "deleteEvent", eventDetails),
+                ButtonContainer(Icons.event_note_rounded, "Change Details", "changeDetails", eventDetails),
+                ButtonContainer(Icons.person_add_alt_1_rounded, "Invite Friends", "inviteFriends", eventDetails),
+                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask", eventDetails),
+                ButtonContainer(Icons.date_range_rounded, "Change Date", "changeDate", eventDetails),
+                ButtonContainer(Icons.access_time_rounded, "Change Time", "changeTime", eventDetails),
+                ButtonContainer(Icons.delete_forever_rounded, "Delete Event", "deleteEvent", eventDetails),
               ],
             ),
           );
@@ -145,8 +132,7 @@ class Event extends StatelessWidget {
 }
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer(
-      this.buttonIcon, this.buttonText, this.buttonTheme, this.eventDetails);
+  const ButtonContainer(this.buttonIcon, this.buttonText, this.buttonTheme, this.eventDetails);
   final IconData buttonIcon;
   final String buttonText;
   final String buttonTheme;
@@ -169,8 +155,7 @@ class ButtonContainer extends StatelessWidget {
                   backgroundColor: kPrimaryColor,
                   context: context,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0), bottom: Radius.zero),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => Wrap(
                     children: [
@@ -184,8 +169,7 @@ class ButtonContainer extends StatelessWidget {
                   backgroundColor: kPrimaryColor,
                   context: context,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0), bottom: Radius.zero),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => new Center(
                     child: EventFriends(),
@@ -197,8 +181,7 @@ class ButtonContainer extends StatelessWidget {
                   backgroundColor: kPrimaryColor,
                   context: context,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0), bottom: Radius.zero),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => new Center(
                     child: EventTasks(),
@@ -209,8 +192,7 @@ class ButtonContainer extends StatelessWidget {
                   backgroundColor: kPrimaryColor,
                   context: context,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0), bottom: Radius.zero),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => Wrap(
                     children: [
@@ -223,8 +205,7 @@ class ButtonContainer extends StatelessWidget {
                   backgroundColor: kPrimaryColor,
                   context: context,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0), bottom: Radius.zero),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => Wrap(
                     children: [
@@ -240,9 +221,7 @@ class ButtonContainer extends StatelessWidget {
                     return AlertDialog(
                       backgroundColor: kPrimaryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusDirectional.vertical(
-                            top: Radius.circular(20.0),
-                            bottom: Radius.circular(20.0)),
+                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                       ),
                       title: Text(
                         'Delete Event?',
@@ -302,8 +281,7 @@ class InvitedFriendsList extends StatefulWidget {
   Map eventUserWithAnswer;
   InvitedFriendsList(this.eventUserWithAnswer);
   @override
-  _InvitedFriendsListState createState() =>
-      _InvitedFriendsListState(eventUserWithAnswer);
+  _InvitedFriendsListState createState() => _InvitedFriendsListState(eventUserWithAnswer);
 }
 
 class _InvitedFriendsListState extends State<InvitedFriendsList> {
@@ -341,9 +319,7 @@ class InvitedFriend extends StatelessWidget {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12),
         margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(
-            color: kSecondaryColor,
-            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
         child: ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 0.0),
           title: Text(
@@ -364,9 +340,7 @@ class InvitedFriend extends StatelessWidget {
                 return SimpleDialog(
                     backgroundColor: kPrimaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(
-                          top: Radius.circular(20.0),
-                          bottom: Radius.circular(20.0)),
+                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                     ),
                     children: [
                       Container(
@@ -400,9 +374,7 @@ class InvitedFriend extends StatelessWidget {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12),
         margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(
-            color: kFifthColor,
-            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        decoration: BoxDecoration(color: kFifthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
         child: ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 0.0),
           title: Text(
@@ -423,9 +395,7 @@ class InvitedFriend extends StatelessWidget {
                 return SimpleDialog(
                     backgroundColor: kPrimaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(
-                          top: Radius.circular(20.0),
-                          bottom: Radius.circular(20.0)),
+                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                     ),
                     children: [
                       Container(
@@ -458,9 +428,7 @@ class InvitedFriend extends StatelessWidget {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 12),
         margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(
-            color: kFourthColor,
-            borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+        decoration: BoxDecoration(color: kFourthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
         child: ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 0.0),
           title: Text(
@@ -481,9 +449,7 @@ class InvitedFriend extends StatelessWidget {
                 return SimpleDialog(
                     backgroundColor: kPrimaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(
-                          top: Radius.circular(20.0),
-                          bottom: Radius.circular(20.0)),
+                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                     ),
                     children: [
                       Container(
@@ -576,9 +542,7 @@ class InvitedFriendTask extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kPrimaryBackgroundColor,
-          border: Border.all(color: done ? kPrimaryColor : Colors.white),
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: done ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? kPrimaryColor : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
@@ -624,11 +588,7 @@ class _EventDetailsState extends State<EventDetails> {
             keyboardType: TextInputType.multiline,
             maxLines: 3,
             maxLength: 200,
-            decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                border: OutlineInputBorder(),
-                labelText: "Eventdetails"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
           ),
         ),
         Padding(
@@ -688,9 +648,7 @@ class _EventFriendsState extends State<EventFriends> {
                 return AlertDialog(
                   backgroundColor: kPrimaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(
-                        top: Radius.circular(20.0),
-                        bottom: Radius.circular(20.0)),
+                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                   ),
                   title: Text(
                     'Invite Friends?',
@@ -760,9 +718,7 @@ class EventFriend extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kPrimaryBackgroundColor,
-          border: Border.all(color: done ? kPrimaryColor : Colors.white),
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: done ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? kPrimaryColor : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
@@ -823,11 +779,7 @@ class _EventTasksState extends State<EventTasks> {
             child: TextField(
               onSubmitted: addTask,
               scrollPadding: EdgeInsets.only(bottom: 10.0),
-              decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(),
-                  labelText: "Eventtasks"),
+              decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
             ),
           ),
           SizedBox(
@@ -857,9 +809,7 @@ class TaskItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color: kSecondaryColor,
-          borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 2.0),
         title: Text(
@@ -899,17 +849,9 @@ class _EventDateState extends State<EventDate> {
           child: DateTimeField(
             format: dateFormat,
             onShowPicker: (context, currentValue) {
-              return showDatePicker(
-                  context: context,
-                  firstDate: DateTime(1900),
-                  initialDate: currentValue ?? DateTime.now(),
-                  lastDate: DateTime(2100));
+              return showDatePicker(context: context, firstDate: DateTime(1900), initialDate: currentValue ?? DateTime.now(), lastDate: DateTime(2100));
             },
-            decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                border: OutlineInputBorder(),
-                labelText: "Eventdate"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate"),
           ),
         ),
         Padding(
@@ -945,16 +887,11 @@ class _EventTimeState extends State<EventTime> {
           onShowPicker: (context, currentValue) async {
             final time = await showTimePicker(
               context: context,
-              initialTime:
-                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
             );
             return DateTimeField.convert(time);
           },
-          decoration: InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(),
-              labelText: "Eventtime"),
+          decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtime"),
         ),
       ),
       Padding(
