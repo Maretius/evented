@@ -12,7 +12,10 @@ class Event extends StatelessWidget {
   final DateTime eventDateTime;
   final String eventUserStatus;
   final Map eventUserWithAnswer;
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
+  final Map eventTasksUser;
+  final String eventID;
+
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventTasksUser, this.eventID);
 
   @override
   Widget build(BuildContext context) {

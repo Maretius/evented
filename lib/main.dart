@@ -223,6 +223,7 @@ class _EventedState extends State<Evented> {
                                           datetime,
                                           localUserStatus,
                                           UserWithAnswer,
+                                          userDocument["eventTasksUser"],
                                           eventID,
                                           database,
                                         );
@@ -287,9 +288,10 @@ class SingleEvent extends StatelessWidget {
   final DateTime eventDateTime;
   final String eventUserStatus;
   final Map eventUserWithAnswer;
+  final Map eventTasksUser;
   final String eventID;
   final DatabaseService database;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventID, this.database);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventTasksUser, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +369,7 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer, eventTasksUser, eventID)));
           }
         },
       ),
