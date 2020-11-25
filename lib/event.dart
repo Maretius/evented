@@ -11,11 +11,12 @@ class Event extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
-  final Map eventUserWithAnswer;
+  final Map eventUsers;
+  final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
 
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventTasksUser, this.eventID);
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +100,7 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(eventUserWithAnswer),
+      body: InvitedFriendsList(eventUsers, eventStatus),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -281,16 +282,14 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class InvitedFriendsList extends StatefulWidget {
-  Map eventUserWithAnswer;
-  InvitedFriendsList(this.eventUserWithAnswer);
+  final Map eventUsers;
+  final Map eventStatus;
+  const InvitedFriendsList(this.eventUsers, this.eventStatus);
   @override
-  _InvitedFriendsListState createState() => _InvitedFriendsListState(eventUserWithAnswer);
+  _InvitedFriendsListState createState() => _InvitedFriendsListState();
 }
 
 class _InvitedFriendsListState extends State<InvitedFriendsList> {
-  Map eventUserWithAnswer;
-  _InvitedFriendsListState(this.eventUserWithAnswer);
-
   void deleteInvitedFriend(String key) {
     setState(() {});
   }
@@ -299,10 +298,10 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.vertical,
-      itemCount: eventUserWithAnswer.length,
+      itemCount: widget.eventUsers.length,
       itemBuilder: (context, i) {
-        String key = eventUserWithAnswer.keys.elementAt(i);
-        return InvitedFriend(key, eventUserWithAnswer[key], () {
+        String key = widget.eventUsers.keys.elementAt(i);
+        return InvitedFriend(widget.eventUsers[key], widget.eventStatus[key], () {
           deleteInvitedFriend(key);
         });
       },

@@ -222,7 +222,9 @@ class _EventedState extends State<Evented> {
                                           userDocument["eventDetails"],
                                           datetime,
                                           localUserStatus,
-                                          UserWithAnswer,
+                                          databaseUser.userFriends,
+                                          eventUsers,
+                                          eventStatus,
                                           userDocument["eventTasksUser"],
                                           eventID,
                                           database,
@@ -287,11 +289,13 @@ class SingleEvent extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
-  final Map eventUserWithAnswer;
+  final Map userFriends;
+  final Map eventUsers;
+  final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
   final DatabaseService database;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventTasksUser, this.eventID, this.database);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +373,7 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer, eventTasksUser, eventID)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUsers, eventStatus, eventTasksUser, eventID)));
           }
         },
       ),
