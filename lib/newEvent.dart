@@ -18,8 +18,6 @@ class _NewEventState extends State<NewEvent> {
     setState(() {
       _event.eventTasks.add(task);
     });
-    print(widget.userID);
-    // Navigator.of(context).pop();s
   }
 
   void deleteEventTask(int index) {
@@ -176,8 +174,10 @@ class _NewEventState extends State<NewEvent> {
                             child: TextFormField(
                               controller: _controller,
                               onFieldSubmitted: (value) {
-                                addTask(value);
-                                _controller.clear();
+                                if (value != ""){
+                                  addTask(value);
+                                  _controller.clear();
+                                }
                               },
                               scrollPadding: EdgeInsets.only(bottom: 10.0),
                               decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
@@ -185,14 +185,15 @@ class _NewEventState extends State<NewEvent> {
                           ),
                           ListView.builder(
                             shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              itemCount: _event.eventTasks.length,
-                              itemBuilder: (context, i) {
-                                return TaskItem(_event.eventTasks[i], () {
-                                  deleteEventTask(i);
-                                });
+                            reverse: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            //scrollDirection: Axis.vertical,
+                            itemCount: _event.eventTasks.length,
+                            itemBuilder: (context, i) {
+                              return TaskItem(_event.eventTasks[i], () {
+                                deleteEventTask(i);
+                              });
                               },
-
                           )
                         ],
                       ),

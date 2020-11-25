@@ -20,6 +20,11 @@ class Event extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> eventTasks = [];
+    eventTasksUser.forEach((key, value) {
+      eventTasks.add(key);
+    });
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
@@ -86,14 +91,14 @@ class Event extends StatelessWidget {
                 DateFormat('dd.MM.yyyy').format(eventDateTime),
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 18,
                 ),
               ),
               Text(
                 DateFormat('kk:mm').format(eventDateTime) + " Uhr",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 18,
                 ),
               ),
             ],
@@ -114,12 +119,12 @@ class Event extends StatelessWidget {
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
-                ButtonContainer(Icons.event_note_rounded, "Change Details", "changeDetails", eventDetails),
-                ButtonContainer(Icons.person_add_alt_1_rounded, "Invite Friends", "inviteFriends", eventDetails),
-                ButtonContainer(Icons.menu_open_rounded, "Add Task", "addTask", eventDetails),
-                ButtonContainer(Icons.date_range_rounded, "Change Date", "changeDate", eventDetails),
-                ButtonContainer(Icons.access_time_rounded, "Change Time", "changeTime", eventDetails),
-                ButtonContainer(Icons.delete_forever_rounded, "Delete Event", "deleteEvent", eventDetails),
+                ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails),
+                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", null),
+                ButtonContainer(eventID, Icons.menu_open_rounded, "Add Task", eventTasks),
+                ButtonContainer(eventID, Icons.date_range_rounded, "Change Date", eventDateTime),
+                ButtonContainer(eventID, Icons.access_time_rounded, "Change Time", eventDateTime),
+                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null),
               ],
             ),
           );
@@ -136,11 +141,11 @@ class Event extends StatelessWidget {
 }
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer(this.buttonIcon, this.buttonText, this.buttonTheme, this.eventDetails);
+  ButtonContainer(this.eventID, this.buttonIcon, this.buttonText, this.eventVar);
+  final String eventID;
   final IconData buttonIcon;
   final String buttonText;
-  final String buttonTheme;
-  final String eventDetails;
+  var eventVar;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -154,7 +159,7 @@ class ButtonContainer extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              if (buttonTheme == "changeDetails") {
+              if (buttonText == "Change Details") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -167,8 +172,7 @@ class ButtonContainer extends StatelessWidget {
                     ],
                   ),
                 );
-              }
-              if (buttonTheme == "inviteFriends") {
+              } else if (buttonText == "Invite Friends") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -179,8 +183,7 @@ class ButtonContainer extends StatelessWidget {
                     child: EventFriends(),
                   ),
                 );
-              }
-              if (buttonTheme == "addTask") {
+              } else if (buttonText == "Add Task") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -188,10 +191,10 @@ class ButtonContainer extends StatelessWidget {
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => new Center(
-                    child: EventTasks(),
+                    child: EventTasks(eventVar),
                   ),
                 );
-              } else if (buttonTheme == "changeDate") {
+              } else if (buttonText == "Change Date") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -204,7 +207,7 @@ class ButtonContainer extends StatelessWidget {
                     ],
                   ),
                 );
-              } else if (buttonTheme == "changeTime") {
+              } else if (buttonText == "Change Time") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -217,7 +220,7 @@ class ButtonContainer extends StatelessWidget {
                     ],
                   ),
                 );
-              } else if (buttonTheme == "deleteEvent") {
+              } else if (buttonText == "Delete Event") {
                 return showDialog(
                   context: context,
                   barrierDismissible: true,
@@ -332,7 +335,8 @@ class InvitedFriend extends StatelessWidget {
             ),
           ),
           trailing: Icon(
-            Icons.check_rounded,
+            Icons.person_add_alt_1_rounded, // how_to_reg
+            color: Colors.white,
             size: 32.0,
           ),
           onTap: () {
@@ -387,7 +391,7 @@ class InvitedFriend extends StatelessWidget {
             ),
           ),
           trailing: Icon(
-            Icons.ac_unit_rounded,
+            Icons.person_outline_rounded,
             size: 32.0,
           ),
           onTap: () {
@@ -441,7 +445,8 @@ class InvitedFriend extends StatelessWidget {
             ),
           ),
           trailing: Icon(
-            Icons.person_rounded,
+            Icons.engineering_rounded,
+            color: Colors.white,
             size: 32.0,
           ),
           onTap: () {
@@ -495,7 +500,7 @@ class InvitedFriend extends StatelessWidget {
             ),
           ),
           trailing: Icon(
-            Icons.remove,
+            Icons.person_remove_rounded,
             size: 32.0,
           ),
           onTap: () {
@@ -798,6 +803,8 @@ class EventFriend extends StatelessWidget {
 }
 
 class EventTasks extends StatefulWidget {
+  final List<String> eventTasks;
+  const EventTasks(this.eventTasks);
   @override
   _EventTasksState createState() => _EventTasksState();
 }
@@ -805,24 +812,16 @@ class EventTasks extends StatefulWidget {
 class _EventTasksState extends State<EventTasks> {
   void addTask(String task) {
     setState(() {
-      eventTask.add(task);
+      widget.eventTasks.add(task);
     });
     // Navigator.of(context).pop();
   }
 
   void deleteEventTask(int index) {
     setState(() {
-      eventTask.removeAt(index);
+      widget.eventTasks.removeAt(index);
     });
   }
-
-  List<String> eventTask = [
-    "Task1",
-    "Task2",
-    "Task2",
-    "Task2",
-    "Task2",
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -842,9 +841,9 @@ class _EventTasksState extends State<EventTasks> {
             height: 260,
             child: ListView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: eventTask.length,
+              itemCount: widget.eventTasks.length,
               itemBuilder: (context, i) {
-                return TaskItem(eventTask[i], () {
+                return TaskItem(widget.eventTasks[i], () {
                   deleteEventTask(i);
                 });
               },
