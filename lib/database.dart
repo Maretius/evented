@@ -50,7 +50,6 @@ class DatabaseService {
   final CollectionReference events = FirebaseFirestore.instance.collection('events');
 
   Future addEvent(String userName, String eventIcon, String eventTitle, String eventDetails, DateTime eventDateTime, List<String> eventTasks, Map<String, String> userFriends, Map<String, bool> eventMembers,) async {
-
     Map<String, String> eventUsers = {userID: userName};
     Map<String, String> eventTasksUser = {};
     Map<String, String> eventStatus = {};
@@ -70,9 +69,6 @@ class DatabaseService {
         eventStatus[key] = "not decided";
       }
     });
-
-    print("Eventname: " + eventTitle + "; EventUsers: " + eventUsers.toString() + "; EventTasks: " + eventTasksUser.toString() + "; EventStatus: " + eventStatus.toString());
-
     final result = await events.add({
       "eventName": eventTitle,
       "eventDetails": eventDetails,
@@ -82,11 +78,51 @@ class DatabaseService {
       "eventTasksUser": eventTasksUser,
       "eventStatus": eventStatus,
     });
-
     eventUsers.forEach((key, value) { 
       users.doc(key).update({"userEvents": FieldValue.arrayUnion([result.id])});
-    }); 
+    });
+  }
 
+  Future changeEventUserStatus(String eventID, String userEventStatus) async {
+    String query = "eventStatus." + userID;
+    await events.doc(eventID).update({
+      query : userEventStatus
+    });
+  }
+
+  Future changeEventDetails(String eventID, String eventDetails) async {
+    await events.doc(eventID).update({
+      "eventDetails" : eventDetails,
+    });
+  }
+
+  Future addEventUsers(String eventID, String userFriendID, String userFriendName) async {
+    String statusQuery = "eventStatus." + userFriendID;
+    String usersQuery = "eventUsers." + userFriendID;
+    await events.doc(eventID).update({
+      statusQuery : "not decided",
+      usersQuery : userFriendName,
+    });
+  }
+
+  Future changeEventDateTime(String eventID, DateTime eventDateTime) async {
+    await events.doc(eventID).update({
+      "eventDateTime" : eventDateTime,
+    });
+  }
+
+  Future addEventTask(String eventID, String eventTask) async {
+    String query = "eventTasksUser." + eventTask;
+    await events.doc(eventID).update({
+      query : null,
+    });
+  }
+
+  Future addEventTaskToUser(String eventID, String eventTask, String eventUserID) async {
+    String query = "eventTasksUser." + eventTask;
+    await events.doc(eventID).update({
+      query : eventUserID,
+    });
   }
 
   Future addUser() async {

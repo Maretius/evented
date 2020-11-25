@@ -183,9 +183,8 @@ class _NewEventState extends State<NewEvent> {
                               decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
                             ),
                           ),
-                          SizedBox(
-                            height: 200,
-                            child: ListView.builder(
+                          ListView.builder(
+                            shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               itemCount: _event.eventTasks.length,
                               itemBuilder: (context, i) {
@@ -193,7 +192,7 @@ class _NewEventState extends State<NewEvent> {
                                   deleteEventTask(i);
                                 });
                               },
-                            ),
+
                           )
                         ],
                       ),
