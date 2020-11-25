@@ -64,7 +64,7 @@ class DatabaseService {
     });
     eventUsers.forEach((key, value) {
       if (key == userID) {
-        eventStatus[key] = "admin";
+        eventStatus[key] = "Admin";
       } else {
         eventStatus[key] = "not decided";
       }

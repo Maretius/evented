@@ -223,6 +223,8 @@ class _EventedState extends State<Evented> {
                                           datetime,
                                           localUserStatus,
                                           UserWithAnswer,
+                                          eventID,
+                                          database,
                                         );
                                       }),
                                 );
@@ -285,7 +287,9 @@ class SingleEvent extends StatelessWidget {
   final DateTime eventDateTime;
   final String eventUserStatus;
   final Map eventUserWithAnswer;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer);
+  final String eventID;
+  final DatabaseService database;
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUserWithAnswer, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -344,8 +348,8 @@ class SingleEvent extends StatelessWidget {
                         style: TextStyle(color: kTextColor),
                       ),
                       onPressed: () {
+                        database.changeEventUserStatus(eventID, "promised");
                         Navigator.of(context).pop();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUserWithAnswer)));
                       },
                     ),
                     TextButton(
@@ -354,6 +358,7 @@ class SingleEvent extends StatelessWidget {
                         style: TextStyle(color: kTextColor),
                       ),
                       onPressed: () {
+                        database.changeEventUserStatus(eventID, "called off");
                         Navigator.of(context).pop();
                       },
                     ),
