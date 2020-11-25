@@ -105,7 +105,7 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(eventUsers, eventStatus),
+      body: InvitedFriendsList(eventTasksUser, eventUsers, eventStatus),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -285,9 +285,10 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class InvitedFriendsList extends StatefulWidget {
+  final Map eventTasksUser;
   final Map eventUsers;
   final Map eventStatus;
-  const InvitedFriendsList(this.eventUsers, this.eventStatus);
+  const InvitedFriendsList(this.eventTasksUser, this.eventUsers, this.eventStatus);
   @override
   _InvitedFriendsListState createState() => _InvitedFriendsListState();
 }
@@ -304,7 +305,7 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
       itemCount: widget.eventUsers.length,
       itemBuilder: (context, i) {
         String key = widget.eventUsers.keys.elementAt(i);
-        return InvitedFriend(widget.eventUsers[key], widget.eventStatus[key], () {
+        return InvitedFriend(widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
           deleteInvitedFriend(key);
         });
       },
@@ -313,10 +314,12 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
 }
 
 class InvitedFriend extends StatelessWidget {
+  final Map eventTasksUser;
+  final String userID;
   final String friendName;
   final String status;
   final Function deleteInvitedFriend;
-  const InvitedFriend(this.friendName, this.status, this.deleteInvitedFriend);
+  const InvitedFriend(this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
 
   @override
   Widget build(BuildContext context) {
@@ -364,7 +367,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            InvitedFriendTasklist(),
+                            InvitedFriendTasklist(eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -474,6 +477,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
+                            InvitedFriendTasklist(eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -544,6 +548,10 @@ class InvitedFriend extends StatelessWidget {
 }
 
 class InvitedFriendTasklist extends StatefulWidget {
+  final Map eventTasksUser;
+  final String userID;
+  const InvitedFriendTasklist(this.eventTasksUser, this.userID);
+
   @override
   _InvitedFriendTasklistState createState() => _InvitedFriendTasklistState();
 }
@@ -555,12 +563,7 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
     });
   }
 
-  Map<String, bool> eventinvitedFriendsTasks = {
-    'Task 1': false,
-    'Task 2': false,
-    'Task 3': false,
-    'Task 4': false,
-  };
+  Map<String, bool> eventinvitedFriendsTasks = {};
 
   @override
   Widget build(BuildContext context) {
@@ -578,12 +581,24 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
           height: 300,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
-            itemCount: eventinvitedFriendsTasks.length,
+            itemCount: widget.eventTasksUser.length,
             itemBuilder: (context, i) {
-              String key = eventinvitedFriendsTasks.keys.elementAt(i);
-              return InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
-                toggleMember(key);
-              });
+              String key = widget.eventTasksUser.keys.elementAt(i);
+              Widget returnWidget;
+              if(widget.eventTasksUser[key] == widget.userID) {
+                eventinvitedFriendsTasks[key] = true;
+                returnWidget = InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
+                  toggleMember(key);
+                });
+              }else if(widget.eventTasksUser[key] == null){
+                eventinvitedFriendsTasks[key] = false;
+                returnWidget = InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
+                  toggleMember(key);
+                });
+              }else {
+                returnWidget = Container();
+              }
+              return returnWidget;
             },
           ),
         ),
