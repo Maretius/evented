@@ -2,6 +2,8 @@ import 'package:evented/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'database.dart';
+import 'main.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
 
@@ -11,12 +13,13 @@ class Event extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
+  final Map userFriends;
   final Map eventUsers;
   final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
 
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus,this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +124,8 @@ class Event extends StatelessWidget {
               children: <Widget>[
                 ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails),
                 ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", null),
-                ButtonContainer(eventID, Icons.menu_open_rounded, "Add Task", eventTasks),
-                ButtonContainer(eventID, Icons.date_range_rounded, "Change Date", eventDateTime),
-                ButtonContainer(eventID, Icons.access_time_rounded, "Change Time", eventDateTime),
+                ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks),
+                ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime),
                 ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null),
               ],
             ),
@@ -168,7 +170,7 @@ class ButtonContainer extends StatelessWidget {
                   ),
                   builder: (context) => Wrap(
                     children: [
-                      EventDetails(),
+                      EventDetails(eventID, eventVar),
                     ],
                   ),
                 );
@@ -183,7 +185,7 @@ class ButtonContainer extends StatelessWidget {
                     child: EventFriends(),
                   ),
                 );
-              } else if (buttonText == "Add Task") {
+              } else if (buttonText == "Edit Tasks") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -194,7 +196,7 @@ class ButtonContainer extends StatelessWidget {
                     child: EventTasks(eventVar),
                   ),
                 );
-              } else if (buttonText == "Change Date") {
+              } else if (buttonText == "Edit DateTime") {
                 showModalBottomSheet(
                   backgroundColor: kPrimaryColor,
                   context: context,
@@ -203,20 +205,7 @@ class ButtonContainer extends StatelessWidget {
                   ),
                   builder: (context) => Wrap(
                     children: [
-                      EventDate(),
-                    ],
-                  ),
-                );
-              } else if (buttonText == "Change Time") {
-                showModalBottomSheet(
-                  backgroundColor: kPrimaryColor,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-                  ),
-                  builder: (context) => Wrap(
-                    children: [
-                      EventTime(),
+                      EventDate(eventID, eventVar),
                     ],
                   ),
                 );
@@ -255,7 +244,11 @@ class ButtonContainer extends StatelessWidget {
                             style: TextStyle(color: kTextColor),
                           ),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            // DatabaseService(null).deleteFriend(eventID);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Evented()),
+                            );
                           },
                         ),
                         TextButton(
@@ -557,13 +550,27 @@ class InvitedFriendTasklist extends StatefulWidget {
 }
 
 class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
-  void toggleMember(String key) {
-    setState(() {
-      eventinvitedFriendsTasks.update(key, (bool done) => !done);
+  Map<String, bool> eventInvitedFriendsTasks = {};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.eventTasksUser.forEach((key, value) {
+      if(widget.eventTasksUser[key] == widget.userID) {
+        eventInvitedFriendsTasks[key] = true;
+      }else if(widget.eventTasksUser[key] == null){
+        eventInvitedFriendsTasks[key] = false;
+      }else {
+      }
     });
   }
 
-  Map<String, bool> eventinvitedFriendsTasks = {};
+  void toggleMember(String key) {
+    setState(() {
+      eventInvitedFriendsTasks.update(key, (bool done) => !done);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -581,24 +588,12 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
           height: 300,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
-            itemCount: widget.eventTasksUser.length,
+            itemCount: eventInvitedFriendsTasks.length,
             itemBuilder: (context, i) {
-              String key = widget.eventTasksUser.keys.elementAt(i);
-              Widget returnWidget;
-              if(widget.eventTasksUser[key] == widget.userID) {
-                eventinvitedFriendsTasks[key] = true;
-                returnWidget = InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
-                  toggleMember(key);
-                });
-              }else if(widget.eventTasksUser[key] == null){
-                eventinvitedFriendsTasks[key] = false;
-                returnWidget = InvitedFriendTask(key, eventinvitedFriendsTasks[key], () {
-                  toggleMember(key);
-                });
-              }else {
-                returnWidget = Container();
-              }
-              return returnWidget;
+              String key = eventInvitedFriendsTasks.keys.elementAt(i);
+              return InvitedFriendTask(key, eventInvitedFriendsTasks[key], () {
+                toggleMember(key);
+              });
             },
           ),
         ),
@@ -617,8 +612,8 @@ class InvitedFriendTask extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? kPrimaryColor : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration( // TODO Farben überarbeiten
+          color: done ? kSecondaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
@@ -634,7 +629,7 @@ class InvitedFriendTask extends StatelessWidget {
             toggle();
           },
           activeColor: kPrimaryBackgroundColor,
-          checkColor: kPrimaryColor,
+          checkColor: Colors.white,
         ),
       ),
     );
@@ -643,17 +638,23 @@ class InvitedFriendTask extends StatelessWidget {
 
 // TODO: Bereits eingestellte Details übergeben und vorher anzeigen
 class EventDetails extends StatefulWidget {
-  String eventDetails;
-  EventDetails();
+  final String eventID;
+  final String eventDetails;
+  EventDetails(this.eventID, this.eventDetails);
+
   @override
-  _EventDetailsState createState() => _EventDetailsState(this.eventDetails);
+  _EventDetailsState createState() => _EventDetailsState();
 }
 
 class _EventDetailsState extends State<EventDetails> {
+  TextEditingController eventDetailsController;
   String eventDetails;
-  _EventDetailsState(this.eventDetails);
+  @override
+  void initState() {
+    super.initState();
+    eventDetailsController = TextEditingController(text: widget.eventDetails);
+  }
 
-  String userText3 = "";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -661,9 +662,13 @@ class _EventDetailsState extends State<EventDetails> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
           child: TextField(
+            controller: eventDetailsController,
             keyboardType: TextInputType.multiline,
             maxLines: 3,
             maxLength: 200,
+            onChanged: (text){
+              eventDetails = text;
+            },
             decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
           ),
         ),
@@ -675,7 +680,9 @@ class _EventDetailsState extends State<EventDetails> {
               size: 32,
               color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              DatabaseService(null).changeEventDetails(widget.eventID, eventDetails);
+            },
           ),
         )
       ],
@@ -684,6 +691,10 @@ class _EventDetailsState extends State<EventDetails> {
 }
 
 class EventFriends extends StatefulWidget {
+  final Map<String, String> eventFriendsIDUsername = {};
+  final Map<String, bool> eventMembersIDUsername = {};
+  //const EventFriends(this.eventFriendsIDUsername, this.eventMembersIDUsername);
+
   @override
   _EventFriendsState createState() => _EventFriendsState();
 }
@@ -903,12 +914,17 @@ class TaskItem extends StatelessWidget {
 }
 
 class EventDate extends StatefulWidget {
+  final String eventID;
+  final DateTime eventDateTime;
+  const EventDate(this.eventID, this.eventDateTime);
+
   @override
   _EventDateState createState() => _EventDateState();
 }
 
 class _EventDateState extends State<EventDate> {
-  final dateFormat = DateFormat("dd.MM.yyyy");
+  DateTime eventDateTime;
+  final datetimeFormat = DateFormat("dd.MM.yyyy - HH:mm");
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -917,9 +933,21 @@ class _EventDateState extends State<EventDate> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
           child: DateTimeField(
-            format: dateFormat,
-            onShowPicker: (context, currentValue) {
-              return showDatePicker(context: context, firstDate: DateTime(1900), initialDate: currentValue ?? DateTime.now(), lastDate: DateTime(2100));
+            format: datetimeFormat,
+            onChanged: (date) {
+              eventDateTime = date;
+            },
+            onShowPicker: (context, currentValue) async {
+              final date = await showDatePicker(context: context, firstDate: DateTime.now(), initialDate: widget.eventDateTime, lastDate: DateTime(2100));
+              if (date != null) {
+                final time = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.fromDateTime(widget.eventDateTime),
+                );
+                return DateTimeField.combine(date, time);
+              } else {
+                return currentValue;
+              }
             },
             decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate"),
           ),
@@ -932,49 +960,13 @@ class _EventDateState extends State<EventDate> {
               size: 32,
               color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              print("DATE: " + DateFormat("dd.MM.yyyy - HH:mm").format(eventDateTime));
+              DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+            },
           ),
         )
       ],
     ); // URL: https://pub.dev/packages/datetime_picker_formfield
-  }
-}
-
-class EventTime extends StatefulWidget {
-  @override
-  _EventTimeState createState() => _EventTimeState();
-}
-
-class _EventTimeState extends State<EventTime> {
-  final dateFormat = DateFormat("HH:mm");
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-        child: DateTimeField(
-          format: dateFormat,
-          onShowPicker: (context, currentValue) async {
-            final time = await showTimePicker(
-              context: context,
-              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-            );
-            return DateTimeField.convert(time);
-          },
-          decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtime"),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-        child: IconButton(
-          icon: Icon(
-            Icons.check_rounded,
-            size: 32,
-            color: Colors.white,
-          ),
-          onPressed: () {},
-        ),
-      )
-    ]); // URL: https://pub.dev/packages/datetime_picker_formfield
   }
 }

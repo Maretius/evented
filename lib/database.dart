@@ -91,6 +91,7 @@ class DatabaseService {
   }
 
   Future changeEventDetails(String eventID, String eventDetails) async {
+    print("ID: " + eventID);
     await events.doc(eventID).update({
       "eventDetails" : eventDetails,
     });

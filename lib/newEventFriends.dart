@@ -13,7 +13,7 @@ class NewEventFriends extends StatefulWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final List<String> eventTask;
-  const NewEventFriends(this.userID,this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
+  const NewEventFriends(this.userID, this.userName, this.userFriends, this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventTask);
 
   @override
   _NewEventFriendsState createState() => _NewEventFriendsState();

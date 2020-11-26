@@ -231,36 +231,6 @@ class _EventedState extends State<Evented> {
                                         );
                                       }),
                                 );
-
-                                /* new ListView.builder(
-  scrollDirection: Axis.vertical,
-    itemCount: eventlistEventID.length,
-    itemBuilder: (context, i) {
-    String eventkey = eventlistEventID.elementAt(i);
-
-    List<String> eventlistInvitedUsersToThis =
-    eventlistInvitedUsers[eventkey];
-    Map<String, String> UserWithAnswer = {};
-    String userkey = "";
-    String username = "";
-    String useranswer = "";
-
-    for (var u = 0; u < eventlistInvitedUsersToThis.length; u++) {
-    userkey = eventlistInvitedUsersToThis.elementAt(u);
-    username = eventlistUsers[userkey];
-    useranswer = eventlistInvitedUsersWithAnswer[userkey];
-    UserWithAnswer[username] = useranswer;
-    }
-    return SingleEvent(
-    eventlistIcon[eventkey],
-    eventlistName[eventkey],
-    eventlistDetails[eventkey],
-    eventlistDateTime[eventkey],
-    eventlistUserStatus[eventkey],
-    UserWithAnswer,
-    );
-    },
-                          );*/
                               }
                             },
                           );
@@ -373,7 +343,7 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, eventUsers, eventStatus, eventTasksUser, eventID)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
           }
         },
       ),
