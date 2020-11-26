@@ -195,16 +195,13 @@ class _EventedState extends State<Evented> {
                                           eventInvitedUsers.add(key);
                                         });
 
-                                        Map<String, String> UserWithAnswer = {};
                                         String userkey = "";
-                                        String username = "";
                                         String useranswer = "";
                                         String localUserStatus = "";
                                         bool localUserIsAdmin = false;
 
                                         for (var u = 0; u < eventUsers.length; u++) {
                                           userkey = eventInvitedUsers.elementAt(u);
-                                          username = eventUsers[userkey];
                                           useranswer = eventStatus[userkey];
                                           if (userkey == localUserID) {
                                             localUserStatus = useranswer;
@@ -212,7 +209,6 @@ class _EventedState extends State<Evented> {
                                           if (useranswer == "Admin" && userkey == localUserID) {
                                             localUserIsAdmin = true;
                                           }
-                                          UserWithAnswer[username] = useranswer;
                                         }
 
                                         var datetime = userDocument["eventDateTime"].toDate();
@@ -222,6 +218,7 @@ class _EventedState extends State<Evented> {
                                           userDocument["eventDetails"],
                                           datetime,
                                           localUserStatus,
+                                          localUserIsAdmin,
                                           databaseUser.userFriends,
                                           eventUsers,
                                           eventStatus,
@@ -259,13 +256,14 @@ class SingleEvent extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
+  final bool localUserIsAdmin;
   final Map userFriends;
   final Map eventUsers;
   final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
   final DatabaseService database;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +341,7 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
           }
         },
       ),

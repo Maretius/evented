@@ -13,13 +13,14 @@ class Event extends StatelessWidget {
   final String eventDetails;
   final DateTime eventDateTime;
   final String eventUserStatus;
+  final bool localUserIsAdmin;
   final Map userFriends;
   final Map eventUsers;
   final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
 
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus,this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +110,9 @@ class Event extends StatelessWidget {
         ),
       ),
       body: InvitedFriendsList(eventTasksUser, eventUsers, eventStatus),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: new Visibility(
+        visible: localUserIsAdmin,
+        child: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
             backgroundColor: kPrimaryColor,
@@ -136,6 +139,7 @@ class Event extends StatelessWidget {
           size: 32.0,
         ),
         backgroundColor: kPrimaryColor,
+      ),
       ),
       backgroundColor: kPrimaryBackgroundColor,
     );
