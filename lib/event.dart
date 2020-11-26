@@ -200,7 +200,7 @@ class ButtonContainer extends StatelessWidget {
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => new Center(
-                    child: EventTasks(eventVar),
+                    child: EventTasks(eventID, eventVar),
                   ),
                 );
               } else if (buttonText == "Edit DateTime") {
@@ -774,7 +774,7 @@ class _EventFriendsState extends State<EventFriends> {
                     child: ListBody(
                       children: <Widget>[
                         Text(
-                          'Are you sure u want to invite this friends??',
+                          'Are you sure u want to invite this friends?',
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -794,7 +794,6 @@ class _EventFriendsState extends State<EventFriends> {
                             newEventUser[key] = widget.userFriends[key];
                           }
                         });
-                        print("NEUE USER: " + newEventUser.toString());
 
                         if (newEventUser.isEmpty == false) {
                           DatabaseService(null).changeEventUsers(widget.eventID, newEventUser);
@@ -878,8 +877,9 @@ class EventFriend extends StatelessWidget {
 }
 
 class EventTasks extends StatefulWidget {
+  final String eventID;
   final List<String> eventTasks;
-  const EventTasks(this.eventTasks);
+  const EventTasks(this.eventID, this.eventTasks);
   @override
   _EventTasksState createState() => _EventTasksState();
 }
@@ -907,7 +907,12 @@ class _EventTasksState extends State<EventTasks> {
           Container(
             margin: const EdgeInsets.all(20.0),
             child: TextField(
-              onSubmitted: addTask,
+              onSubmitted: (value) {
+                if (value != ""){
+                  addTask(value);
+                  DatabaseService(null).addEventTask(widget.eventID, value);
+                }
+              },
               scrollPadding: EdgeInsets.only(bottom: 10.0),
               decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
             ),

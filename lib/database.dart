@@ -93,7 +93,7 @@ class DatabaseService {
     await events.doc(eventID).set({
       "eventUsers" : newEventUsers,
       "eventStatus": eventStatus,
-    });
+    }, SetOptions(merge: true));
     newEventUsers.forEach((key, value) {
       users.doc(key).update({
         "userEvents": FieldValue.arrayUnion([eventID])
