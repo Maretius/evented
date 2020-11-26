@@ -12,19 +12,20 @@ class Event extends StatelessWidget {
   final String eventTitle;
   final String eventDetails;
   final DateTime eventDateTime;
+  final String localUserID;
   final String eventUserStatus;
+  final bool localUserIsAdmin;
   final Map userFriends;
   final Map eventUsers;
   final Map eventStatus;
   final Map eventTasksUser;
   final String eventID;
 
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus,this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
+  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
 
   @override
   Widget build(BuildContext context) {
     List<String> eventTasks = [];
-
     eventTasksUser.forEach((key, value) {
       eventTasks.add(key);
     });
@@ -109,8 +110,10 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(eventTasksUser, eventUsers, eventStatus),
-      floatingActionButton: FloatingActionButton(
+      body: InvitedFriendsList(eventTasksUser, eventUsers, eventStatus, localUserID, localUserIsAdmin),
+      floatingActionButton: new Visibility(
+        visible: localUserIsAdmin,
+        child: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
             backgroundColor: kPrimaryColor,
@@ -124,10 +127,10 @@ class Event extends StatelessWidget {
               crossAxisCount: 3,
               children: <Widget>[
                 ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails, null),
-                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends",userFriends, eventUsers),
+                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", userFriends, eventUsers),
                 ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks, null),
                 ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime, null),
-                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null, null),
+                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", eventUsers, null),
               ],
             ),
           );
@@ -137,6 +140,7 @@ class Event extends StatelessWidget {
           size: 32.0,
         ),
         backgroundColor: kPrimaryColor,
+      ),
       ),
       backgroundColor: kPrimaryBackgroundColor,
     );
@@ -247,7 +251,7 @@ class ButtonContainer extends StatelessWidget {
                             style: TextStyle(color: kTextColor),
                           ),
                           onPressed: () {
-                            // DatabaseService(null).deleteFriend(eventID);
+                             DatabaseService(null).deleteEvent(eventVar, eventID);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => Evented()),
@@ -284,7 +288,9 @@ class InvitedFriendsList extends StatefulWidget {
   final Map eventTasksUser;
   final Map eventUsers;
   final Map eventStatus;
-  const InvitedFriendsList(this.eventTasksUser, this.eventUsers, this.eventStatus);
+  final String localUserID;
+  final bool localUserIsAdmin;
+  const InvitedFriendsList(this.eventTasksUser, this.eventUsers, this.eventStatus, this.localUserID, this.localUserIsAdmin);
   @override
   _InvitedFriendsListState createState() => _InvitedFriendsListState();
 }
@@ -301,7 +307,7 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
       itemCount: widget.eventUsers.length,
       itemBuilder: (context, i) {
         String key = widget.eventUsers.keys.elementAt(i);
-        return InvitedFriend(widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
+        return InvitedFriend(widget.localUserID, widget.localUserIsAdmin, widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
           deleteInvitedFriend(key);
         });
       },
@@ -310,12 +316,14 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
 }
 
 class InvitedFriend extends StatelessWidget {
+  final String localUserID;
+  final bool localUserIsAdmin;
   final Map eventTasksUser;
   final String userID;
   final String friendName;
   final String status;
   final Function deleteInvitedFriend;
-  const InvitedFriend(this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
+  const InvitedFriend(this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
 
   @override
   Widget build(BuildContext context) {
@@ -363,7 +371,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            InvitedFriendTasklist(eventTasksUser, userID),
+                            InvitedFriendTasklist(localUserID, localUserIsAdmin, eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -473,7 +481,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            InvitedFriendTasklist(eventTasksUser, userID),
+                            InvitedFriendTasklist(localUserID, localUserIsAdmin, eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -544,9 +552,11 @@ class InvitedFriend extends StatelessWidget {
 }
 
 class InvitedFriendTasklist extends StatefulWidget {
+  final String localUserID;
+  final bool localUserIsAdmin;
   final Map eventTasksUser;
   final String userID;
-  const InvitedFriendTasklist(this.eventTasksUser, this.userID);
+  const InvitedFriendTasklist(this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID);
 
   @override
   _InvitedFriendTasklistState createState() => _InvitedFriendTasklistState();
@@ -559,18 +569,27 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
   void initState() {
     super.initState();
     widget.eventTasksUser.forEach((key, value) {
-      if(widget.eventTasksUser[key] == widget.userID) {
-        eventInvitedFriendsTasks[key] = true;
-      }else if(widget.eventTasksUser[key] == null){
-        eventInvitedFriendsTasks[key] = false;
-      }else {
+      if(widget.localUserIsAdmin) {
+        if (widget.eventTasksUser[key] == widget.userID) {
+          eventInvitedFriendsTasks[key] = true;
+        } else if (widget.eventTasksUser[key] == null) {
+          eventInvitedFriendsTasks[key] = false;
+        } else {}
+      }else{
+        if (widget.eventTasksUser[key] == widget.userID) {
+          eventInvitedFriendsTasks[key] = true;
+        } else if (widget.eventTasksUser[key] == null && widget.localUserID == widget.userID) {
+          eventInvitedFriendsTasks[key] = false;
+        } else {}
       }
     });
   }
 
   void toggleMember(String key) {
     setState(() {
-      eventInvitedFriendsTasks.update(key, (bool done) => !done);
+      if(widget.localUserIsAdmin || widget.localUserID == widget.userID) {
+        eventInvitedFriendsTasks.update(key, (bool done) => !done);
+      }
     });
   }
 
@@ -779,8 +798,6 @@ class _EventFriendsState extends State<EventFriends> {
 
                         if (newEventUser.isEmpty == false) {
                           DatabaseService(null).changeEventUsers(widget.eventID, newEventUser);
-                        } else {
-                          print("LANGWEILIG");
                         }
 
                         Navigator.of(context).pop();

@@ -144,6 +144,20 @@ class DatabaseService {
     });
   }
 
+  Future deleteEvent(Map eventUser, String eventID) async {
+    List<String> eventUserIDs = [];
+    eventUser.forEach((key, value) {
+      eventUserIDs.add(key);
+    });
+    for (var u = 0; u < eventUserIDs.length; u++) {
+      String query = "userEvents";
+      print("ID ist: " + eventUserIDs[u] + " " + eventID);
+      await users.doc(eventUserIDs[u]).update({query: FieldValue.arrayRemove([eventID])});
+    }
+    await events.doc(eventID).delete();
+  }
+
+
   Future addUser() async {
     String userToken = userID.substring(userID.length - 6);
     return await users.doc(userID).set({
