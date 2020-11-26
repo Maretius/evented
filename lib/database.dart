@@ -137,6 +137,12 @@ class DatabaseService {
     });
   }
 
+  Future changeEventTask(String eventID, Map<String, String> eventTasksUser) async {
+    await events.doc(eventID).set({
+      "eventTasksUser" : eventTasksUser,
+    }, SetOptions(merge: true));
+  }
+
   Future addEventTaskToUser(String eventID, String eventTask, String eventUserID) async {
     String query = "eventTasksUser." + eventTask;
     await events.doc(eventID).update({

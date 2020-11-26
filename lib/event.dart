@@ -110,7 +110,7 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(eventTasksUser, eventUsers, eventStatus, localUserID, localUserIsAdmin),
+      body: InvitedFriendsList(eventID, eventTasksUser, eventUsers, eventStatus, localUserID, localUserIsAdmin),
       floatingActionButton: new Visibility(
         visible: localUserIsAdmin,
         child: FloatingActionButton(
@@ -285,12 +285,13 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class InvitedFriendsList extends StatefulWidget {
+  final String eventID;
   final Map eventTasksUser;
   final Map eventUsers;
   final Map eventStatus;
   final String localUserID;
   final bool localUserIsAdmin;
-  const InvitedFriendsList(this.eventTasksUser, this.eventUsers, this.eventStatus, this.localUserID, this.localUserIsAdmin);
+  const InvitedFriendsList(this.eventID, this.eventTasksUser, this.eventUsers, this.eventStatus, this.localUserID, this.localUserIsAdmin);
   @override
   _InvitedFriendsListState createState() => _InvitedFriendsListState();
 }
@@ -307,7 +308,7 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
       itemCount: widget.eventUsers.length,
       itemBuilder: (context, i) {
         String key = widget.eventUsers.keys.elementAt(i);
-        return InvitedFriend(widget.localUserID, widget.localUserIsAdmin, widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
+        return InvitedFriend(widget.eventID, widget.localUserID, widget.localUserIsAdmin, widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
           deleteInvitedFriend(key);
         });
       },
@@ -316,6 +317,7 @@ class _InvitedFriendsListState extends State<InvitedFriendsList> {
 }
 
 class InvitedFriend extends StatelessWidget {
+  final String eventID;
   final String localUserID;
   final bool localUserIsAdmin;
   final Map eventTasksUser;
@@ -323,7 +325,7 @@ class InvitedFriend extends StatelessWidget {
   final String friendName;
   final String status;
   final Function deleteInvitedFriend;
-  const InvitedFriend(this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
+  const InvitedFriend(this.eventID, this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
 
   @override
   Widget build(BuildContext context) {
@@ -371,7 +373,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            InvitedFriendTasklist(localUserID, localUserIsAdmin, eventTasksUser, userID),
+                            InvitedFriendTasklist(eventID, localUserID, localUserIsAdmin, eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -481,7 +483,7 @@ class InvitedFriend extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            InvitedFriendTasklist(localUserID, localUserIsAdmin, eventTasksUser, userID),
+                            InvitedFriendTasklist(eventID, localUserID, localUserIsAdmin, eventTasksUser, userID),
                           ],
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -552,11 +554,12 @@ class InvitedFriend extends StatelessWidget {
 }
 
 class InvitedFriendTasklist extends StatefulWidget {
+  final String eventID;
   final String localUserID;
   final bool localUserIsAdmin;
   final Map eventTasksUser;
   final String userID;
-  const InvitedFriendTasklist(this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID);
+  const InvitedFriendTasklist(this.eventID, this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID);
 
   @override
   _InvitedFriendTasklistState createState() => _InvitedFriendTasklistState();
@@ -564,6 +567,7 @@ class InvitedFriendTasklist extends StatefulWidget {
 
 class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
   Map<String, bool> eventInvitedFriendsTasks = {};
+  Map<String, String> newEventTasks = {};
 
   @override
   void initState() {
@@ -574,7 +578,7 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
           eventInvitedFriendsTasks[key] = true;
         } else if (widget.eventTasksUser[key] == null) {
           eventInvitedFriendsTasks[key] = false;
-        } else {}
+        }
       }else{
         if (widget.eventTasksUser[key] == widget.userID) {
           eventInvitedFriendsTasks[key] = true;
@@ -604,7 +608,18 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
             size: 32,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            eventInvitedFriendsTasks.forEach((key, value) {
+              if (value) {
+                newEventTasks[key] = widget.userID;
+              } else {
+                newEventTasks[key] = null;
+              }
+            });
+            print("TEST: " + newEventTasks.toString());
+
+           DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
+          },
         ),
         SizedBox(
           height: 300,
