@@ -130,7 +130,7 @@ class Event extends StatelessWidget {
                 ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", null),
                 ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks),
                 ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime),
-                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null),
+                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", eventUsers),
               ],
             ),
           );
@@ -249,7 +249,7 @@ class ButtonContainer extends StatelessWidget {
                             style: TextStyle(color: kTextColor),
                           ),
                           onPressed: () {
-                            // DatabaseService(null).deleteFriend(eventID);
+                             DatabaseService(null).deleteEvent(eventVar, eventID);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => Evented()),
