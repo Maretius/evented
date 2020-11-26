@@ -217,6 +217,7 @@ class _EventedState extends State<Evented> {
                                           userDocument["eventName"],
                                           userDocument["eventDetails"],
                                           datetime,
+                                          localUserID,
                                           localUserStatus,
                                           localUserIsAdmin,
                                           databaseUser.userFriends,
@@ -255,6 +256,7 @@ class SingleEvent extends StatelessWidget {
   final String eventTitle;
   final String eventDetails;
   final DateTime eventDateTime;
+  final String localUserID;
   final String eventUserStatus;
   final bool localUserIsAdmin;
   final Map userFriends;
@@ -263,7 +265,7 @@ class SingleEvent extends StatelessWidget {
   final Map eventTasksUser;
   final String eventID;
   final DatabaseService database;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +343,7 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, localUserID, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
           }
         },
       ),
