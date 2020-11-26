@@ -24,6 +24,7 @@ class Event extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> eventTasks = [];
+
     eventTasksUser.forEach((key, value) {
       eventTasks.add(key);
     });
@@ -122,11 +123,11 @@ class Event extends StatelessWidget {
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
-                ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails),
-                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", null),
-                ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks),
-                ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime),
-                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null),
+                ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails, null),
+                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends",userFriends, eventUsers),
+                ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks, null),
+                ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime, null),
+                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", null, null),
               ],
             ),
           );
@@ -143,11 +144,13 @@ class Event extends StatelessWidget {
 }
 
 class ButtonContainer extends StatelessWidget {
-  ButtonContainer(this.eventID, this.buttonIcon, this.buttonText, this.eventVar);
+  ButtonContainer(this.eventID, this.buttonIcon, this.buttonText, this.eventVar, this.eventVar2);
   final String eventID;
   final IconData buttonIcon;
   final String buttonText;
   var eventVar;
+  var eventVar2;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -182,7 +185,7 @@ class ButtonContainer extends StatelessWidget {
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                   ),
                   builder: (context) => new Center(
-                    child: EventFriends(),
+                    child: EventFriends(eventID, eventVar, eventVar2),
                   ),
                 );
               } else if (buttonText == "Edit Tasks") {
@@ -691,31 +694,38 @@ class _EventDetailsState extends State<EventDetails> {
 }
 
 class EventFriends extends StatefulWidget {
-  final Map<String, String> eventFriendsIDUsername = {};
-  final Map<String, bool> eventMembersIDUsername = {};
-  //const EventFriends(this.eventFriendsIDUsername, this.eventMembersIDUsername);
+  final String eventID;
+  final Map<String, String> userFriends;
+  final Map<String, dynamic> eventMembers;
+  const EventFriends(this.eventID, this.userFriends, this.eventMembers);
 
   @override
   _EventFriendsState createState() => _EventFriendsState();
 }
 
 class _EventFriendsState extends State<EventFriends> {
-  void toggleMember(String key) {
-    setState(() {
-      eventFriends.update(key, (bool done) => !done);
+  Map<String, bool> userFriendsEventMember= {};
+  Map<String, String> newEventUser = {};
+  bool eventOriginalUser;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.userFriends.forEach((key, value) {
+      if (widget.eventMembers[key] != null) {
+        userFriendsEventMember[key] = true;
+      }else {
+        userFriendsEventMember[key] = false;
+      }
     });
+    print("LISTE: " + userFriendsEventMember.toString());
   }
 
-  Map<String, bool> eventFriends = {
-    'Jeremy': false,
-    'Hans Jürgen': false,
-    'Gertrude': false,
-    'Petfewie': false,
-    'Peter Silie': false,
-    'Petsdfsdf Silie': false,
-    'Peteg': false,
-    'eegregerg Silie': false,
-  };
+  void toggleMember(String key) {
+    setState(() {
+      userFriendsEventMember.update(key, (bool done) => !done);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -758,6 +768,21 @@ class _EventFriendsState extends State<EventFriends> {
                         style: TextStyle(color: kTextColor),
                       ),
                       onPressed: () {
+                        // Map erstellen mit nur neuen Usern
+                        userFriendsEventMember.forEach((key, value) {
+                          // prüfe ob in neuer eventMap der alte user vorhanden ist
+                          if ( widget.eventMembers[key] == null && value == true) {
+                            newEventUser[key] = widget.userFriends[key];
+                          }
+                        });
+                        print("NEUE USER: " + newEventUser.toString());
+
+                        if (newEventUser.isEmpty == false) {
+                          DatabaseService(null).changeEventUsers(widget.eventID, newEventUser);
+                        } else {
+                          print("LANGWEILIG");
+                        }
+
                         Navigator.of(context).pop();
                       },
                     ),
@@ -780,12 +805,16 @@ class _EventFriendsState extends State<EventFriends> {
           height: 300,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
-            itemCount: eventFriends.length,
+            itemCount: userFriendsEventMember.length,
             itemBuilder: (context, i) {
-              String key = eventFriends.keys.elementAt(i);
-              return EventFriend(key, eventFriends[key], () {
-                toggleMember(key);
-              });
+              String key = userFriendsEventMember.keys.elementAt(i);
+              String eventFriendUserName = widget.userFriends[key];
+              if (widget.eventMembers[key] != null){
+                eventOriginalUser = true;
+              } else {
+                eventOriginalUser = false;
+              }
+              return EventFriend(eventFriendUserName, eventOriginalUser, userFriendsEventMember[key], () {toggleMember(key);});
             },
           ),
         ),
@@ -797,15 +826,16 @@ class _EventFriendsState extends State<EventFriends> {
 class EventFriend extends StatelessWidget {
   final String friendName;
   final bool done;
+  final bool eventOriginalUser;
   final Function toggle;
-  const EventFriend(this.friendName, this.done, this.toggle);
+  const EventFriend(this.friendName,this.eventOriginalUser, this.done, this.toggle);
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? kPrimaryColor : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: done ? kPrimaryColor : kSecondaryColor, border: Border.all(color: done ? Colors.white : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
@@ -818,7 +848,9 @@ class EventFriend extends StatelessWidget {
         trailing: Checkbox(
           value: done,
           onChanged: (bool value) {
-            toggle();
+            if (eventOriginalUser == false) {
+              toggle();
+            }
           },
           activeColor: kPrimaryBackgroundColor,
           checkColor: kPrimaryColor,

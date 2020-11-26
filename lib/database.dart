@@ -79,7 +79,25 @@ class DatabaseService {
       "eventStatus": eventStatus,
     });
     eventUsers.forEach((key, value) { 
-      users.doc(key).update({"userEvents": FieldValue.arrayUnion([result.id])});
+      users.doc(key).update({
+        "userEvents": FieldValue.arrayUnion([result.id])
+      });
+    });
+  }
+
+  Future changeEventUsers(String eventID, Map<String, String> newEventUsers) async {
+    Map<String, String> eventStatus = {};
+    newEventUsers.forEach((key, value) {
+        eventStatus[key] = "not decided";
+    });
+    await events.doc(eventID).set({
+      "eventUsers" : newEventUsers,
+      "eventStatus": eventStatus,
+    });
+    newEventUsers.forEach((key, value) {
+      users.doc(key).update({
+        "userEvents": FieldValue.arrayUnion([eventID])
+      });
     });
   }
 
