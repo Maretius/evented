@@ -263,8 +263,8 @@ class ButtonContainer extends StatelessWidget {
                             'Delete',
                             style: TextStyle(color: kTextColor),
                           ),
-                          onPressed: () {
-                             DatabaseService(null).deleteEvent(eventVar, eventID);
+                          onPressed: () async {
+                            await DatabaseService(null).deleteEvent(eventVar, eventID);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => Evented()),
@@ -1053,10 +1053,6 @@ class _EventDateState extends State<EventDate> {
               DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Evented()),
-              );
               Navigator.of(context).pop();
             },
           ),

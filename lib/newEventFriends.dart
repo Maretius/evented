@@ -57,8 +57,8 @@ class _NewEventFriendsState extends State<NewEventFriends> {
         ),
         actions: <Widget>[
           IconButton(
-              onPressed: () {
-                DatabaseService(widget.userID).addEvent(widget.userName, widget.eventIcon, widget.eventTitle, widget.eventDetails, widget.eventDateTime, widget.eventTask, widget.userFriends, eventFriends);
+              onPressed: () async {
+               await DatabaseService(widget.userID).addEvent(widget.userName, widget.eventIcon, widget.eventTitle, widget.eventDetails, widget.eventDateTime, widget.eventTask, widget.userFriends, eventFriends);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Evented()),
