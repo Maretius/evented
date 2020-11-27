@@ -31,12 +31,6 @@ class Event extends StatefulWidget {
 class _EventState extends State<Event> {
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
     List<String> eventTasks = [];
     widget.eventTasksUser.forEach((key, value) {
@@ -416,6 +410,7 @@ class InvitedFriend extends StatelessWidget {
           trailing: Icon(
             Icons.person_outline_rounded,
             size: 32.0,
+            color: Colors.white,
           ),
           onTap: () {
             showDialog(
@@ -526,6 +521,7 @@ class InvitedFriend extends StatelessWidget {
           trailing: Icon(
             Icons.person_remove_rounded,
             size: 32.0,
+            color: Colors.white,
           ),
           onTap: () {
             showDialog(

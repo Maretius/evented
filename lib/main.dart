@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
@@ -17,8 +16,6 @@ void main() {
 }
 
 class Evented extends StatefulWidget {
-
-
   @override
   _EventedState createState() => _EventedState();
 }
@@ -34,12 +31,6 @@ class _EventedState extends State<Evented> {
     print(localUserID);
     database = DatabaseService(localUserID);
     databaseUser = await database.getUserData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    setState(() {});
   }
 
   @override
@@ -106,7 +97,7 @@ class _EventedState extends State<Evented> {
             ],
           ),
           title: Text(
-            "Evented",
+            "evented",
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.w600,
@@ -114,16 +105,16 @@ class _EventedState extends State<Evented> {
             ),
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.search_rounded,
-                size: 28.0,
-              ),
-              onPressed: () {
-/*                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GoogleLogin()));*/
-              },
-            ),
+//             IconButton(
+//               icon: Icon(
+//                 Icons.search_rounded,
+//                 size: 28.0,
+//               ),
+//               onPressed: () {
+// /*                Navigator.push(context,
+//                     MaterialPageRoute(builder: (context) => GoogleLogin()));*/
+//               },
+//             ),
             IconButton(
               icon: Icon(
                 Icons.person_add_alt_1_rounded,
@@ -143,33 +134,33 @@ class _EventedState extends State<Evented> {
                   context: context,
                   builder: (BuildContext cxt) {
                     return AlertDialog(
-                        backgroundColor: kPrimaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                      backgroundColor: kPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                      ),
+                      title: isLoggedIn ? Text('Logout', style: TextStyle(color: Colors.white)) : Text('Login', style: TextStyle(color: Colors.white)),
+                      content: isLoggedIn ? Text('Are you sure u want to Logout?', style: TextStyle(color: Colors.white)) : Text('Are you sure u want to Login?', style: TextStyle(color: Colors.white)),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text(
+                            'Yes',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            isLoggedIn ? logoutUser() : loginUser();
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        title: isLoggedIn ? Text('Logout', style: TextStyle(color: Colors.white)) : Text('Login', style: TextStyle(color: Colors.white)),
-                        content: isLoggedIn ? Text('Are you sure u want to Logout', style: TextStyle(color: Colors.white)) : Text('Are you sure u want to Login', style: TextStyle(color: Colors.white)),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text(
-                              'Yes',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {
-                              isLoggedIn ? logoutUser() : loginUser();
-                              Navigator.of(context).pop();
-                            },
+                        TextButton(
+                          child: Text(
+                            'No',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          TextButton(
-                            child: Text(
-                              'No',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
                     );
                   },
                 );
@@ -178,91 +169,85 @@ class _EventedState extends State<Evented> {
           ],
           backgroundColor: kPrimaryColor,
         ),
-        body: SizedBox(
-          height: 800.0,
-          child: FutureBuilder(
-              // Wait until [connectToFirebase] returns stream
-              future: connectToFirebase(),
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else {
-                  print("Diese2: " + databaseUser.userEvents.toString());
-                  return SizedBox(
-                    height: 200.0,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: databaseUser.userEvents.length,
-                        itemBuilder: (context, i) {
-                          String eventID = databaseUser.userEvents[i];
-                          return StreamBuilder<DocumentSnapshot>(
-                            stream: database.getEvents(eventID),
-                            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return Center(child: CircularProgressIndicator());
-                              } else {
-                                // resolve stream... Stream<DocumentSnapshot> -> DocumentSnapshot -> Map<String, bool>
-                                Map<String, dynamic> items = snapshot.data.data();
-                                var userDocument = snapshot.data;
-                                //userDocument["eventName"]
-                                return SizedBox(
-                                  height: 85,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: 1,
-                                      itemBuilder: (context, i) {
-                                        Map<String, dynamic> eventStatus = userDocument["eventStatus"];
-                                        Map<String, dynamic> eventUsers = userDocument["eventUsers"];
+        body: FutureBuilder(
+            // Wait until [connectToFirebase] returns stream
+            future: connectToFirebase(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return StreamBuilder<DocumentSnapshot>(
+                    stream: database.getUserInfos(),
+                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        var userDocument = snapshot.data;
+                        List<dynamic> userEvents = userDocument["userEvents"];
 
-                                        List<String> eventInvitedUsers = [];
-                                        eventUsers.forEach((key, value) {
-                                          eventInvitedUsers.add(key);
-                                        });
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: userEvents.length,
+                          itemBuilder: (context, i) {
+                            String eventID = userEvents[i];
+                            return StreamBuilder<DocumentSnapshot>(
+                              stream: database.getEvents(eventID),
+                              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else {
+                                  var userEventDocument = snapshot.data;
+                                  //userDocument["eventName"]
+                                  Map<String, dynamic> eventStatus = userEventDocument["eventStatus"];
+                                  Map<String, dynamic> eventUsers = userEventDocument["eventUsers"];
 
-                                        String userkey = "";
-                                        String useranswer = "";
-                                        String localUserStatus = "";
-                                        bool localUserIsAdmin = false;
+                                  List<String> eventInvitedUsers = [];
+                                  eventUsers.forEach((key, value) {
+                                    eventInvitedUsers.add(key);
+                                  });
 
-                                        for (var u = 0; u < eventUsers.length; u++) {
-                                          userkey = eventInvitedUsers.elementAt(u);
-                                          useranswer = eventStatus[userkey];
-                                          if (userkey == localUserID) {
-                                            localUserStatus = useranswer;
-                                          }
-                                          if (useranswer == "Admin" && userkey == localUserID) {
-                                            localUserIsAdmin = true;
-                                          }
-                                        }
+                                  String userkey = "";
+                                  String useranswer = "";
+                                  String localUserStatus = "";
+                                  bool localUserIsAdmin = false;
 
-                                        var datetime = userDocument["eventDateTime"].toDate();
-                                        return SingleEvent(
-                                          userDocument["eventIcon"],
-                                          userDocument["eventName"],
-                                          userDocument["eventDetails"],
-                                          datetime,
-                                          localUserID,
-                                          localUserStatus,
-                                          localUserIsAdmin,
-                                          databaseUser.userFriends,
-                                          eventUsers,
-                                          eventStatus,
-                                          userDocument["eventTasksUser"],
-                                          eventID,
-                                          database,
-                                        );
-                                      }),
-                                );
-                              }
-                            },
-                          );
-                        }),
-                  );
-                }
-              }),
-        ),
+                                  for (var u = 0; u < eventUsers.length; u++) {
+                                    userkey = eventInvitedUsers.elementAt(u);
+                                    useranswer = eventStatus[userkey];
+                                    if (userkey == localUserID) {
+                                      localUserStatus = useranswer;
+                                    }
+                                    if (useranswer == "Admin" && userkey == localUserID) {
+                                      localUserIsAdmin = true;
+                                    }
+                                  }
+
+                                  var datetime = userEventDocument["eventDateTime"].toDate();
+                                  return SingleEvent(
+                                    userEventDocument["eventIcon"],
+                                    userEventDocument["eventName"],
+                                    userEventDocument["eventDetails"],
+                                    datetime,
+                                    localUserID,
+                                    localUserStatus,
+                                    localUserIsAdmin,
+                                    databaseUser.userFriends,
+                                    eventUsers,
+                                    eventStatus,
+                                    userEventDocument["eventTasksUser"],
+                                    eventID,
+                                    database,
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        );
+                      }
+                    });
+              }
+            }),
         backgroundColor: kPrimaryBackgroundColor,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -291,7 +276,8 @@ class SingleEvent extends StatelessWidget {
   final Map eventTasksUser;
   final String eventID;
   final DatabaseService database;
-  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID, this.database);
+  const SingleEvent(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus,
+      this.eventTasksUser, this.eventID, this.database);
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +355,10 @@ class SingleEvent extends StatelessWidget {
               },
             );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, localUserID, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, localUserID, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
           }
         },
       ),
@@ -379,4 +368,3 @@ class SingleEvent extends StatelessWidget {
     );
   }
 }
-

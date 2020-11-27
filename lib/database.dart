@@ -209,6 +209,10 @@ class DatabaseService {
     return events.doc(eventID).snapshots();
   }
 
+  Stream getUserInfos() {
+    return users.doc(userID).snapshots();
+  }
+
   Future<Map<String, String>> addFriend(String userFriendToken, List<String> userFriendIDs) async {
     String userFriendName;
     var result = await users.where("userToken", isEqualTo: userFriendToken).limit(1).get();
