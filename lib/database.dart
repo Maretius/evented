@@ -88,11 +88,13 @@ class DatabaseService {
         "userEvents": FieldValue.arrayUnion([result.id])
       });
       // send Message to each user
-      await users.doc(key).get().then((value) {
-        userMessagingToken = (value.data()["userMessagingToken"]);
+      if (userID != key) {
+        await users.doc(key).get().then((value) {
+          userMessagingToken = (value.data()["userMessagingToken"]);
+        });
+        PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to the $eventIcon '$eventTitle' event");
+      }
       });
-      PushNotificationsManager.instance.sendNotification(userMessagingToken, "Evented invitation", "Hey, you have been invited to the $eventTitle event");
-    });
   }
 
   Future changeEventUsers(String eventID, Map<String, String> newEventUsers) async {
@@ -112,7 +114,7 @@ class DatabaseService {
   }
 
   Future changeEventUserStatus(String eventID, String userEventStatus) async {
-    String query = "eventStatus." + userID;
+    String query = "eventStatus.-" + userID;
     await events.doc(eventID).update({
       query : userEventStatus
     });
@@ -259,6 +261,7 @@ class PushNotificationsManager {
 
   bool initialized = false;
   String token;
+  String serverKey = "AAAAPgopnYc:APA91bFhhqlrD5xmamFBkwpOq3pu_dk_JoBktvuy1i69Oh-x74s2HlXgxCKM3njyEYlLJ2gYtpD4CtaB_NARiMyHnmYweiaHljzB3GVkcmfslEnJqnyLZzUMG6XmhGgaE6jhyPf1J-EM";
 
   Future init() async {
     if (!initialized) {
@@ -288,7 +291,7 @@ class PushNotificationsManager {
       'https://fcm.googleapis.com/fcm/send',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'key=AAAAPgopnYc:APA91bFhhqlrD5xmamFBkwpOq3pu_dk_JoBktvuy1i69Oh-x74s2HlXgxCKM3njyEYlLJ2gYtpD4CtaB_NARiMyHnmYweiaHljzB3GVkcmfslEnJqnyLZzUMG6XmhGgaE6jhyPf1J-EM',
+        'Authorization': 'key=$serverKey',
       },
       body: jsonEncode(
         <String, dynamic>{

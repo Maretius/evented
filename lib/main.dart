@@ -132,19 +132,35 @@ class _EventedState extends State<Evented> {
                 showDialog(
                   context: context,
                   builder: (BuildContext cxt) {
-                    return SimpleDialog(
+                    return AlertDialog(
                         backgroundColor: kPrimaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                         ),
-                        children: [
-                          RaisedButton(
+                        title: isLoggedIn ? Text('Logout', style: TextStyle(color: Colors.white)) : Text('Login', style: TextStyle(color: Colors.white)),
+                        content: isLoggedIn ? Text('Are you sure u want to Logout', style: TextStyle(color: Colors.white)) : Text('Are you sure u want to Login', style: TextStyle(color: Colors.white)),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(color: Colors.white),
+                            ),
                             onPressed: () {
                               isLoggedIn ? logoutUser() : loginUser();
+                              Navigator.of(context).pop();
                             },
-                            child: isLoggedIn ? Text('Logout') : Text('Login'),
-                          )
-                        ]);
+                          ),
+                          TextButton(
+                            child: Text(
+                              'No',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                    );
                   },
                 );
               },
