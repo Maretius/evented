@@ -33,6 +33,12 @@ class _EventedState extends State<Evented> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {});
+  }
+
+  @override
   void initState() {
     super.initState();
     if (localUserID != null) {

@@ -7,7 +7,7 @@ import 'main.dart';
 // import 'main.dart';
 // import 'newEvent.dart';
 
-class Event extends StatelessWidget {
+class Event extends StatefulWidget {
   final String eventIcon;
   final String eventTitle;
   final String eventDetails;
@@ -24,9 +24,22 @@ class Event extends StatelessWidget {
   const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
 
   @override
+  _EventState createState() => _EventState();
+}
+
+
+class _EventState extends State<Event> {
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> eventTasks = [];
-    eventTasksUser.forEach((key, value) {
+    widget.eventTasksUser.forEach((key, value) {
       eventTasks.add(key);
     });
 
@@ -35,7 +48,7 @@ class Event extends StatelessWidget {
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
         centerTitle: true,
         title: Text(
-          eventTitle,
+          widget.eventTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24.0,
@@ -48,7 +61,7 @@ class Event extends StatelessWidget {
             alignment: Alignment.center,
             child: IconButton(
               icon: Text(
-                eventIcon,
+                widget.eventIcon,
                 style: TextStyle(
                   fontSize: 30.0,
                   fontWeight: FontWeight.w600,
@@ -68,7 +81,7 @@ class Event extends StatelessWidget {
                             child: Column(
                               children: [
                                 Text(
-                                  eventDetails,
+                                  widget.eventDetails,
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
@@ -93,14 +106,14 @@ class Event extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                DateFormat('dd.MM.yyyy').format(eventDateTime),
+                DateFormat('dd.MM.yyyy').format(widget.eventDateTime),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),
               ),
               Text(
-                DateFormat('kk:mm').format(eventDateTime) + " Uhr",
+                DateFormat('kk:mm').format(widget.eventDateTime) + " Uhr",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -110,9 +123,9 @@ class Event extends StatelessWidget {
           ),
         ),
       ),
-      body: InvitedFriendsList(eventID, eventTasksUser, eventUsers, eventStatus, localUserID, localUserIsAdmin),
+      body: InvitedFriendsList(widget.eventID, widget.eventTasksUser, widget.eventUsers, widget.eventStatus, widget.localUserID, widget.localUserIsAdmin),
       floatingActionButton: new Visibility(
-        visible: localUserIsAdmin,
+        visible: widget.localUserIsAdmin,
         child: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -126,11 +139,11 @@ class Event extends StatelessWidget {
               childAspectRatio: 1.0,
               crossAxisCount: 3,
               children: <Widget>[
-                ButtonContainer(eventID, Icons.event_note_rounded, "Change Details", eventDetails, null),
-                ButtonContainer(eventID, Icons.person_add_alt_1_rounded, "Invite Friends", userFriends, eventUsers),
-                ButtonContainer(eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks, null),
-                ButtonContainer(eventID, Icons.date_range_rounded, "Edit DateTime", eventDateTime, null),
-                ButtonContainer(eventID, Icons.delete_forever_rounded, "Delete Event", eventUsers, null),
+                ButtonContainer(widget.eventID, Icons.event_note_rounded, "Change Details", widget.eventDetails, null),
+                ButtonContainer(widget.eventID, Icons.person_add_alt_1_rounded, "Invite Friends", widget.userFriends, widget.eventUsers),
+                ButtonContainer(widget.eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks, null),
+                ButtonContainer(widget.eventID, Icons.date_range_rounded, "Edit DateTime", widget.eventDateTime, null),
+                ButtonContainer(widget.eventID, Icons.delete_forever_rounded, "Delete Event", widget.eventUsers, null),
               ],
             ),
           );
@@ -265,6 +278,7 @@ class ButtonContainer extends StatelessWidget {
                           ),
                           onPressed: () {
                             Navigator.of(context).pop();
+
                           },
                         ),
                       ],
@@ -617,8 +631,10 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
               }
             });
             print("TEST: " + newEventTasks.toString());
-
            DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+
           },
         ),
         SizedBox(
@@ -719,6 +735,8 @@ class _EventDetailsState extends State<EventDetails> {
             ),
             onPressed: () {
               DatabaseService(null).changeEventDetails(widget.eventID, eventDetails);
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
           ),
         )
@@ -813,7 +831,8 @@ class _EventFriendsState extends State<EventFriends> {
                         if (newEventUser.isEmpty == false) {
                           DatabaseService(null).changeEventUsers(widget.eventID, newEventUser);
                         }
-
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
                         Navigator.of(context).pop();
                       },
                     ),
@@ -1032,6 +1051,13 @@ class _EventDateState extends State<EventDate> {
             onPressed: () {
               print("DATE: " + DateFormat("dd.MM.yyyy - HH:mm").format(eventDateTime));
               DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Evented()),
+              );
+              Navigator.of(context).pop();
             },
           ),
         )
