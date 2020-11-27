@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 //final Firestore firestore = Firestore();
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -45,6 +48,7 @@ class LocalUser {
 class DatabaseService {
   final String userID;
   DatabaseService(this.userID);
+  String postUrl = "fcm.googleapis.com/fcm/send";
 
   final CollectionReference users = FirebaseFirestore.instance.collection('users');
   final CollectionReference events = FirebaseFirestore.instance.collection('events');
@@ -53,6 +57,7 @@ class DatabaseService {
     Map<String, String> eventUsers = {userID: userName};
     Map<String, String> eventTasksUser = {};
     Map<String, String> eventStatus = {};
+    String userMessagingToken;
 
     userFriends.forEach((key, value) {
       if (eventMembers[key] == true) {
@@ -78,10 +83,15 @@ class DatabaseService {
       "eventTasksUser": eventTasksUser,
       "eventStatus": eventStatus,
     });
-    eventUsers.forEach((key, value) { 
+    eventUsers.forEach((key, value) async { 
       users.doc(key).update({
         "userEvents": FieldValue.arrayUnion([result.id])
       });
+      // send Message to each user
+      await users.doc(key).get().then((value) {
+        userMessagingToken = (value.data()["userMessagingToken"]);
+      });
+      PushNotificationsManager.instance.sendNotification(userMessagingToken, "Evented invitation", "Hey, you have been invited to the $eventTitle event");
     });
   }
 
@@ -163,25 +173,33 @@ class DatabaseService {
     await events.doc(eventID).delete();
   }
 
-
-  Future addUser() async {
-    String userToken = userID.substring(userID.length - 6);
-    return await users.doc(userID).set({
-      "userName": user.displayName,
-      "userToken": userToken,
-    });
-  }
-
   Future checkIfUserExists() async {
     //await Firebase.initializeApp();
     String userName;
+    String userMessagingToken;
+    // get Firebase Messaging Token
+    String userDBMessagingToken = await PushNotificationsManager.instance.init();
+
     if ((await users.doc(userID).get()).exists) {
       await users.doc(userID).get().then((value) {
         userName = (value.data()["userName"]);
+        userMessagingToken = (value.data()["userMessagingToken"]);
       });
+      if (userDBMessagingToken != userMessagingToken) {
+        await users.doc(userID).update({
+          "userMessagingToken": userDBMessagingToken,
+        });
+      }
       return userName;
     } else {
-      addUser();
+      // add User to Firebase
+      String userToken = userID.substring(userID.length - 6);
+      await users.doc(userID).set({
+        "userName": user.displayName,
+        "userToken": userToken,
+        "userMessagingToken": userDBMessagingToken,
+      });
+      return user.displayName;
     }
   }
 
@@ -230,4 +248,64 @@ class DatabaseService {
     });
     return LocalUser(userName, userEvents, userFriends);
   }
+}
+
+class PushNotificationsManager {
+
+  PushNotificationsManager._();
+  factory PushNotificationsManager() => instance;
+  static final PushNotificationsManager instance = PushNotificationsManager._();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
+  bool initialized = false;
+  String token;
+
+  Future init() async {
+    if (!initialized) {
+      firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print("onLaunch: $message");
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          print("onLaunch: $message");
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print("onResume: $message");
+        },
+      );
+
+      token = await firebaseMessaging.getToken();
+      initialized = true;
+    } else {
+      token = await firebaseMessaging.getToken();
+    }
+    print("FirebaseMessaging Token: " + token);
+    return token;
+  }
+
+  Future sendNotification(userFriendMessagingToken, messageTitle, messageBody) async {
+    await http.post(
+      'https://fcm.googleapis.com/fcm/send',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=AAAAPgopnYc:APA91bFhhqlrD5xmamFBkwpOq3pu_dk_JoBktvuy1i69Oh-x74s2HlXgxCKM3njyEYlLJ2gYtpD4CtaB_NARiMyHnmYweiaHljzB3GVkcmfslEnJqnyLZzUMG6XmhGgaE6jhyPf1J-EM',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': messageBody,
+            'title': messageTitle
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          'to': userFriendMessagingToken,
+        },
+      ),
+    );
+  }
+
 }
