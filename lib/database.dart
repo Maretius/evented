@@ -114,7 +114,7 @@ class DatabaseService {
   }
 
   Future changeEventUserStatus(String eventID, String userEventStatus) async {
-    String query = "eventStatus.-" + userID;
+    String query = "eventStatus." + userID;
     await events.doc(eventID).update({
       query : userEventStatus
     });

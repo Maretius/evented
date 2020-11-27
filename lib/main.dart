@@ -105,16 +105,6 @@ class _EventedState extends State<Evented> {
             ),
           ),
           actions: <Widget>[
-//             IconButton(
-//               icon: Icon(
-//                 Icons.search_rounded,
-//                 size: 28.0,
-//               ),
-//               onPressed: () {
-// /*                Navigator.push(context,
-//                     MaterialPageRoute(builder: (context) => GoogleLogin()));*/
-//               },
-//             ),
             IconButton(
               icon: Icon(
                 Icons.person_add_alt_1_rounded,
@@ -336,6 +326,7 @@ class SingleEvent extends StatelessWidget {
                         style: TextStyle(color: kTextColor),
                       ),
                       onPressed: () {
+                        print("Test");
                         database.changeEventUserStatus(eventID, "promised");
                         Navigator.of(context).pop();
                       },
@@ -346,6 +337,7 @@ class SingleEvent extends StatelessWidget {
                         style: TextStyle(color: kTextColor),
                       ),
                       onPressed: () {
+                        print("Test2");
                         database.changeEventUserStatus(eventID, "called off");
                         Navigator.of(context).pop();
                       },
