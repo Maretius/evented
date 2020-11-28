@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evented/constants.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
 import 'main.dart';
@@ -21,16 +21,32 @@ class Event extends StatefulWidget {
 class _EventState extends State<Event> {
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder(
-    //     future: widget.database.getEventInfos(widget.eventID),
-    //     builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return Center(child: CircularProgressIndicator());
-    //       } else {
     return StreamBuilder<DocumentSnapshot>(
       stream: widget.database.getEvent(widget.eventID),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+        if (snapshot.connectionState != ConnectionState.waiting && !snapshot.data.exists) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Error', style: TextStyle(fontSize: 22.0, color: Colors.white)),
+              centerTitle: true,
+              backgroundColor: kFourthColor,
+            ),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text("This event was removed", textAlign: TextAlign.center,style: TextStyle(color: Colors.white, fontSize: 26.0)),
+                IconButton(
+                    icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 40.0),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }
+                )
+              ]
+            ),
+            backgroundColor: kPrimaryBackgroundColor,
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else {
           var eventSnapshot = snapshot.data;
@@ -45,7 +61,6 @@ class _EventState extends State<Event> {
           if (eventStatus[widget.userID] == "Admin") {
             userIsAdmin = true;
           }
-
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
@@ -147,8 +162,6 @@ class _EventState extends State<Event> {
         }
       },
     );
-    //}
-    //});
   }
 }
 

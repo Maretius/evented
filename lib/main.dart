@@ -307,28 +307,9 @@ class SingleEvent extends StatelessWidget {
                     eventTitle,
                     style: TextStyle(color: Colors.white),
                   ),
-                  content: SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        Text(
-                          eventDetails,
+                  content: Text("Details: " + eventDetails + "\n\nAt: " + DateFormat('dd.MM.yyyy, kk:mm').format(eventDateTime) + "\n\nDo u want to accept the Invite?",
                           style: TextStyle(color: Colors.white),
                         ),
-                        Text(
-                          DateFormat('dd.MM.yyyy, kk:mm').format(eventDateTime) + " Uhr",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          '',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          'Do u want to accept the Invite?',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
                   actions: <Widget>[
                     TextButton(
                       child: Text(
