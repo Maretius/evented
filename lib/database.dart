@@ -92,7 +92,7 @@ class DatabaseService {
         await users.doc(key).get().then((value) {
           userMessagingToken = (value.data()["userMessagingToken"]);
         });
-        PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to the $eventIcon '$eventTitle' event");
+        PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to the '$eventTitle' event");
       }
       });
   }
@@ -149,6 +149,11 @@ class DatabaseService {
     });
   }
 
+  Future removeEventTask(String eventID, String eventTask) async {
+    String query = "eventTasksUser." + eventTask;
+    await events.doc(eventID).update({query: FieldValue.delete()});
+  }
+
   Future changeEventTask(String eventID, Map<String, String> eventTasksUser) async {
     await events.doc(eventID).set({
       "eventTasksUser" : eventTasksUser,
@@ -162,7 +167,11 @@ class DatabaseService {
     });
   }
 
-  Future deleteEvent(Map eventUser, String eventID) async {
+  Future deleteEvent(String eventID) async {
+    Map<String, String> eventUser = {};
+    await events.doc(eventID).get().then((value) {
+      eventUser = Map.from(value.data()["userFriends"]);
+    });
     List<String> eventUserIDs = [];
     eventUser.forEach((key, value) {
       eventUserIDs.add(key);
@@ -205,11 +214,11 @@ class DatabaseService {
     }
   }
 
-  Stream getEvents(String eventID) {
+  Stream getEvent(String eventID) {
     return events.doc(eventID).snapshots();
   }
 
-  Stream getUserInfos() {
+  Stream getUser() {
     return users.doc(userID).snapshots();
   }
 

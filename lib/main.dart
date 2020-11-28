@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:evented/event.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
@@ -167,7 +168,7 @@ class _EventedState extends State<Evented> {
                 return Center(child: CircularProgressIndicator());
               } else {
                 return StreamBuilder<DocumentSnapshot>(
-                    stream: database.getUserInfos(),
+                    stream: database.getUser(),
                     builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -182,7 +183,7 @@ class _EventedState extends State<Evented> {
                           itemBuilder: (context, i) {
                             String eventID = userEvents[i];
                             return StreamBuilder<DocumentSnapshot>(
-                              stream: database.getEvents(eventID),
+                              stream: database.getEvent(eventID),
                               builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                                 if (!snapshot.hasData) {
                                   return Center(child: CircularProgressIndicator());
@@ -350,7 +351,10 @@ class SingleEvent extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Event(eventIcon, eventTitle, eventDetails, eventDateTime, localUserID, eventUserStatus, localUserIsAdmin, userFriends, eventUsers, eventStatus, eventTasksUser, eventID)));
+                    builder: (context) => Event(database, eventID, localUserID, userFriends)));
+            // eventUsers, eventStatus,
+          // eventTasksUser,
+            // eventID)));
           }
         },
       ),

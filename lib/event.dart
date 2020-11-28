@@ -1,617 +1,284 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evented/constants.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
 import 'main.dart';
-// import 'main.dart';
-// import 'newEvent.dart';
 
 class Event extends StatefulWidget {
-  final String eventIcon;
-  final String eventTitle;
-  final String eventDetails;
-  final DateTime eventDateTime;
-  final String localUserID;
-  final String eventUserStatus;
-  final bool localUserIsAdmin;
-  final Map userFriends;
-  final Map eventUsers;
-  final Map eventStatus;
-  final Map eventTasksUser;
+  final DatabaseService database;
   final String eventID;
-
-  const Event(this.eventIcon, this.eventTitle, this.eventDetails, this.eventDateTime, this.localUserID, this.eventUserStatus, this.localUserIsAdmin, this.userFriends, this.eventUsers, this.eventStatus, this.eventTasksUser, this.eventID);
+  final String userID;
+  final Map<String, String> userFriends;
+  const Event(this.database, this.eventID, this.userID, this.userFriends);
 
   @override
   _EventState createState() => _EventState();
 }
 
-
 class _EventState extends State<Event> {
-
   @override
   Widget build(BuildContext context) {
-    List<String> eventTasks = [];
-    widget.eventTasksUser.forEach((key, value) {
-      eventTasks.add(key);
-    });
+    // return FutureBuilder(
+    //     future: widget.database.getEventInfos(widget.eventID),
+    //     builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return Center(child: CircularProgressIndicator());
+    //       } else {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: widget.database.getEvent(widget.eventID),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+          return CircularProgressIndicator();
+        } else {
+          var eventSnapshot = snapshot.data;
+          String eventTitle = eventSnapshot["eventName"];
+          String eventDetails = eventSnapshot["eventDetails"];
+          String eventIcon = eventSnapshot["eventIcon"];
+          var eventDateTime = eventSnapshot["eventDateTime"].toDate();
+          Map<String, dynamic> eventTasksUser = eventSnapshot["eventTasksUser"];
+          Map<String, dynamic> eventUsers = eventSnapshot["eventUsers"];
+          Map<String, dynamic> eventStatus = eventSnapshot["eventStatus"];
+          bool userIsAdmin = false;
+          if (eventStatus[widget.userID] == "Admin") {
+            userIsAdmin = true;
+          }
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
-        centerTitle: true,
-        title: Text(
-          widget.eventTitle,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(right: 20.0),
-            alignment: Alignment.center,
-            child: IconButton(
-              icon: Text(
-                widget.eventIcon,
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext cxt) {
-                    return SimpleDialog(
-                        backgroundColor: kPrimaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                        ),
-                        children: [
-                          Container(
-                            child: Column(
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
+              centerTitle: true,
+              title: Text(eventTitle, style: TextStyle(fontSize: 24.0)),
+              backgroundColor: kPrimaryColor,
+              actions: <Widget>[
+                IconButton(
+                    icon: Text(eventIcon, style: TextStyle(fontSize: 26.0)),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                              backgroundColor: kPrimaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                              ),
+                              title: Text(
+                                "Eventdetails",
+                                style: TextStyle(color: Colors.white, fontSize: 22.0),
+                              ),
                               children: [
                                 Text(
-                                  widget.eventDetails,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                  eventDetails,
+                                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                                  textAlign: TextAlign.center,
+                                )
                               ],
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 5),
-                            margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                          ),
-                        ]);
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-        backgroundColor: kPrimaryColor,
-        bottom: PreferredSize(
-          preferredSize: Size(0.0, 20.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                DateFormat('dd.MM.yyyy').format(widget.eventDateTime),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-              Text(
-                DateFormat('kk:mm').format(widget.eventDateTime) + " Uhr",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: InvitedFriendsList(widget.eventID, widget.eventTasksUser, widget.eventUsers, widget.eventStatus, widget.localUserID, widget.localUserIsAdmin),
-      floatingActionButton: new Visibility(
-        visible: widget.localUserIsAdmin,
-        child: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            backgroundColor: kPrimaryColor,
-            context: context,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-            ),
-            builder: (context) => new GridView.count(
-              shrinkWrap: true,
-              childAspectRatio: 1.0,
-              crossAxisCount: 3,
-              children: <Widget>[
-                ButtonContainer(widget.eventID, Icons.event_note_rounded, "Change Details", widget.eventDetails, null),
-                ButtonContainer(widget.eventID, Icons.person_add_alt_1_rounded, "Invite Friends", widget.userFriends, widget.eventUsers),
-                ButtonContainer(widget.eventID, Icons.menu_open_rounded, "Edit Tasks", eventTasks, null),
-                ButtonContainer(widget.eventID, Icons.date_range_rounded, "Edit DateTime", widget.eventDateTime, null),
-                ButtonContainer(widget.eventID, Icons.delete_forever_rounded, "Delete Event", widget.eventUsers, null),
+                            );
+                          });
+                    })
               ],
-            ),
-          );
-        },
-        child: Icon(
-          Icons.settings_rounded,
-          size: 32.0,
-        ),
-        backgroundColor: kPrimaryColor,
-      ),
-      ),
-      backgroundColor: kPrimaryBackgroundColor,
-    );
-  }
-}
-
-class ButtonContainer extends StatelessWidget {
-  ButtonContainer(this.eventID, this.buttonIcon, this.buttonText, this.eventVar, this.eventVar2);
-  final String eventID;
-  final IconData buttonIcon;
-  final String buttonText;
-  var eventVar;
-  var eventVar2;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(
-              buttonIcon,
-              size: 32,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              if (buttonText == "Change Details") {
-                showModalBottomSheet(
-                  backgroundColor: kPrimaryColor,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-                  ),
-                  builder: (context) => Wrap(
+              bottom: PreferredSize(
+                preferredSize: Size(0.0, 22.0),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 6.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      EventDetails(eventID, eventVar),
+                      Text(
+                        DateFormat('dd.MM.yyyy').format(eventDateTime),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        DateFormat('kk:mm').format(eventDateTime) + " Uhr",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
                     ],
                   ),
-                );
-              } else if (buttonText == "Invite Friends") {
-                showModalBottomSheet(
-                  backgroundColor: kPrimaryColor,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-                  ),
-                  builder: (context) => new Center(
-                    child: EventFriends(eventID, eventVar, eventVar2),
-                  ),
-                );
-              } else if (buttonText == "Edit Tasks") {
-                showModalBottomSheet(
-                  backgroundColor: kPrimaryColor,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-                  ),
-                  builder: (context) => new Center(
-                    child: EventTasks(eventID, eventVar),
-                  ),
-                );
-              } else if (buttonText == "Edit DateTime") {
-                showModalBottomSheet(
-                  backgroundColor: kPrimaryColor,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
-                  ),
-                  builder: (context) => Wrap(
-                    children: [
-                      EventDate(eventID, eventVar),
-                    ],
-                  ),
-                );
-              } else if (buttonText == "Delete Event") {
-                return showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext cxt) {
-                    return AlertDialog(
+                ),
+              ),
+            ),
+            body: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: eventUsers.length,
+                itemBuilder: (context, i) {
+                  String eventUserID = eventUsers.keys.elementAt(i);
+                  String eventUserName = eventUsers.values.elementAt(i);
+                  String eventUserStatus = eventStatus[eventUserID];
+                  return EventUsers(widget.eventID, widget.userID, userIsAdmin, eventUserID, eventUserName, eventUserStatus, eventTasksUser);
+                }),
+            floatingActionButton: Visibility(
+              visible: userIsAdmin,
+              child: FloatingActionButton(
+                child: Icon(Icons.settings_rounded, size: 32.0),
+                backgroundColor: kPrimaryColor,
+                onPressed: () {
+                  showModalBottomSheet(
                       backgroundColor: kPrimaryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.zero),
                       ),
-                      title: Text(
-                        'Delete Event?',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      content: SingleChildScrollView(
-                        child: ListBody(
-                          children: <Widget>[
-                            Text(
-                              'Are you sure u want to delete the event?',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              'Deleted Events cant be restored!',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(color: kTextColor),
-                          ),
-                          onPressed: () async {
-                            await DatabaseService(null).deleteEvent(eventVar, eventID);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Evented()),
-                            );
-                          },
-                        ),
-                        TextButton(
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(color: kTextColor),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          Text(
-            buttonText,
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class InvitedFriendsList extends StatefulWidget {
-  final String eventID;
-  final Map eventTasksUser;
-  final Map eventUsers;
-  final Map eventStatus;
-  final String localUserID;
-  final bool localUserIsAdmin;
-  const InvitedFriendsList(this.eventID, this.eventTasksUser, this.eventUsers, this.eventStatus, this.localUserID, this.localUserIsAdmin);
-  @override
-  _InvitedFriendsListState createState() => _InvitedFriendsListState();
-}
-
-class _InvitedFriendsListState extends State<InvitedFriendsList> {
-  void deleteInvitedFriend(String key) {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: widget.eventUsers.length,
-      itemBuilder: (context, i) {
-        String key = widget.eventUsers.keys.elementAt(i);
-        return InvitedFriend(widget.eventID, widget.localUserID, widget.localUserIsAdmin, widget.eventTasksUser, key, widget.eventUsers[key], widget.eventStatus[key], () {
-          deleteInvitedFriend(key);
-        });
+                      context: context,
+                      builder: (context) => GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            childAspectRatio: 1.0,
+                            children: <Widget>[
+                              ButtonContainer(widget.eventID, Icons.event_note_rounded, "Details", eventDetails, null),
+                              ButtonContainer(widget.eventID, Icons.person_add_alt_1_rounded,"Friends", widget.userFriends, eventUsers),
+                              ButtonContainer(widget.eventID, Icons.menu_open_rounded,"Tasks",  eventTasksUser, null),
+                              ButtonContainer(widget.eventID, Icons.date_range_rounded, "Date & Time", eventDateTime, null),
+                              ButtonContainer(widget.eventID, Icons.delete_forever_rounded, "Delete Event", null, null),
+                            ],
+                          ));
+                },
+              ),
+            ),
+            backgroundColor: kPrimaryBackgroundColor,
+          );
+        }
       },
     );
+    //}
+    //});
   }
 }
 
-class InvitedFriend extends StatelessWidget {
+class EventUsers extends StatefulWidget {
   final String eventID;
-  final String localUserID;
-  final bool localUserIsAdmin;
-  final Map eventTasksUser;
   final String userID;
-  final String friendName;
-  final String status;
-  final Function deleteInvitedFriend;
-  const InvitedFriend(this.eventID, this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID, this.friendName, this.status, this.deleteInvitedFriend);
+  final bool userIsAdmin;
+  final String eventUserID;
+  final String eventUserName;
+  final String eventUserStatus;
+  final Map eventTasksUser;
+  const EventUsers(this.eventID, this.userID, this.userIsAdmin, this.eventUserID, this.eventUserName, this.eventUserStatus, this.eventTasksUser);
 
+  @override
+  _EventUsersState createState() => _EventUsersState();
+}
+
+class _EventUsersState extends State<EventUsers> {
   @override
   Widget build(BuildContext context) {
-    if (status == "promised") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-        child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-          title: Text(
-            friendName,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-          trailing: Icon(
-            Icons.person_add_alt_1_rounded, // how_to_reg
-            color: Colors.white,
-            size: 32.0,
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext cxt) {
-                return SimpleDialog(
-                    backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                    ),
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              friendName,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              status,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            InvitedFriendTasklist(eventID, localUserID, localUserIsAdmin, eventTasksUser, userID),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                      ),
-                    ]);
-              },
-            );
-          },
-        ),
-      );
-    } else if (status == "not decided") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(color: kFifthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-        child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-          title: Text(
-            friendName,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-          trailing: Icon(
-            Icons.person_outline_rounded,
-            size: 32.0,
-            color: Colors.white,
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext cxt) {
-                return SimpleDialog(
-                    backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                    ),
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              friendName,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              status,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                      ),
-                    ]);
-              },
-            );
-          },
-        ),
-      );
-    } else if (status == "Admin") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-        child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-          title: Text(
-            friendName,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-          trailing: Icon(
-            Icons.engineering_rounded,
-            color: Colors.white,
-            size: 32.0,
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext cxt) {
-                return SimpleDialog(
-                    backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                    ),
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              friendName,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              status,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            InvitedFriendTasklist(eventID, localUserID, localUserIsAdmin, eventTasksUser, userID),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                      ),
-                    ]);
-              },
-            );
-          },
-        ),
-      );
-    } else if (status == "called off") {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-        decoration: BoxDecoration(color: kFourthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
-        child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-          title: Text(
-            friendName,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-          trailing: Icon(
-            Icons.person_remove_rounded,
-            size: 32.0,
-            color: Colors.white,
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext cxt) {
-                return SimpleDialog(
-                    backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                    ),
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              friendName,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              status,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                      ),
-                    ]);
-              },
-            );
-          },
-        ),
-      );
-    }
-  }
-}
+    Map<String, bool> eventTasks = {};
+    IconData userIcon;
+    Color userColor;
+    bool edit = false;
 
-class InvitedFriendTasklist extends StatefulWidget {
-  final String eventID;
-  final String localUserID;
-  final bool localUserIsAdmin;
-  final Map eventTasksUser;
-  final String userID;
-  const InvitedFriendTasklist(this.eventID, this.localUserID, this.localUserIsAdmin, this.eventTasksUser, this.userID);
-
-  @override
-  _InvitedFriendTasklistState createState() => _InvitedFriendTasklistState();
-}
-
-class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
-  Map<String, bool> eventInvitedFriendsTasks = {};
-  Map<String, String> newEventTasks = {};
-
-  @override
-  void initState() {
-    super.initState();
     widget.eventTasksUser.forEach((key, value) {
-      if(widget.localUserIsAdmin) {
-        if (widget.eventTasksUser[key] == widget.userID) {
-          eventInvitedFriendsTasks[key] = true;
-        } else if (widget.eventTasksUser[key] == null) {
-          eventInvitedFriendsTasks[key] = false;
+      if (widget.eventUserStatus == "Admin" || widget.eventUserStatus == "promised") {
+        if (widget.userIsAdmin) {
+          if (widget.eventTasksUser[key] == widget.eventUserID) {
+            eventTasks[key] = true;
+          } else if (widget.eventTasksUser[key] == null) {
+            eventTasks[key] = false;
+          }
+        } else {
+          if (widget.eventTasksUser[key] == widget.eventUserID) {
+            eventTasks[key] = true;
+          } else if (widget.eventTasksUser[key] == null && widget.eventUserID == widget.userID) {
+            eventTasks[key] = false;
+          }
         }
-      }else{
-        if (widget.eventTasksUser[key] == widget.userID) {
-          eventInvitedFriendsTasks[key] = true;
-        } else if (widget.eventTasksUser[key] == null && widget.localUserID == widget.userID) {
-          eventInvitedFriendsTasks[key] = false;
-        } else {}
       }
     });
+
+    if (widget.eventUserStatus == "Admin") {
+      userIcon = Icons.engineering_rounded;
+      userColor = kPrimaryColor;
+    } else if (widget.eventUserStatus == "promised") {
+      userIcon = Icons.person_add_alt_1_rounded;
+      userColor = kSecondaryColor;
+    } else if (widget.eventUserStatus == "not decided") {
+      userIcon = Icons.person_outline_rounded;
+      userColor = kThirdColor;
+    } else {
+      userIcon = Icons.person_remove_rounded;
+      userColor = kFourthColor;
+    }
+    if (widget.eventUserStatus == "Admin" || widget.eventUserStatus == "promised") {
+      edit = true;
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(color: userColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      child: ListTile(
+          title: Text(widget.eventUserName, style: TextStyle(fontSize: 22, color: Colors.white)),
+          trailing: Icon(userIcon, color: Colors.white, size: 28),
+          onTap: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return SimpleDialog(
+                    backgroundColor: userColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                    ),
+                    children: [
+                      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Text(widget.eventUserName, style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                        Text(widget.eventUserStatus, style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                        Visibility(visible: edit, child: EventUserTasks(widget.eventID, widget.userID, widget.userIsAdmin, widget.eventUserID, widget.eventUserName, widget.eventUserStatus, eventTasks))
+                      ])
+                    ],
+                  );
+                });
+          }),
+    );
   }
+}
+
+class EventUserTasks extends StatefulWidget {
+  final String eventID;
+  final String userID;
+  final bool userIsAdmin;
+  final String eventUserID;
+  final String eventUserName;
+  final String eventUserStatus;
+  final Map<String, bool> eventTasks;
+  const EventUserTasks(this.eventID, this.userID, this.userIsAdmin, this.eventUserID, this.eventUserName, this.eventUserStatus, this.eventTasks);
+
+  @override
+  _EventUserTasksState createState() => _EventUserTasksState();
+}
+
+class _EventUserTasksState extends State<EventUserTasks> {
+  Map<String, String> newEventTasks = {};
 
   void toggleMember(String key) {
     setState(() {
-      if(widget.localUserIsAdmin || widget.localUserID == widget.userID) {
-        eventInvitedFriendsTasks.update(key, (bool done) => !done);
+      if (widget.eventUserID == widget.userID || widget.userIsAdmin) {
+        widget.eventTasks.update(key, (bool done) => !done);
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemCount: widget.eventTasks.length,
+          itemBuilder: (context, i) {
+            String taskName = widget.eventTasks.keys.elementAt(i);
+            return InvitedFriendTask(taskName, widget.eventTasks[taskName], () {
+              toggleMember(taskName);
+            });
+          },
+        ),
         IconButton(
           icon: Icon(
             Icons.check_rounded,
@@ -619,32 +286,18 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
             color: Colors.white,
           ),
           onPressed: () {
-            eventInvitedFriendsTasks.forEach((key, value) {
-              if (value) {
-                newEventTasks[key] = widget.userID;
-              } else {
-                newEventTasks[key] = null;
-              }
-            });
-            print("TEST: " + newEventTasks.toString());
-           DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-
-          },
-        ),
-        SizedBox(
-          height: 300,
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: eventInvitedFriendsTasks.length,
-            itemBuilder: (context, i) {
-              String key = eventInvitedFriendsTasks.keys.elementAt(i);
-              return InvitedFriendTask(key, eventInvitedFriendsTasks[key], () {
-                toggleMember(key);
+            if (widget.eventTasks.length != 0) {
+              widget.eventTasks.forEach((key, value) {
+                if (value) {
+                  newEventTasks[key] = widget.eventUserID;
+                } else {
+                  newEventTasks[key] = null;
+                }
               });
-            },
-          ),
+              DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
+            }
+            Navigator.of(context).pop();
+          },
         ),
       ],
     );
@@ -652,21 +305,21 @@ class _InvitedFriendTasklistState extends State<InvitedFriendTasklist> {
 }
 
 class InvitedFriendTask extends StatelessWidget {
-  final String friendName;
+  final String taskName;
   final bool done;
   final Function toggle;
-  const InvitedFriendTask(this.friendName, this.done, this.toggle);
+  const InvitedFriendTask(this.taskName, this.done, this.toggle);
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration( // TODO Farben überarbeiten
-          color: done ? kSecondaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration:
+          BoxDecoration(color: done ? kSecondaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
-          friendName,
+          taskName,
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.white,
@@ -685,65 +338,195 @@ class InvitedFriendTask extends StatelessWidget {
   }
 }
 
-// TODO: Bereits eingestellte Details übergeben und vorher anzeigen
-class EventDetails extends StatefulWidget {
+class ButtonContainer extends StatelessWidget {
   final String eventID;
-  final String eventDetails;
-  EventDetails(this.eventID, this.eventDetails);
-
-  @override
-  _EventDetailsState createState() => _EventDetailsState();
-}
-
-class _EventDetailsState extends State<EventDetails> {
-  TextEditingController eventDetailsController;
-  String eventDetails;
-  @override
-  void initState() {
-    super.initState();
-    eventDetailsController = TextEditingController(text: widget.eventDetails);
-  }
+  final IconData eventSettingsIcon;
+  final String eventSettingsName;
+  var eventSettingsDefault;
+  var eventSettingsDefault2;
+  ButtonContainer(this.eventID, this.eventSettingsIcon, this.eventSettingsName, this.eventSettingsDefault, this.eventSettingsDefault2);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-          child: TextField(
-            controller: eventDetailsController,
-            keyboardType: TextInputType.multiline,
-            maxLines: 3,
-            maxLength: 200,
-            onChanged: (text){
-              eventDetails = text;
-            },
-            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-          child: IconButton(
-            icon: Icon(
-              Icons.check_rounded,
-              size: 32,
-              color: Colors.white,
-            ),
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(eventSettingsIcon, color: Colors.white, size: 30.0),
             onPressed: () {
-              DatabaseService(null).changeEventDetails(widget.eventID, eventDetails);
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              return showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: kPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
+                      ),
+                      title: Text(eventSettingsName, style: TextStyle(color: Colors.white)),
+                      content: ButtonContainerSettings(eventID, eventSettingsName, eventSettingsDefault, eventSettingsDefault2),
+                    );
+                  });
             },
           ),
-        )
-      ],
+          Text(eventSettingsName, style: TextStyle(color: Colors.white, fontSize: 16))
+        ],
+      ),
     );
   }
 }
 
+class ButtonContainerSettings extends StatefulWidget {
+  final String eventID;
+  final String eventSettingsName;
+  var eventSettingsDefault;
+  var eventSettingsDefault2;
+  ButtonContainerSettings(this.eventID, this.eventSettingsName, this.eventSettingsDefault, this.eventSettingsDefault2);
+
+  @override
+  _ButtonContainerSettingsState createState() => _ButtonContainerSettingsState();
+}
+
+class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
+  var databaseValue;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.eventSettingsName == "Details") {
+      TextEditingController eventDetailsTextController;
+      eventDetailsTextController = TextEditingController(text: widget.eventSettingsDefault);
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: eventDetailsTextController,
+            keyboardType: TextInputType.multiline,
+            maxLines: 3,
+            maxLength: 200,
+            onChanged: (text) {
+              databaseValue = text;
+            },
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                child: Text('Change', style: TextStyle(color: kTextColor),),
+                onPressed: () {
+                  DatabaseService(null).changeEventDetails(widget.eventID, databaseValue);
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          )
+        ],
+      );
+
+    } else if (widget.eventSettingsName == "Friends") {
+      // TODO ganz viel Spaß haben!!! Yipppiieeeeee
+      List<String> eventTasks = [];
+      Map<String, dynamic> eventTasksMap = widget.eventSettingsDefault;
+      eventTasksMap.forEach((key, value) {
+        eventTasks.add(key);
+      });
+      return EventFriends(widget.eventID, widget.eventSettingsDefault, widget.eventSettingsDefault2);
+    }  else if (widget.eventSettingsName == "Tasks") {
+      List<String> eventTasks = [];
+      Map<String, dynamic> eventTasksMap = widget.eventSettingsDefault;
+      eventTasksMap.forEach((key, value) {
+        eventTasks.add(key);
+      });
+      return EventTasksList(widget.eventID, eventTasks);
+    } else if (widget.eventSettingsName == "Date & Time") {
+      DateTime eventDateTime;
+      final datetimeFormat = DateFormat("dd.MM.yyyy - HH:mm");
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DateTimeField(
+            format: datetimeFormat,
+            onChanged: (date) {
+              eventDateTime = date;
+            },
+            onShowPicker: (context, currentValue) async {
+              final date = await showDatePicker(context: context, firstDate: DateTime.now(), initialDate: widget.eventSettingsDefault, lastDate: DateTime(2100));
+              if (date != null) {
+                final time = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.fromDateTime(widget.eventSettingsDefault),
+                );
+                return DateTimeField.combine(date, time);
+              } else {
+                return currentValue;
+              }
+            },
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                child: Text('Change', style: TextStyle(color: kTextColor),),
+                onPressed: () {
+                  DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+                },
+              ),
+              TextButton(
+                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          )
+        ],
+      );
+    } else if (widget.eventSettingsName == "Delete Event"){
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Are you sure u want to delete the event?\nDeleted Events cant be restored!',
+            style: TextStyle(color: Colors.white),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                child: Text('Delete', style: TextStyle(color: kTextColor),),
+                onPressed: () {
+                  DatabaseService(null).deleteEvent(widget.eventID);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Evented()),
+                  );
+                },
+              ),
+              TextButton(
+                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          )
+        ],
+      );
+    }
+  }
+}
+
+
 class EventFriends extends StatefulWidget {
   final String eventID;
-  final Map<String, String> userFriends;
+  final Map<String, dynamic> userFriends;
   final Map<String, dynamic> eventMembers;
   const EventFriends(this.eventID, this.userFriends, this.eventMembers);
 
@@ -778,7 +561,25 @@ class _EventFriendsState extends State<EventFriends> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
+        SizedBox(
+          height: 250,
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: userFriendsEventMember.length,
+            itemBuilder: (context, i) {
+              String key = userFriendsEventMember.keys.elementAt(i);
+              String eventFriendUserName = widget.userFriends[key];
+              if (widget.eventMembers[key] != null){
+                eventOriginalUser = true;
+              } else {
+                eventOriginalUser = false;
+              }
+              return EventFriend(eventFriendUserName, eventOriginalUser, userFriendsEventMember[key], () {toggleMember(key);});
+            },
+          ),
+        ),
         IconButton(
           icon: Icon(
             Icons.check_rounded,
@@ -847,23 +648,6 @@ class _EventFriendsState extends State<EventFriends> {
             );
           },
         ),
-        SizedBox(
-          height: 300,
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: userFriendsEventMember.length,
-            itemBuilder: (context, i) {
-              String key = userFriendsEventMember.keys.elementAt(i);
-              String eventFriendUserName = widget.userFriends[key];
-              if (widget.eventMembers[key] != null){
-                eventOriginalUser = true;
-              } else {
-                eventOriginalUser = false;
-              }
-              return EventFriend(eventFriendUserName, eventOriginalUser, userFriendsEventMember[key], () {toggleMember(key);});
-            },
-          ),
-        ),
       ],
     );
   }
@@ -906,64 +690,73 @@ class EventFriend extends StatelessWidget {
   }
 }
 
-class EventTasks extends StatefulWidget {
+
+
+
+
+
+
+
+class EventTasksList extends StatefulWidget {
   final String eventID;
-  final List<String> eventTasks;
-  const EventTasks(this.eventID, this.eventTasks);
+  List<String> eventTasks;
+  EventTasksList(this.eventID, this.eventTasks);
+
   @override
-  _EventTasksState createState() => _EventTasksState();
+  _EventTasksListState createState() => _EventTasksListState();
 }
 
-class _EventTasksState extends State<EventTasks> {
+class _EventTasksListState extends State<EventTasksList> {
+  final TextEditingController _controller = TextEditingController();
   void addTask(String task) {
     setState(() {
       widget.eventTasks.add(task);
     });
-    // Navigator.of(context).pop();
   }
 
-  void deleteEventTask(int index) {
+  void deleteEventTask(int index, String task) {
     setState(() {
       widget.eventTasks.removeAt(index);
     });
+    DatabaseService(null).removeEventTask(widget.eventID, task);
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(20.0),
-            child: TextField(
-              onSubmitted: (value) {
-                if (value != ""){
-                  addTask(value);
-                  DatabaseService(null).addEventTask(widget.eventID, value);
-                }
-              },
-              scrollPadding: EdgeInsets.only(bottom: 10.0),
-              decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          child: TextField(
+            controller: _controller,
+            onSubmitted: (value) {
+              if (value != ""){
+                addTask(value);
+                DatabaseService(null).addEventTask(widget.eventID, value);
+                _controller.clear();
+              }
+            },
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
           ),
-          SizedBox(
-            height: 260,
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: widget.eventTasks.length,
-              itemBuilder: (context, i) {
-                return TaskItem(widget.eventTasks[i], () {
-                  deleteEventTask(i);
-                });
-              },
-            ),
-          )
-        ],
-      ),
+          margin: EdgeInsets.only(bottom: 10.0),
+        ),
+        SizedBox(
+          height: 260,
+          child: ListView.builder(
+            reverse: true,
+            scrollDirection: Axis.vertical,
+            itemCount: widget.eventTasks.length,
+            itemBuilder: (context, i) {
+              return TaskItem(widget.eventTasks[i], () {
+                deleteEventTask(i, widget.eventTasks[i]);
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 }
+
 
 class TaskItem extends StatelessWidget {
   final String taskname;
@@ -972,11 +765,10 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+
+      margin: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
       decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 2.0),
         title: Text(
           taskname,
           style: TextStyle(
@@ -994,66 +786,5 @@ class TaskItem extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class EventDate extends StatefulWidget {
-  final String eventID;
-  final DateTime eventDateTime;
-  const EventDate(this.eventID, this.eventDateTime);
-
-  @override
-  _EventDateState createState() => _EventDateState();
-}
-
-class _EventDateState extends State<EventDate> {
-  DateTime eventDateTime;
-  final datetimeFormat = DateFormat("dd.MM.yyyy - HH:mm");
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-          child: DateTimeField(
-            format: datetimeFormat,
-            onChanged: (date) {
-              eventDateTime = date;
-            },
-            onShowPicker: (context, currentValue) async {
-              final date = await showDatePicker(context: context, firstDate: DateTime.now(), initialDate: widget.eventDateTime, lastDate: DateTime(2100));
-              if (date != null) {
-                final time = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.fromDateTime(widget.eventDateTime),
-                );
-                return DateTimeField.combine(date, time);
-              } else {
-                return currentValue;
-              }
-            },
-            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate"),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-          child: IconButton(
-            icon: Icon(
-              Icons.check_rounded,
-              size: 32,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              print("DATE: " + DateFormat("dd.MM.yyyy - HH:mm").format(eventDateTime));
-              DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-          ),
-        )
-      ],
-    ); // URL: https://pub.dev/packages/datetime_picker_formfield
   }
 }
