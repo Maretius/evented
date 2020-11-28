@@ -272,6 +272,15 @@ class SingleEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color eventColor;
+    if (eventUserStatus == "not decided") {
+      eventColor = kThirdColor;
+    } else if (eventUserStatus == "promised" || eventUserStatus == "Admin") {
+      eventColor = kSecondaryColor;
+    } else {
+      eventColor = kFourthColor;
+    }
+
     return Container(
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),
@@ -360,7 +369,7 @@ class SingleEvent extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: eventUserStatus == "not decided" ? kThirdColor : kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: eventColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
     );
   }
 }

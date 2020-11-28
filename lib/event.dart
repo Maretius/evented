@@ -414,7 +414,9 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
               TextButton(
                 child: Text('Change', style: TextStyle(color: kTextColor),),
                 onPressed: () {
-                  DatabaseService(null).changeEventDetails(widget.eventID, databaseValue);
+                  if (databaseValue != "") {
+                    DatabaseService(null).changeEventDetails(widget.eventID, databaseValue);
+                  }
                   Navigator.of(context).pop();
                 },
               ),
@@ -430,7 +432,6 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
       );
 
     } else if (widget.eventSettingsName == "Friends") {
-      // TODO ganz viel Spaß haben!!! Yipppiieeeeee
       List<String> eventTasks = [];
       Map<String, dynamic> eventTasksMap = widget.eventSettingsDefault;
       eventTasksMap.forEach((key, value) {
@@ -475,7 +476,9 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
               TextButton(
                 child: Text('Change', style: TextStyle(color: kTextColor),),
                 onPressed: () {
-                  DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+                  if (eventDateTime != null) {
+                    DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+                  }
                 },
               ),
               TextButton(
@@ -689,13 +692,6 @@ class EventFriend extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
 
 class EventTasksList extends StatefulWidget {
   final String eventID;

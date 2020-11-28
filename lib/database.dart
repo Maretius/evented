@@ -170,7 +170,7 @@ class DatabaseService {
   Future deleteEvent(String eventID) async {
     Map<String, String> eventUser = {};
     await events.doc(eventID).get().then((value) {
-      eventUser = Map.from(value.data()["userFriends"]);
+      eventUser = Map.from(value.data()["eventUsers"]);
     });
     List<String> eventUserIDs = [];
     eventUser.forEach((key, value) {
@@ -178,7 +178,6 @@ class DatabaseService {
     });
     for (var u = 0; u < eventUserIDs.length; u++) {
       String query = "userEvents";
-      print("ID ist: " + eventUserIDs[u] + " " + eventID);
       await users.doc(eventUserIDs[u]).update({query: FieldValue.arrayRemove([eventID])});
     }
     await events.doc(eventID).delete();
