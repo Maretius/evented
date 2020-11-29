@@ -59,6 +59,7 @@ class _EventedState extends State<Evented> {
       });
     } else {
       String userID = await signInWithGoogle();
+
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('userid', userID);
       setState(() {
@@ -67,7 +68,6 @@ class _EventedState extends State<Evented> {
       });
     }
     connectToFirebase();
-    print("TEST2");
     await database.checkIfUserExists();
   }
 
@@ -97,7 +97,7 @@ class _EventedState extends State<Evented> {
             IconButton(
               icon: Icon(
                 Icons.person_add_alt_1_rounded,
-                size: 28.0,
+                size: 32.0,
               ),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => Contacts(localUserID, localUserID.substring(localUserID.length - 6), databaseUser.userName, databaseUser.userFriends)));
@@ -218,7 +218,7 @@ class SingleEvent extends StatelessWidget {
     if (eventUserStatus == "not decided") {
       eventColor = kThirdColor;
     } else if (eventUserStatus == "promised" || eventUserStatus == "Admin") {
-      eventColor = kSecondaryColor;
+      eventColor = kPrimaryColor;
     } else {
       eventColor = kFourthColor;
     }

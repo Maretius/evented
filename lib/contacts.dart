@@ -232,7 +232,7 @@ class Friend extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: kFifthColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
         title: Text(

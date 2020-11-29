@@ -11,7 +11,10 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 User user;
 
 Future<String> signInWithGoogle() async {
-  final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+  GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+  while (googleSignInAccount == null) {
+     googleSignInAccount = await googleSignIn.signIn();
+  }
   final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
   final AuthCredential credential = GoogleAuthProvider.credential(
     accessToken: googleSignInAuthentication.accessToken,
@@ -28,13 +31,6 @@ Future<String> signInWithGoogle() async {
     assert(user.uid == currentUser.uid);
   }
   return user.uid;
-}
-
-Future signOutWithGoogle() async {
-  await FirebaseAuth.instance.signOut();
-  await _auth.signOut();
-  googleSignIn.signOut();
-  //googleSignIn.disconnect();
 }
 
 class LocalUser {

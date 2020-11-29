@@ -86,7 +86,7 @@ class _EventState extends State<Event> {
                               children: [
                                 Text(
                                   eventDetails,
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                  style: TextStyle(color: Colors.white, fontSize: 18),
                                   textAlign: TextAlign.center,
                                 )
                               ],
@@ -207,10 +207,10 @@ class _EventUsersState extends State<EventUsers> {
 
     if (widget.eventUserStatus == "Admin") {
       userIcon = Icons.engineering_rounded;
-      userColor = kPrimaryColor;
+      userColor = kSecondaryColor;
     } else if (widget.eventUserStatus == "promised") {
       userIcon = Icons.person_add_alt_1_rounded;
-      userColor = kSecondaryColor;
+      userColor = kPrimaryColor;
     } else if (widget.eventUserStatus == "not decided") {
       userIcon = Icons.person_outline_rounded;
       userColor = kThirdColor;
@@ -239,10 +239,13 @@ class _EventUsersState extends State<EventUsers> {
                       borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                     ),
                     children: [
-                      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(widget.eventUserName, style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                        Text(widget.eventUserStatus, style: TextStyle(color: Colors.white, fontSize: 16.0)),
-                        Visibility(visible: edit, child: EventUserTasks(widget.eventID, widget.userID, widget.userIsAdmin, widget.eventUserID, widget.eventUserName, widget.eventUserStatus, eventTasks))
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(widget.eventUserName, style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                            Container(margin: EdgeInsets.symmetric(vertical: 8.0),child: Text(widget.eventUserStatus, style: TextStyle(color: Colors.white, fontSize: 16.0))),
+                            Visibility(visible: edit, child: EventUserTasks(widget.eventID, widget.userID, widget.userIsAdmin, widget.eventUserID, widget.eventUserName, widget.eventUserStatus, eventTasks))
                       ])
                     ],
                   );
@@ -276,42 +279,53 @@ class _EventUserTasksState extends State<EventUserTasks> {
       }
     });
   }
+  bool checkBoxvisible = false;
+
 
   @override
   Widget build(BuildContext context) {
+    if ((widget.userIsAdmin || widget.userID == widget.eventUserID) && widget.eventTasks.length != 0){
+      checkBoxvisible = true;
+    }
     return Column(
       children: [
-        ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: widget.eventTasks.length,
-          itemBuilder: (context, i) {
-            String taskName = widget.eventTasks.keys.elementAt(i);
-            return InvitedFriendTask(taskName, widget.eventTasks[taskName], () {
-              toggleMember(taskName);
-            });
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.check_rounded,
-            size: 32,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            if (widget.eventTasks.length != 0) {
-              widget.eventTasks.forEach((key, value) {
-                if (value) {
-                  newEventTasks[key] = widget.eventUserID;
-                } else {
-                  newEventTasks[key] = null;
-                }
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 300),
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: widget.eventTasks.length,
+            itemBuilder: (context, i) {
+              String taskName = widget.eventTasks.keys.elementAt(i);
+              return InvitedFriendTask(taskName, widget.eventTasks[taskName], () {
+                toggleMember(taskName);
               });
-              DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
-            }
-            Navigator.of(context).pop();
-          },
+            },
+          ),
         ),
+        Visibility(
+          visible: checkBoxvisible,
+            child: IconButton(
+              icon: Icon(
+                Icons.check_rounded,
+                size: 32,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                if (widget.eventTasks.length != 0) {
+                  widget.eventTasks.forEach((key, value) {
+                    if (value) {
+                      newEventTasks[key] = widget.eventUserID;
+                    } else {
+                      newEventTasks[key] = null;
+                    }
+                  });
+                  DatabaseService(null).changeEventTask(widget.eventID, newEventTasks);
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+        )
       ],
     );
   }
@@ -328,7 +342,7 @@ class InvitedFriendTask extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration:
-          BoxDecoration(color: done ? kSecondaryColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          BoxDecoration(color: done ? kSixthColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
@@ -361,8 +375,7 @@ class ButtonContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           IconButton(
@@ -384,8 +397,7 @@ class ButtonContainer extends StatelessWidget {
           ),
           Text(eventSettingsName, style: TextStyle(color: Colors.white, fontSize: 16))
         ],
-      ),
-    );
+      );
   }
 }
 
@@ -579,9 +591,10 @@ class _EventFriendsState extends State<EventFriends> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: 250,
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 300),
           child: ListView.builder(
+            shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemCount: userFriendsEventMember.length,
             itemBuilder: (context, i) {
@@ -603,9 +616,9 @@ class _EventFriendsState extends State<EventFriends> {
             color: Colors.white,
           ),
           onPressed: () {
-            showDialog<void>(
+            showDialog(
               context: context,
-              barrierDismissible: true, // user must tap button!
+              barrierDismissible: false, // user must tap button!
               builder: (BuildContext context) {
                 return AlertDialog(
                   backgroundColor: kPrimaryColor,
@@ -619,28 +632,19 @@ class _EventFriendsState extends State<EventFriends> {
                   content: SingleChildScrollView(
                     child: ListBody(
                       children: <Widget>[
-                        Text(
-                          'Are you sure u want to invite this friends?',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        Text('Are you sure u want to invite this friends?', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),
                   actions: <Widget>[
                     TextButton(
-                      child: Text(
-                        'Yes',
-                        style: TextStyle(color: kTextColor),
-                      ),
+                      child: Text('Yes', style: TextStyle(color: kTextColor)),
                       onPressed: () {
-                        // Map erstellen mit nur neuen Usern
                         userFriendsEventMember.forEach((key, value) {
-                          // prüfe ob in neuer eventMap der alte user vorhanden ist
                           if ( widget.eventMembers[key] == null && value == true) {
                             newEventUser[key] = widget.userFriends[key];
                           }
                         });
-
                         if (newEventUser.isEmpty == false) {
                           DatabaseService(null).changeEventUsers(widget.eventID, newEventUser);
                         }
@@ -678,12 +682,10 @@ class EventFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kSecondaryColor, border: Border.all(color: done ? Colors.white : Colors.white), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+          color: done ? kPrimaryColor : kFifthColor, border: Border.all(color: done ? Colors.white : Colors.white), borderRadius: BorderRadius.all(Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
           friendName,
           style: TextStyle(
@@ -751,12 +753,12 @@ class _EventTasksListState extends State<EventTasksList> {
         SizedBox(
           height: 260,
           child: ListView.builder(
-            reverse: true,
             scrollDirection: Axis.vertical,
             itemCount: widget.eventTasks.length,
             itemBuilder: (context, i) {
-              return TaskItem(widget.eventTasks[i], () {
-                deleteEventTask(i, widget.eventTasks[i]);
+              var reversedEventTasks = widget.eventTasks.reversed.toList();
+              return TaskItem(reversedEventTasks[i], () {
+                deleteEventTask(i, reversedEventTasks[i]);
               });
             },
           ),
@@ -765,7 +767,6 @@ class _EventTasksListState extends State<EventTasksList> {
     );
   }
 }
-
 
 class TaskItem extends StatelessWidget {
   final String taskname;
@@ -776,7 +777,7 @@ class TaskItem extends StatelessWidget {
     return Container(
 
       margin: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-      decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      decoration: BoxDecoration(color: kFifthColor, borderRadius: BorderRadius.all( Radius.circular(5.0))),
       child: ListTile(
         title: Text(
           taskname,
