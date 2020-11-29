@@ -49,7 +49,6 @@ class _NewEventState extends State<NewEvent> {
                 final form = _formKey.currentState;
                 if (form.validate()) {
                   form.save();
-                  // _event.save(); // TODO laut Form Link (siehe unten) soll _event.save() ausgeführt werden
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -216,11 +215,9 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
+      margin: const EdgeInsets.only(top: 14.0, left: 16.0, right: 16.0),
       decoration: BoxDecoration(color: kPrimaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
         title: Text(
           taskName,
           style: TextStyle(

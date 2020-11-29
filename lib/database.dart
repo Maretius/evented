@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -98,6 +97,7 @@ class DatabaseService {
   }
 
   Future changeEventUsers(String eventID, Map<String, String> newEventUsers) async {
+    String userMessagingToken;
     Map<String, String> eventStatus = {};
     newEventUsers.forEach((key, value) {
         eventStatus[key] = "not decided";
@@ -106,10 +106,14 @@ class DatabaseService {
       "eventUsers" : newEventUsers,
       "eventStatus": eventStatus,
     }, SetOptions(merge: true));
-    newEventUsers.forEach((key, value) {
+    newEventUsers.forEach((key, value) async {
       users.doc(key).update({
         "userEvents": FieldValue.arrayUnion([eventID])
       });
+      await users.doc(key).get().then((value) {
+        userMessagingToken = (value.data()["userMessagingToken"]);
+      });
+      PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to an event");
     });
   }
 
@@ -124,15 +128,6 @@ class DatabaseService {
     print("ID: " + eventID);
     await events.doc(eventID).update({
       "eventDetails" : eventDetails,
-    });
-  }
-
-  Future addEventUsers(String eventID, String userFriendID, String userFriendName) async {
-    String statusQuery = "eventStatus." + userFriendID;
-    String usersQuery = "eventUsers." + userFriendID;
-    await events.doc(eventID).update({
-      statusQuery : "not decided",
-      usersQuery : userFriendName,
     });
   }
 
@@ -184,7 +179,6 @@ class DatabaseService {
   }
 
   Future checkIfUserExists() async {
-    //await Firebase.initializeApp();
     String userName;
     String userMessagingToken;
     // get Firebase Messaging Token
@@ -279,13 +273,10 @@ class PushNotificationsManager {
     if (!initialized) {
       firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-          print("onLaunch: $message");
         },
         onLaunch: (Map<String, dynamic> message) async {
-          print("onLaunch: $message");
         },
         onResume: (Map<String, dynamic> message) async {
-          print("onResume: $message");
         },
       );
 
@@ -294,7 +285,6 @@ class PushNotificationsManager {
     } else {
       token = await firebaseMessaging.getToken();
     }
-    print("FirebaseMessaging Token: " + token);
     return token;
   }
 

@@ -86,7 +86,7 @@ class _EventState extends State<Event> {
                               children: [
                                 Text(
                                   eventDetails,
-                                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                                  style: TextStyle(color: Colors.white, fontSize: 16),
                                   textAlign: TextAlign.center,
                                 )
                               ],

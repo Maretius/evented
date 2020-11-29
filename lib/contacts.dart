@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'database.dart';
-import 'main.dart';
 
 class Contacts extends StatelessWidget {
   final String userID;

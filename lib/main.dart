@@ -13,6 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  // WidgetsFlutterBinding for deprecated API message
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(home: Evented()));
 }
 
@@ -37,11 +39,12 @@ class _EventedState extends State<Evented> {
   @override
   void initState() {
     super.initState();
-    if (localUserID != null) {
-      connectToFirebase();
-    } else {
+    // if (localUserID != null) {
+    //   connectToFirebase();
+    //   print("TEST1");
+    // } else {
       autoLogIn();
-    }
+    // }
   }
 
   void autoLogIn() async {
@@ -55,32 +58,17 @@ class _EventedState extends State<Evented> {
         localUserID = userID;
       });
     } else {
-      await loginUser();
+      String userID = await signInWithGoogle();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('userid', userID);
+      setState(() {
+        isLoggedIn = true;
+        localUserID = userID;
+      });
     }
     connectToFirebase();
+    print("TEST2");
     await database.checkIfUserExists();
-  }
-
-  void logoutUser() async {
-    signOutWithGoogle();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('userid', null);
-
-    setState(() {
-      localUserID = '';
-      isLoggedIn = false;
-    });
-  }
-
-  Future<Null> loginUser() async {
-    String userID = await signInWithGoogle();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('userid', userID);
-
-    setState(() {
-      localUserID = userID;
-      isLoggedIn = true;
-    });
   }
 
   @override
@@ -115,48 +103,6 @@ class _EventedState extends State<Evented> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => Contacts(localUserID, localUserID.substring(localUserID.length - 6), databaseUser.userName, databaseUser.userFriends)));
               },
             ),
-            IconButton(
-              icon: Icon(
-                Icons.logout,
-                size: 28.0,
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext cxt) {
-                    return AlertDialog(
-                      backgroundColor: kPrimaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
-                      ),
-                      title: isLoggedIn ? Text('Logout', style: TextStyle(color: Colors.white)) : Text('Login', style: TextStyle(color: Colors.white)),
-                      content: isLoggedIn ? Text('Are you sure u want to Logout?', style: TextStyle(color: Colors.white)) : Text('Are you sure u want to Login?', style: TextStyle(color: Colors.white)),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text(
-                            'Yes',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () {
-                            isLoggedIn ? logoutUser() : loginUser();
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: Text(
-                            'No',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
           ],
           backgroundColor: kPrimaryColor,
         ),
@@ -164,14 +110,14 @@ class _EventedState extends State<Evented> {
             // Wait until [connectToFirebase] returns stream
             future: connectToFirebase(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if (snapshot.connectionState == ConnectionState.waiting || snapshot.hasError) {
                 return Center(child: CircularProgressIndicator());
               } else {
                 return StreamBuilder<DocumentSnapshot>(
                     stream: database.getUser(),
                     builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: null);
                       } else {
                         var userDocument = snapshot.data;
                         List<dynamic> userEvents = userDocument["userEvents"];
@@ -186,23 +132,20 @@ class _EventedState extends State<Evented> {
                               stream: database.getEvent(eventID),
                               builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                                 if (!snapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(child: null);
                                 } else {
                                   var userEventDocument = snapshot.data;
-                                  //userDocument["eventName"]
                                   Map<String, dynamic> eventStatus = userEventDocument["eventStatus"];
                                   Map<String, dynamic> eventUsers = userEventDocument["eventUsers"];
-
-                                  List<String> eventInvitedUsers = [];
-                                  eventUsers.forEach((key, value) {
-                                    eventInvitedUsers.add(key);
-                                  });
-
                                   String userkey = "";
                                   String useranswer = "";
                                   String localUserStatus = "";
                                   bool localUserIsAdmin = false;
 
+                                  List<String> eventInvitedUsers = [];
+                                  eventUsers.forEach((key, value) {
+                                    eventInvitedUsers.add(key);
+                                  });
                                   for (var u = 0; u < eventUsers.length; u++) {
                                     userkey = eventInvitedUsers.elementAt(u);
                                     useranswer = eventStatus[userkey];
@@ -213,7 +156,6 @@ class _EventedState extends State<Evented> {
                                       localUserIsAdmin = true;
                                     }
                                   }
-
                                   var datetime = userEventDocument["eventDateTime"].toDate();
                                   return SingleEvent(
                                     userEventDocument["eventIcon"],
@@ -349,8 +291,8 @@ class SingleEvent extends StatelessWidget {
         },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: eventColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(color: eventColor, borderRadius: BorderRadius.all(Radius.circular(5.0))),
     );
   }
 }
