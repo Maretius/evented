@@ -279,20 +279,25 @@ class _EventUserTasksState extends State<EventUserTasks> {
     }
     return Column(
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 300),
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemCount: widget.eventTasks.length,
-            itemBuilder: (context, i) {
-              String taskName = widget.eventTasks.keys.elementAt(i);
-              return InvitedFriendTask(taskName, widget.eventTasks[taskName], () {
-                toggleMember(taskName);
-              });
-            },
-          ),
+        SingleChildScrollView(
+              child: Container(
+                height: widget.eventTasks.length>3 ? 300.0 : widget.eventTasks.length*100.0,
+                width: 300,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: widget.eventTasks.length,
+                  itemBuilder: (context, i) {
+                    String taskName = widget.eventTasks.keys.elementAt(i);
+                    return InvitedFriendTask(taskName, widget.eventTasks[taskName], () {
+                      toggleMember(taskName);
+                    });
+                  },
+                ),
+              ),
         ),
+
+
         Visibility(
           visible: checkBoxVisible,
             child: IconButton(
@@ -353,6 +358,8 @@ class ButtonContainer extends StatelessWidget {
   var eventSettingsDefault2;
   ButtonContainer(this.eventID, this.eventSettingsIcon, this.eventSettingsName, this.eventSettingsDefault, this.eventSettingsDefault2);
 
+  bool barrierDismissibleSetting = true;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -361,7 +368,11 @@ class ButtonContainer extends StatelessWidget {
           IconButton(
             icon: Icon(eventSettingsIcon, color: Colors.white, size: 30.0),
             onPressed: () {
+              if(eventSettingsName == "Tasks"){
+                barrierDismissibleSetting = false;
+              }
               return showDialog(
+                barrierDismissible: barrierDismissibleSetting,
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
@@ -566,9 +577,11 @@ class _EventFriendsState extends State<EventFriends> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 300),
-          child: ListView.builder(
+      SingleChildScrollView(
+         child: Container(
+           height: userFriendsEventMember.length>3 ? 300.0 : userFriendsEventMember.length*100.0,
+           width: 300,
+           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemCount: userFriendsEventMember.length,
@@ -584,6 +597,7 @@ class _EventFriendsState extends State<EventFriends> {
             },
           ),
         ),
+      ),
         IconButton(
           icon: Icon(Icons.check_rounded, size: 32, color: Colors.white),
           onPressed: () {
@@ -677,24 +691,18 @@ class EventTasksList extends StatefulWidget {
 }
 
 class _EventTasksListState extends State<EventTasksList> {
-  List<String> reversedEventTasks;
-  @override
-  void initState() {
-    super.initState();
-    reversedEventTasks = widget.eventTasks.reversed.toList();
-  }
 
   final TextEditingController _controller = TextEditingController();
   void addTask(String task) {
     setState(() {
-      reversedEventTasks.add(task);
+      widget.eventTasks.add(task);
     });
     DatabaseService(null).addEventTask(widget.eventID, task);
   }
 
   void deleteEventTask(int index, String task) {
     setState(() {
-      reversedEventTasks.removeAt(index);
+      widget.eventTasks.removeAt(index);
     });
     DatabaseService(null).removeEventTask(widget.eventID, task);
   }
@@ -716,17 +724,27 @@ class _EventTasksListState extends State<EventTasksList> {
           ),
           margin: EdgeInsets.only(bottom: 10.0),
         ),
-        SizedBox(
-          height: 260,
-          child: ListView.builder(
+        SingleChildScrollView(
+          child: Container(
+            height: widget.eventTasks.length>3 ? 240.0 : widget.eventTasks.length*80.0,
+            width: 300,
+            child: ListView.builder(
             // reverse: true,
             scrollDirection: Axis.vertical,
-            itemCount: reversedEventTasks.length,
+            itemCount: widget.eventTasks.length,
             itemBuilder: (context, i) {
-              return TaskItem(reversedEventTasks[i], () {deleteEventTask(i, reversedEventTasks[i]);});
+              return TaskItem(widget.eventTasks[i], () {deleteEventTask(i, widget.eventTasks[i]);});
             },
           ),
         ),
+        ),
+        IconButton(
+          icon: Icon(Icons.check_rounded, size: 32, color: Colors.white),
+          onPressed: (){
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          },
+        )
       ],
     );
   }
