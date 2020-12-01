@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evented/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
-import 'main.dart';
 
 class Event extends StatefulWidget {
   final DatabaseService database;
@@ -27,7 +27,7 @@ class _EventState extends State<Event> {
         if (snapshot.connectionState != ConnectionState.waiting && !snapshot.data.exists) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Error', style: TextStyle(fontSize: 22.0, color: Colors.white)),
+              title: Text('Error', style: TextStyle(fontSize: 22.0, color: Colors.white, fontFamily: 'SourceSansPro')),
               centerTitle: true,
               backgroundColor: kFourthColor,
             ),
@@ -35,7 +35,7 @@ class _EventState extends State<Event> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text("This event was removed", textAlign: TextAlign.center,style: TextStyle(color: Colors.white, fontSize: 26.0)),
+                Text("This event was removed", textAlign: TextAlign.center,style: TextStyle(color: Colors.white, fontSize: 26.0, fontFamily: 'SourceSansPro')),
                 IconButton(
                     icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 40.0),
                     onPressed: () {
@@ -65,7 +65,7 @@ class _EventState extends State<Event> {
             appBar: AppBar(
               leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
               centerTitle: true,
-              title: Text(eventTitle, style: TextStyle(fontSize: 24.0)),
+              title: Text(eventTitle, style: TextStyle(fontSize: 24.0, fontFamily: 'SourceSansPro', fontWeight: FontWeight.w600)),
               backgroundColor: kPrimaryColor,
               actions: <Widget>[
                 IconButton(
@@ -79,16 +79,12 @@ class _EventState extends State<Event> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                               ),
-                              title: Text(
-                                "Eventdetails",
-                                style: TextStyle(color: Colors.white, fontSize: 22.0),
-                              ),
+                              title: Text("Eventdetails", style: TextStyle(color: Colors.white, fontSize: 22.0, fontFamily: 'SourceSansPro', fontWeight: FontWeight.w600)),
                               children: [
-                                Text(
-                                  eventDetails,
-                                  style: TextStyle(color: Colors.white, fontSize: 18),
-                                  textAlign: TextAlign.center,
-                                )
+                                Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                    child: Text(eventDetails, style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'SourceSansPro'), textAlign: TextAlign.center)
+                              )
                               ],
                             );
                           });
@@ -103,18 +99,10 @@ class _EventState extends State<Event> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        DateFormat('dd.MM.yyyy').format(eventDateTime),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        DateFormat('dd.MM.yyyy').format(eventDateTime), style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'SourceSansPro'),
                       ),
                       Text(
-                        DateFormat('kk:mm').format(eventDateTime) + " Uhr",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        DateFormat('kk:mm').format(eventDateTime) + " Uhr", style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'SourceSansPro'),
                       ),
                     ],
                   ),
@@ -147,7 +135,7 @@ class _EventState extends State<Event> {
                             crossAxisCount: 3,
                             childAspectRatio: 1.0,
                             children: <Widget>[
-                              ButtonContainer(widget.eventID, Icons.event_note_rounded, "Details", eventDetails, null),
+                              ButtonContainer(widget.eventID, Icons.info_outline_rounded, "Details", eventDetails, null),
                               ButtonContainer(widget.eventID, Icons.person_add_alt_1_rounded,"Friends", widget.userFriends, eventUsers),
                               ButtonContainer(widget.eventID, Icons.menu_open_rounded,"Tasks",  eventTasksUser, null),
                               ButtonContainer(widget.eventID, Icons.date_range_rounded, "Date & Time", eventDateTime, null),
@@ -223,11 +211,14 @@ class _EventUsersState extends State<EventUsers> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: userColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+        color: userColor, borderRadius: BorderRadius.all( Radius.circular(5.0)),
+        boxShadow: [BoxShadow(color: userColor.withOpacity(0.6), spreadRadius: 0, blurRadius: 0.0, offset: Offset(3, 3))]
+      ),
       child: ListTile(
-          title: Text(widget.eventUserName, style: TextStyle(fontSize: 22, color: Colors.white)),
+          title: Text(widget.eventUserName, style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: 'SourceSansPro')),
           trailing: Icon(userIcon, color: Colors.white, size: 28),
           onTap: () {
             showDialog(
@@ -243,8 +234,8 @@ class _EventUsersState extends State<EventUsers> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(widget.eventUserName, style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                            Container(margin: EdgeInsets.symmetric(vertical: 8.0),child: Text(widget.eventUserStatus, style: TextStyle(color: Colors.white, fontSize: 16.0))),
+                            Text(widget.eventUserName, style: TextStyle(color: Colors.white, fontSize: 25.0, fontFamily: 'SourceSansPro')),
+                            Container(margin: EdgeInsets.symmetric(vertical: 8.0),child: Text(widget.eventUserStatus, style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'SourceSansPro'))),
                             Visibility(visible: edit, child: EventUserTasks(widget.eventID, widget.userID, widget.userIsAdmin, widget.eventUserID, widget.eventUserName, widget.eventUserStatus, eventTasks))
                       ])
                     ],
@@ -279,13 +270,12 @@ class _EventUserTasksState extends State<EventUserTasks> {
       }
     });
   }
-  bool checkBoxvisible = false;
-
+  bool checkBoxVisible = false;
 
   @override
   Widget build(BuildContext context) {
     if ((widget.userIsAdmin || widget.userID == widget.eventUserID) && widget.eventTasks.length != 0){
-      checkBoxvisible = true;
+      checkBoxVisible = true;
     }
     return Column(
       children: [
@@ -304,13 +294,9 @@ class _EventUserTasksState extends State<EventUserTasks> {
           ),
         ),
         Visibility(
-          visible: checkBoxvisible,
+          visible: checkBoxVisible,
             child: IconButton(
-              icon: Icon(
-                Icons.check_rounded,
-                size: 32,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.check_rounded, size: 32, color: Colors.white),
               onPressed: () {
                 if (widget.eventTasks.length != 0) {
                   widget.eventTasks.forEach((key, value) {
@@ -339,19 +325,13 @@ class InvitedFriendTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3.0),
+      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       decoration:
           BoxDecoration(color: done ? kSixthColor : kPrimaryBackgroundColor, border: Border.all(color: done ? Colors.white : Colors.white, width: 2.0), borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-        title: Text(
-          taskName,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
-        ),
+        title: Text(taskName, style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'SourceSansPro')),
         trailing: Checkbox(
           value: done,
           onChanged: (bool value) {
@@ -389,13 +369,13 @@ class ButtonContainer extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                       ),
-                      title: Text(eventSettingsName, style: TextStyle(color: Colors.white)),
+                      title: Text(eventSettingsName, style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
                       content: ButtonContainerSettings(eventID, eventSettingsName, eventSettingsDefault, eventSettingsDefault2),
                     );
                   });
             },
           ),
-          Text(eventSettingsName, style: TextStyle(color: Colors.white, fontSize: 16))
+          Text(eventSettingsName, style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'SourceSansPro'))
         ],
       );
   }
@@ -437,7 +417,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Change', style: TextStyle(color: kTextColor),),
+                child: Text('Change', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   if (databaseValue != "") {
                     DatabaseService(null).changeEventDetails(widget.eventID, databaseValue);
@@ -446,7 +426,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -499,7 +479,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Change', style: TextStyle(color: kTextColor),),
+                child: Text('Change', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   if (eventDateTime != null) {
                     DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
@@ -507,7 +487,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -520,25 +500,21 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Are you sure u want to delete the event?\nDeleted Events cant be restored!',
-            style: TextStyle(color: Colors.white),
-          ),
+          Text('Are you sure u want to delete the event?\n\nDeleted Events cant be restored!', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Delete', style: TextStyle(color: kTextColor),),
+                child: Text('Delete', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro'),),
                 onPressed: () {
                   DatabaseService(null).deleteEvent(widget.eventID);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Evented()),
-                  );
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor)),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -577,7 +553,6 @@ class _EventFriendsState extends State<EventFriends> {
         userFriendsEventMember[key] = false;
       }
     });
-    print("LISTE: " + userFriendsEventMember.toString());
   }
 
   void toggleMember(String key) {
@@ -610,11 +585,7 @@ class _EventFriendsState extends State<EventFriends> {
           ),
         ),
         IconButton(
-          icon: Icon(
-            Icons.check_rounded,
-            size: 32,
-            color: Colors.white,
-          ),
+          icon: Icon(Icons.check_rounded, size: 32, color: Colors.white),
           onPressed: () {
             showDialog(
               context: context,
@@ -625,20 +596,17 @@ class _EventFriendsState extends State<EventFriends> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                   ),
-                  title: Text(
-                    'Invite Friends?',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  title: Text('Invite Friends?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
                   content: SingleChildScrollView(
                     child: ListBody(
                       children: <Widget>[
-                        Text('Are you sure u want to invite this friends?', style: TextStyle(color: Colors.white)),
+                        Text('Are you sure u want to invite this friends?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
                       ],
                     ),
                   ),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('Yes', style: TextStyle(color: kTextColor)),
+                      child: Text('Yes', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         userFriendsEventMember.forEach((key, value) {
                           if ( widget.eventMembers[key] == null && value == true) {
@@ -654,10 +622,7 @@ class _EventFriendsState extends State<EventFriends> {
                       },
                     ),
                     TextButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: kTextColor),
-                      ),
+                      child: Text('No', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -682,17 +647,11 @@ class EventFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      margin: EdgeInsets.only(top: 20.0, left: 4.0, right: 4.0),
       decoration: BoxDecoration(
-          color: done ? kPrimaryColor : kFifthColor, border: Border.all(color: done ? Colors.white : Colors.white), borderRadius: BorderRadius.all(Radius.circular(5.0))),
+          color: done ? kFifthColor.withOpacity(0.3) : kFifthColor.withOpacity(0.8), border: Border.all(color: done ? Colors.white : Colors.white), borderRadius: BorderRadius.all(Radius.circular(5.0))),
       child: ListTile(
-        title: Text(
-          friendName,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
-        ),
+        title: Text(friendName, style: TextStyle(fontSize: 20.0, color: Colors.white, fontFamily: 'SourceSansPro')),
         trailing: Checkbox(
           value: done,
           onChanged: (bool value) {
@@ -718,16 +677,24 @@ class EventTasksList extends StatefulWidget {
 }
 
 class _EventTasksListState extends State<EventTasksList> {
+  List<String> reversedEventTasks;
+  @override
+  void initState() {
+    super.initState();
+    reversedEventTasks = widget.eventTasks.reversed.toList();
+  }
+
   final TextEditingController _controller = TextEditingController();
   void addTask(String task) {
     setState(() {
-      widget.eventTasks.add(task);
+      reversedEventTasks.add(task);
     });
+    DatabaseService(null).addEventTask(widget.eventID, task);
   }
 
   void deleteEventTask(int index, String task) {
     setState(() {
-      widget.eventTasks.removeAt(index);
+      reversedEventTasks.removeAt(index);
     });
     DatabaseService(null).removeEventTask(widget.eventID, task);
   }
@@ -742,7 +709,6 @@ class _EventTasksListState extends State<EventTasksList> {
             onSubmitted: (value) {
               if (value != ""){
                 addTask(value);
-                DatabaseService(null).addEventTask(widget.eventID, value);
                 _controller.clear();
               }
             },
@@ -753,13 +719,11 @@ class _EventTasksListState extends State<EventTasksList> {
         SizedBox(
           height: 260,
           child: ListView.builder(
+            // reverse: true,
             scrollDirection: Axis.vertical,
-            itemCount: widget.eventTasks.length,
+            itemCount: reversedEventTasks.length,
             itemBuilder: (context, i) {
-              var reversedEventTasks = widget.eventTasks.reversed.toList();
-              return TaskItem(reversedEventTasks[i], () {
-                deleteEventTask(i, reversedEventTasks[i]);
-              });
+              return TaskItem(reversedEventTasks[i], () {deleteEventTask(i, reversedEventTasks[i]);});
             },
           ),
         ),
@@ -775,17 +739,11 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-
-      margin: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
+      margin: EdgeInsets.only(top: 16.0),
+      padding: EdgeInsets.symmetric(vertical: 4.0),
       decoration: BoxDecoration(color: kFifthColor, borderRadius: BorderRadius.all( Radius.circular(5.0))),
       child: ListTile(
-        title: Text(
-          taskname,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
-        ),
+        title: Text(taskname, style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'SourceSansPro')),
         trailing: IconButton(
           icon: Icon(Icons.delete_forever_rounded),
           color: Colors.white,

@@ -37,12 +37,7 @@ class _NewEventState extends State<NewEvent> {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.keyboard_backspace_rounded)),
-        title: Text(
-          "New Event",
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
+        title: Text("New Event", style: TextStyle(fontSize: 24.0,fontFamily: 'SourceSansPro')),
         actions: [
           IconButton(
               onPressed: () {
@@ -100,6 +95,7 @@ class _NewEventState extends State<NewEvent> {
                                 border: OutlineInputBorder(),
                                 labelText: "Icon",
                               ),
+                              style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                             ),
                           ),
                           Container(
@@ -120,6 +116,7 @@ class _NewEventState extends State<NewEvent> {
                                 border: OutlineInputBorder(),
                                 labelText: "Eventname",
                               ),
+                              style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                             ),
                           ),
                         ],
@@ -137,6 +134,7 @@ class _NewEventState extends State<NewEvent> {
                       maxLines: 3,
                       maxLength: 200,
                       decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
+                      style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                     ),
                     DateTimeField(
                       validator: (value) {
@@ -161,6 +159,7 @@ class _NewEventState extends State<NewEvent> {
                         }
                       },
                       decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate & Time"),
+                      style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
@@ -180,6 +179,7 @@ class _NewEventState extends State<NewEvent> {
                               },
                               scrollPadding: EdgeInsets.only(bottom: 10.0),
                               decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
+                              style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                             ),
                           ),
                           ListView.builder(
@@ -215,16 +215,13 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 14.0, left: 16.0, right: 16.0),
-      decoration: BoxDecoration(color: kPrimaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      margin: EdgeInsets.only(top: 14.0, left: 16.0, right: 16.0),
+      decoration: BoxDecoration(
+          color: kPrimaryColor, borderRadius: BorderRadius.all( Radius.circular(5.0)),
+          boxShadow: [BoxShadow(color: kPrimaryColor.withOpacity(0.6), spreadRadius: 0, blurRadius: 0.0, offset: Offset(3, 3))]
+      ),
       child: ListTile(
-        title: Text(
-          taskName,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
-        ),
+        title: Text(taskName, style: TextStyle(fontSize: 20.0, color: Colors.white, fontFamily: 'SourceSansPro')),
         trailing: IconButton(
           icon: Icon(Icons.delete_forever_rounded),
           color: Colors.white,

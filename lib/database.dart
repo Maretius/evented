@@ -194,10 +194,14 @@ class DatabaseService {
     } else {
       // add User to Firebase
       String userToken = userID.substring(userID.length - 6);
+      Map<String, String> userFriends = {};
+      List<String> userEvents = [];
       await users.doc(userID).set({
         "userName": user.displayName,
         "userToken": userToken,
         "userMessagingToken": userDBMessagingToken,
+        "userEvents": userEvents,
+        "userFriends": userFriends,
       });
       return user.displayName;
     }

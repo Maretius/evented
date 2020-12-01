@@ -59,16 +59,17 @@ class _EventedState extends State<Evented> {
       });
     } else {
       String userID = await signInWithGoogle();
-
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('userid', userID);
       setState(() {
         isLoggedIn = true;
         localUserID = userID;
       });
+      await DatabaseService(userID).checkIfUserExists();
+      setState(() {
+      });
     }
     connectToFirebase();
-    await database.checkIfUserExists();
   }
 
   @override
@@ -85,14 +86,7 @@ class _EventedState extends State<Evented> {
               ),
             ],
           ),
-          title: Text(
-            "evented",
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w600,
-              fontFamily: "Arial",
-            ),
-          ),
+          title: Text("evented", style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600, fontFamily: 'SourceSansPro')),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -105,9 +99,10 @@ class _EventedState extends State<Evented> {
             ),
           ],
           backgroundColor: kPrimaryColor,
+          shadowColor: kPrimaryColor,
+          elevation: 20.0,
         ),
         body: FutureBuilder(
-            // Wait until [connectToFirebase] returns stream
             future: connectToFirebase(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting || snapshot.hasError) {
@@ -157,20 +152,7 @@ class _EventedState extends State<Evented> {
                                     }
                                   }
                                   var datetime = userEventDocument["eventDateTime"].toDate();
-                                  return SingleEvent(
-                                    userEventDocument["eventIcon"],
-                                    userEventDocument["eventName"],
-                                    userEventDocument["eventDetails"],
-                                    datetime,
-                                    localUserID,
-                                    localUserStatus,
-                                    localUserIsAdmin,
-                                    databaseUser.userFriends,
-                                    eventUsers,
-                                    eventStatus,
-                                    userEventDocument["eventTasksUser"],
-                                    eventID,
-                                    database,
+                                  return SingleEvent(userEventDocument["eventIcon"], userEventDocument["eventName"], userEventDocument["eventDetails"], datetime, localUserID, localUserStatus, localUserIsAdmin, databaseUser.userFriends, eventUsers, eventStatus, userEventDocument["eventTasksUser"], eventID, database,
                                   );
                                 }
                               },
@@ -186,10 +168,7 @@ class _EventedState extends State<Evented> {
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => NewEvent(localUserID, databaseUser.userName, databaseUser.userFriends)));
           },
-          child: Icon(
-            Icons.add_rounded,
-            size: 32.0,
-          ),
+          child: Icon(Icons.add_rounded, size: 32.0),
           backgroundColor: kPrimaryColor,
         ));
   }
@@ -228,11 +207,11 @@ class SingleEvent extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),
         leading: Text(
           eventIcon,
-          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600, color: kTextColor),
+          style: TextStyle(fontSize: 24.0, color: Colors.white),
         ),
         title: Text(
           eventTitle,
-          style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600, color: kTextColor),
+          style: TextStyle(fontSize: 22.0, color: Colors.white, fontFamily: 'SourceSansPro'),
         ),
         onTap: () {
           if (eventUserStatus == "not decided") {
@@ -245,32 +224,22 @@ class SingleEvent extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                   ),
-                  title: Text(
-                    eventTitle,
-                    style: TextStyle(color: Colors.white),
+                  title: Text(eventTitle, style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro'),
                   ),
                   content: Text("Details: " + eventDetails + "\n\nAt: " + DateFormat('dd.MM.yyyy, kk:mm').format(eventDateTime) + "\n\nDo u want to accept the Invite?",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro'),
                         ),
                   actions: <Widget>[
                     TextButton(
-                      child: Text(
-                        'Accept',
-                        style: TextStyle(color: kTextColor),
-                      ),
+                      child: Text('Accept', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                       onPressed: () {
-                        print("Test");
                         database.changeEventUserStatus(eventID, "promised");
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                      child: Text(
-                        'Decline',
-                        style: TextStyle(color: kTextColor),
-                      ),
+                      child: Text('Decline', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
                       onPressed: () {
-                        print("Test2");
                         database.changeEventUserStatus(eventID, "called off");
                         Navigator.of(context).pop();
                       },
@@ -292,7 +261,10 @@ class SingleEvent extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
       margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: eventColor, borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      decoration: BoxDecoration(
+          color: eventColor, borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          boxShadow: [BoxShadow(color: eventColor.withOpacity(0.6), spreadRadius: 0, blurRadius: 0.0, offset: Offset(3, 3))]
+      ),
     );
   }
 }

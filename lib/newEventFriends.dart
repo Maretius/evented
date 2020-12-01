@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'main.dart';
 import 'database.dart';
-//import 'newEvent.dart';
 
 class NewEventFriends extends StatefulWidget {
   final String userID;
@@ -48,12 +47,7 @@ class _NewEventFriendsState extends State<NewEventFriends> {
           },
           icon: Icon(Icons.keyboard_backspace_rounded),
         ),
-        title: Text(
-          widget.eventTitle,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24.0,
-          ),
+        title: Text(widget.eventTitle, textAlign: TextAlign.center, style: TextStyle(fontSize: 24.0, fontFamily: 'SourceSansPro'),
         ),
         actions: <Widget>[
           IconButton(
@@ -98,13 +92,7 @@ class EventFriend extends StatelessWidget {
           border: Border.all(color: kPrimaryColor, width: 2),
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
       child: ListTile(
-        title: Text(
-          friendUserName,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
-        ),
+        title: Text(friendUserName, style: TextStyle(fontSize: 20.0, color: Colors.white, fontFamily: 'SourceSansPro')),
         trailing: Checkbox(
           value: friendMember,
           onChanged: (bool value) {

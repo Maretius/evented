@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'constants.dart';
 import 'database.dart';
 
@@ -15,12 +16,7 @@ class Contacts extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_rounded)),
-        title: Text(
-          "Contacts",
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
+        title: Text("Contacts", style: TextStyle(fontSize: 24.0, fontFamily: 'SourceSansPro')),
         backgroundColor: kPrimaryColor,
       ),
       body: SingleChildScrollView(
@@ -63,38 +59,37 @@ class MyName extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.symmetric(horizontal: 0),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
     );
   }
 }
 
 class MyID extends StatelessWidget {
-  //final String userToken = userID.substring(userID.length - 6);
   final String userToken;
   const MyID(this.userToken);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: TextFormField(
-        initialValue: userToken,
-        enabled: false,
-        decoration: InputDecoration(
-          labelText: "My Token:",
-          labelStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
+    return GestureDetector(
+      onTap: () {
+        final RenderBox box = context.findRenderObject();
+        Share.share("Hey here is my evented friendship token:\n\n$userToken", sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      },
+      child: Container(
+        child: TextFormField(
+          initialValue: userToken,
+          enabled: false,
+          decoration: InputDecoration(
+            labelText: "My Token:",
+            labelStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'SourceSansPro'),
+            filled: true,
+            fillColor: kPrimaryColor,
           ),
-          filled: true,
-          fillColor: kPrimaryColor,
+          style: TextStyle(color: Colors.white, fontSize: 22.0, fontFamily: 'SourceSansPro'),
         ),
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 22.0,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 0),
+        margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 0),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
     );
   }
 }
@@ -122,14 +117,8 @@ class _FriendListState extends State<FriendList> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
               ),
-              title: Text(
-                "Error",
-                style: TextStyle(color: Colors.white),
-              ),
-              content: Text(
-                "Username does not exists or friend does already exist!",
-                style: TextStyle(color: Colors.white, fontSize: 18.0),
-              ),
+              title: Text("Error", style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
+              content: Text("Username does not exists or friend does already exist!", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'SourceSansPro')),
             );
           });
     } else {
@@ -149,26 +138,17 @@ class _FriendListState extends State<FriendList> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
           ),
-          title: Text(
-            'Delete Friend?',
-            style: TextStyle(color: Colors.white),
-          ),
+          title: Text('Delete Friend?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                  'Are you sure u want to delete?',
-                  style: TextStyle(color: Colors.white),
-                ),
+                Text('Are you sure u want to delete?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                'Yes',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text('Yes', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 DatabaseService(widget.userID).deleteFriend(friendUserID);
                 setState(() {
@@ -179,10 +159,7 @@ class _FriendListState extends State<FriendList> {
               },
             ),
             TextButton(
-              child: Text(
-                'No',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text('No', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -201,7 +178,7 @@ class _FriendListState extends State<FriendList> {
           margin: const EdgeInsets.all(20.0),
           child: TextField(
             onSubmitted: addFriend,
-            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Add Friend with Token"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Add Friend with Token", labelStyle: TextStyle(fontFamily: 'SourceSansPro')),
           ),
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         ),
@@ -230,11 +207,14 @@ class Friend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-      decoration: BoxDecoration(color: kSecondaryColor, borderRadius: new BorderRadius.all(const Radius.circular(5.0))),
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      margin: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+      decoration: BoxDecoration(
+          color: kSecondaryColor, borderRadius: BorderRadius.all( Radius.circular(5.0)),
+          boxShadow: [BoxShadow(color: kSecondaryColor.withOpacity(0.6), spreadRadius: 0, blurRadius: 0.0, offset: Offset(3, 3))]
+      ),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
         title: Text(
           friendName,
           style: TextStyle(
