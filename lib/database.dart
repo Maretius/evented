@@ -267,7 +267,7 @@ class PushNotificationsManager {
 
   bool initialized = false;
   String token;
-  String serverKey = "AAAAPgopnYc:APA91bFhhqlrD5xmamFBkwpOq3pu_dk_JoBktvuy1i69Oh-x74s2HlXgxCKM3njyEYlLJ2gYtpD4CtaB_NARiMyHnmYweiaHljzB3GVkcmfslEnJqnyLZzUMG6XmhGgaE6jhyPf1J-EM";
+  String serverKey = "AAAAvM0bnq8:APA91bHLcWVZ47ho1jhJl2UNxCr8N4q5TEne8Bbd7matb6LdVPM8WffxztmIvo0HAYSEZ5Io3MaXOhUPtNXbUgoqlVBh-9T-o5LxW5D_CPOl19a10QNXFG_7b55WWWUG--r2279Ip_yt";
 
   Future init() async {
     if (!initialized) {

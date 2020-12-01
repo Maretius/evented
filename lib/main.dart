@@ -224,21 +224,21 @@ class SingleEvent extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                   ),
-                  title: Text(eventTitle, style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro'),
+                  title: Text(eventTitle, style: TextStyle(color: Colors.white, fontSize: 20.0, fontFamily: 'SourceSansPro'),
                   ),
                   content: Text("Details: " + eventDetails + "\n\nAt: " + DateFormat('dd.MM.yyyy, kk:mm').format(eventDateTime) + "\n\nDo u want to accept the Invite?",
                           style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro'),
                         ),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('Accept', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                      child: Text('Accept', style: TextStyle(color: kTextColor, fontSize: 18.0, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         database.changeEventUserStatus(eventID, "promised");
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                      child: Text('Decline', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                      child: Text('Decline', style: TextStyle(color: kTextColor, fontSize: 18.0, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         database.changeEventUserStatus(eventID, "called off");
                         Navigator.of(context).pop();
