@@ -260,7 +260,7 @@ class SingleEvent extends StatelessWidget {
         },
       ),
       padding: EdgeInsets.symmetric(horizontal: 12),
-      margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0, bottom: 5),
       decoration: BoxDecoration(
           color: eventColor, borderRadius: BorderRadius.all(Radius.circular(5.0)),
           boxShadow: [BoxShadow(color: eventColor.withOpacity(0.6), spreadRadius: 0, blurRadius: 0.0, offset: Offset(3, 3))]

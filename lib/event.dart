@@ -296,8 +296,6 @@ class _EventUserTasksState extends State<EventUserTasks> {
                 ),
               ),
         ),
-
-
         Visibility(
           visible: checkBoxVisible,
             child: IconButton(
@@ -428,7 +426,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Change', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                child: Text('Change', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   if (databaseValue != "") {
                     DatabaseService(null).changeEventDetails(widget.eventID, databaseValue);
@@ -437,7 +435,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -490,7 +488,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Change', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                child: Text('Change', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   if (eventDateTime != null) {
                     DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
@@ -498,7 +496,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -620,7 +618,7 @@ class _EventFriendsState extends State<EventFriends> {
                   ),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('Yes', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                      child: Text('Yes', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         userFriendsEventMember.forEach((key, value) {
                           if ( widget.eventMembers[key] == null && value == true) {
@@ -636,7 +634,7 @@ class _EventFriendsState extends State<EventFriends> {
                       },
                     ),
                     TextButton(
-                      child: Text('No', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                      child: Text('No', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },

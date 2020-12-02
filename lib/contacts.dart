@@ -148,7 +148,7 @@ class _FriendListState extends State<FriendList> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Yes', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
+              child: Text('Yes', style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 DatabaseService(widget.userID).deleteFriend(friendUserID);
                 setState(() {
@@ -159,7 +159,7 @@ class _FriendListState extends State<FriendList> {
               },
             ),
             TextButton(
-              child: Text('No', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
+              child: Text('No', style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 Navigator.of(context).pop();
               },
