@@ -39,12 +39,7 @@ class _EventedState extends State<Evented> {
   @override
   void initState() {
     super.initState();
-    // if (localUserID != null) {
-    //   connectToFirebase();
-    //   print("TEST1");
-    // } else {
-      autoLogIn();
-    // }
+    autoLogIn();
   }
 
   void autoLogIn() async {
