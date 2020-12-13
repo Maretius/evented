@@ -125,7 +125,7 @@ class _NewEventState extends State<NewEvent> {
                     TextFormField(
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter some Eventdetails';
+                          return 'Please enter some Details';
                         }
                         return null;
                       },
@@ -133,13 +133,13 @@ class _NewEventState extends State<NewEvent> {
                       keyboardType: TextInputType.multiline,
                       maxLines: 3,
                       maxLength: 200,
-                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdetails"),
+                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Details"),
                       style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                     ),
                     DateTimeField(
                       validator: (value) {
                         if (value == null) {
-                          return 'Please enter Date & Time';
+                          return 'Please enter Date & time';
                         }
                         return null;
                       },
@@ -158,7 +158,7 @@ class _NewEventState extends State<NewEvent> {
                           return currentValue;
                         }
                       },
-                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate & Time"),
+                      decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Date & Time"),
                       style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                     ),
                     Container(
@@ -178,7 +178,7 @@ class _NewEventState extends State<NewEvent> {
                                 }
                               },
                               scrollPadding: EdgeInsets.only(bottom: 10.0),
-                              decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
+                              decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Tasks"),
                               style: TextStyle(fontSize: 16.0, fontFamily: 'SourceSansPro'),
                             ),
                           ),

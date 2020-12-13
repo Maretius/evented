@@ -142,13 +142,13 @@ class _FriendListState extends State<FriendList> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Are you sure u want to delete?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
+                Text('Do you really want to remove that friend?', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Yes', style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'SourceSansPro')),
+              child: Text('Yes', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 DatabaseService(widget.userID).deleteFriend(friendUserID);
                 setState(() {
@@ -159,7 +159,7 @@ class _FriendListState extends State<FriendList> {
               },
             ),
             TextButton(
-              child: Text('No', style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'SourceSansPro')),
+              child: Text('No', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
               onPressed: () {
                 Navigator.of(context).pop();
               },

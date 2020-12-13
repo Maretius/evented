@@ -87,7 +87,7 @@ class DatabaseService {
         await users.doc(key).get().then((value) {
           userMessagingToken = (value.data()["userMessagingToken"]);
         });
-        PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to the '$eventTitle' event");
+        PushNotificationsManager.instance.sendNotification(userMessagingToken, "event invitation", "Hey, you have been invited to $eventTitle $eventIcon");
       }
       });
   }
@@ -109,7 +109,7 @@ class DatabaseService {
       await users.doc(key).get().then((value) {
         userMessagingToken = (value.data()["userMessagingToken"]);
       });
-      PushNotificationsManager.instance.sendNotification(userMessagingToken, "evented invitation", "Hey, you have been invited to an event");
+      PushNotificationsManager.instance.sendNotification(userMessagingToken, "event invitation", "Hey, you have been invited to an event");
     });
   }
 

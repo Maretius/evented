@@ -79,7 +79,7 @@ class _EventState extends State<Event> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20.0), bottom: Radius.circular(20.0)),
                               ),
-                              title: Text("Eventdetails", style: TextStyle(color: Colors.white, fontSize: 22.0, fontFamily: 'SourceSansPro', fontWeight: FontWeight.w600)),
+                              title: Text("Details", style: TextStyle(color: Colors.white, fontSize: 22.0, fontFamily: 'SourceSansPro', fontWeight: FontWeight.w600)),
                               children: [
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -482,7 +482,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 return currentValue;
               }
             },
-            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventdate"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Date"),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -509,12 +509,12 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Are you sure u want to delete the event?\n\nDeleted Events cant be restored!', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
+          Text('Are you sure to delete the event?\n\nDeleted Events can not be restored!', style: TextStyle(color: Colors.white, fontFamily: 'SourceSansPro')),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                child: Text('Delete', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro'),),
+                child: Text('Delete', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro'),),
                 onPressed: () {
                   DatabaseService(null).deleteEvent(widget.eventID);
                   Navigator.of(context).pop();
@@ -523,7 +523,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 },
               ),
               TextButton(
-                child: Text('Cancel', style: TextStyle(color: kTextColor, fontFamily: 'SourceSansPro')),
+                child: Text('Cancel', style: TextStyle(color: kTextColor, fontSize: 16.0, fontFamily: 'SourceSansPro')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -718,7 +718,7 @@ class _EventTasksListState extends State<EventTasksList> {
                 _controller.clear();
               }
             },
-            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Eventtasks"),
+            decoration: InputDecoration(fillColor: Colors.white, filled: true, border: OutlineInputBorder(), labelText: "Tasks"),
           ),
           margin: EdgeInsets.only(bottom: 10.0),
         ),
