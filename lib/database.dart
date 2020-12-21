@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 //final Firestore firestore = Firestore();
@@ -43,7 +44,6 @@ class LocalUser {
 class DatabaseService {
   final String userID;
   DatabaseService(this.userID);
-  String postUrl = "fcm.googleapis.com/fcm/send";
 
   final CollectionReference users = FirebaseFirestore.instance.collection('users');
   final CollectionReference events = FirebaseFirestore.instance.collection('events');
@@ -121,15 +121,29 @@ class DatabaseService {
   }
 
   Future changeEventDetails(String eventID, String eventDetails) async {
-    print("ID: " + eventID);
     await events.doc(eventID).update({
       "eventDetails" : eventDetails,
     });
   }
 
   Future changeEventDateTime(String eventID, DateTime eventDateTime) async {
+    Map<String, String> eventUsers = {};
+    String eventName;
+    String userMessagingToken;
+    String eventDateTimeConvert = DateFormat('dd.MM.yyyy – kk:mm').format(eventDateTime);
+
     await events.doc(eventID).update({
       "eventDateTime" : eventDateTime,
+    });
+    await events.doc(eventID).get().then((value) {
+      eventUsers = Map.from(value.data()["eventUsers"]);
+      eventName = value.data()["eventName"];
+    });
+    eventUsers.forEach((key, value) async {
+      await users.doc(key).get().then((value) {
+        userMessagingToken = (value.data()["userMessagingToken"]);
+      });
+      PushNotificationsManager.instance.sendNotification(userMessagingToken, "event time change", "$eventName is now at $eventDateTimeConvert");
     });
   }
 
@@ -159,12 +173,12 @@ class DatabaseService {
   }
 
   Future deleteEvent(String eventID) async {
-    Map<String, String> eventUser = {};
+    Map<String, String> eventUsers = {};
     await events.doc(eventID).get().then((value) {
-      eventUser = Map.from(value.data()["eventUsers"]);
+      eventUsers = Map.from(value.data()["eventUsers"]);
     });
     List<String> eventUserIDs = [];
-    eventUser.forEach((key, value) {
+    eventUsers.forEach((key, value) {
       eventUserIDs.add(key);
     });
     for (var u = 0; u < eventUserIDs.length; u++) {

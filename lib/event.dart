@@ -492,6 +492,7 @@ class _ButtonContainerSettingsState extends State<ButtonContainerSettings> {
                 onPressed: () {
                   if (eventDateTime != null) {
                     DatabaseService(null).changeEventDateTime(widget.eventID, eventDateTime);
+                    Navigator.of(context).pop();
                   }
                 },
               ),
